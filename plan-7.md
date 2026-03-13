@@ -1791,4 +1791,736 @@ curl "http://localhost:7860/api/v1/memory/search?query=previous+research"
 
 This implementation gives you **80% of Perplexity Computer's functionality** in a single container, ready for your cloud provider! 🚀
 
+---
+
+# 🔍 CRITICAL REVIEW: Perplexity Computer Clone Implementation
+
+After meticulous analysis of the provided design against my earlier plan and the Perplexity Computer research, I've identified **significant strengths** alongside **critical issues that must be fixed before deployment**. Below is my comprehensive comparison.
+
+---
+
+## 📊 Executive Summary
+
+| Category | Assessment | Priority |
+|----------|------------|----------|
+| **Architecture** | ✅ Excellent - matches Perplexity patterns | - |
+| **Dockerfile** | ⚠️ Good but has security & reliability concerns | 🔴 High |
+| **Entrypoint Script** | ⚠️ Port conflict risk identified | 🟡 Medium |
+| **Orchestrator** | ✅ Well-structured, production-ready | - |
+| **Safety Gate** | ✅ Correct implementation of confirm_action | - |
+| **Model Routing** | ❌ **Critical URL bugs** will cause failures | 🔴 **Critical** |
+| **Connectors** | ⚠️ Stub implementation, credential storage weak | 🟡 Medium |
+| **Memory Layer** | ❌ **Missing from provided code** | 🔴 High |
+| **Web UI** | ✅ Functional but basic | - |
+
+---
+
+## 🔴 CRITICAL ISSUES THAT MUST BE FIXED
+
+### 1. **Broken API URLs in `model_routing.py`**
+
+```python
+# ❌ BROKEN - trailing spaces will cause HTTP 404 errors
+resp = await client.post(
+    "https://api.anthropic.com/v1/messages  ",  # <-- TWO TRAILING SPACES
+    ...
+)
+
+resp = await client.post(
+    "https://api.openai.com/v1/chat/completions  ",  # <-- TWO TRAILING SPACES
+    ...
+)
+
+url = f"https://generativelanguage.googleapis.com/v1beta/models/  {model}:generateContent?key={api_key}"
+#                                                                ^^^ TWO TRAILING SPACES
+```
+
+**Impact:** All LLM calls will fail with 404 errors. This is a **showstopper bug**.
+
+**Fix:**
+```python
+# ✅ CORRECTED
+resp = await client.post(
+    "https://api.anthropic.com/v1/messages",
+    ...
+)
+```
+
+---
+
+### 2. **Missing Memory Layer Implementation**
+
+The provided design **references memory functionality** but `memory.py` is **not included** in the file structure. The research explicitly states Perplexity uses persistent cross-session memory.
+
+**Impact:** No workflow persistence, no cross-session context, no preference storage.
+
+**Fix:** Add the SQLite-based `memory.py` from my earlier design (see corrected version below).
+
+---
+
+### 3. **Health Check Port Conflict**
+
+The `docker-entrypoint.sh` starts the FastAPI app directly, but the `HEALTHCHECK` in Dockerfile expects `/health` endpoint. If the app fails to start, the health check will fail silently until timeout.
+
+**Impact:** Cloud provider may kill container during startup, causing boot loops.
+
+**Fix:** Add startup delay or separate health endpoint that doesn't depend on app initialization.
+
+---
+
+### 4. **Credential Storage Security**
+
+```python
+# ❌ WEAK - plaintext in environment variables
+token = os.getenv("GMAIL_TOKEN")  # Not secure; use proper storage
+```
+
+**Impact:** Credentials visible in `docker inspect`, process list, and logs.
+
+**Fix:** Use encrypted file storage or secrets manager (even simple AES encryption is better).
+
+---
+
+## 📋 DETAILED COMPONENT COMPARISON
+
+### 1. Dockerfile
+
+| Aspect | My Plan | Provided Design | Winner |
+|--------|---------|-----------------|--------|
+| **Base Image** | `python:3.13-trixie` | `python:3.13-trixie` | 🤝 Tie |
+| **User Setup** | `appuser` (1000:1000) | `user` (1000:1000) | 🤝 Tie |
+| **bun/uv Installation** | Official installers | GitHub binary downloads | ⚠️ **My Plan** (more reliable) |
+| **Node.js Version** | 24.x LTS | 22.x LTS | ⚠️ **My Plan** (newer) |
+| **Playwright Install** | Before user switch | Before user switch | 🤝 Tie |
+| **Workspace Directories** | `/workspace/{ipc,artifacts,logs,memory}` | `/workspace/{ipc,tasks,artifacts,logs,memory}` | ✅ **Provided** (adds `tasks`) |
+| **Health Check** | Port 7860 `/health` | Port 7860 `/health` | 🤝 Tie |
+| **Layer Optimization** | 8 RUN layers | 14 RUN layers | ⚠️ **My Plan** (fewer layers = smaller image) |
+
+**Critical Issues in Provided Dockerfile:**
+
+```dockerfile
+# ❌ Reliability risk - GitHub raw URLs may change or be rate-limited
+RUN cd /usr/bin && wget https://github.com/nordeim/HF-Space/raw/refs/heads/main/bun
+RUN cd /usr/bin && wget https://github.com/nordeim/HF-Space/raw/refs/heads/main/uv
+RUN cd /usr/bin && wget https://github.com/nordeim/HF-Space/raw/refs/heads/main/uvx
+
+# ✅ BETTER - Use official installers
+RUN curl -fsSL https://bun.sh/install | bash
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+```dockerfile
+# ❌ Security issue - sudo granted for ALL commands
+echo "user ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/user
+
+# ✅ BETTER - Restrict to cron only
+echo "user ALL=(ALL) NOPASSWD: /usr/sbin/cron" > /etc/sudoers.d/user
+```
+
+---
+
+### 2. Entrypoint Script
+
+| Aspect | My Plan | Provided Design | Winner |
+|--------|---------|-----------------|--------|
+| **Process Management** | PID tracking + cleanup trap | PID tracking + cleanup trap | 🤝 Tie |
+| **Service Functions** | Modular (start_orchestrator, start_terminal, etc.) | Modular (start_cron, start_ttyd, start_app) | 🤝 Tie |
+| **Run Modes** | 5 modes (start, orchestrator-only, etc.) | 4 modes (start, cron-only, ttyd-only, app-only) | ⚠️ **My Plan** (more flexibility) |
+| **Logging** | Tee to log files | Basic echo only | ✅ **My Plan** (better observability) |
+| **API Key Validation** | Warns if no keys set | None | ✅ **My Plan** (better UX) |
+
+**Critical Issue in Provided Entrypoint:**
+
+```bash
+# ❌ No logging to files - debugging will be difficult
+start_app() {
+    echo "Starting FastAPI orchestrator..."
+    uvicorn main:app --host 0.0.0.0 --port "${APP_PORT:-7860}" &
+    # No log redirection!
+}
+
+# ✅ BETTER - Log to files for debugging
+start_app() {
+    echo "Starting FastAPI orchestrator..." | tee -a /workspace/logs/app.log
+    uvicorn main:app --host 0.0.0.0 --port "${APP_PORT:-7860}" >> /workspace/logs/app.log 2>&1 &
+}
+```
+
+---
+
+### 3. Orchestrator Architecture
+
+| Aspect | My Plan | Provided Design | Winner |
+|--------|---------|-----------------|--------|
+| **Task Decomposition** | LLM-based with JSON parsing | LLM-based with JSON parsing + regex fallback | ✅ **Provided** (better error handling) |
+| **Workflow Objects** | `Workflow` + `SubTask` dataclasses | Dict-based with status tracking | ⚠️ **My Plan** (type-safe) |
+| **Parallel Execution** | `asyncio.gather()` for parallel tasks | `asyncio.gather()` for all subtasks | 🤝 Tie |
+| **Dependency Tracking** | `depends_on` field in SubTask | `depends_on` field but not enforced | ✅ **My Plan** (actually enforces dependencies) |
+| **State Persistence** | SQLite + JSON files | In-memory only (lost on restart) | ✅ **My Plan** (persistent) |
+| **Filesystem IPC** | `/workspace/ipc/task_*.json` | Referenced but not implemented | ✅ **My Plan** (actually writes files) |
+
+**Critical Gap in Provided Orchestrator:**
+
+```python
+# ❌ No dependency enforcement - tasks with depends_on run immediately
+async def _process_goal(self, task_id: str):
+    # All subtasks run concurrently regardless of dependencies
+    results = await asyncio.gather(*[
+        self._execute_subtask(st) for st in subtasks
+    ])
+
+# ✅ BETTER - Respect dependencies
+async def _process_goal(self, task_id: str):
+    completed = set()
+    pending = subtasks.copy()
+    
+    while pending:
+        # Find tasks whose dependencies are satisfied
+        ready = [t for t in pending if all(d in completed for d in t.get("depends_on", []))]
+        if not ready:
+            raise Exception("Circular dependency detected")
+        
+        # Execute ready tasks in parallel
+        results = await asyncio.gather(*[self._execute_subtask(t) for t in ready])
+        
+        # Mark as completed
+        for t in ready:
+            completed.add(t["id"])
+            pending.remove(t)
+```
+
+---
+
+### 4. Safety Gate (`safety.py`)
+
+| Aspect | My Plan | Provided Design | Winner |
+|--------|---------|-----------------|--------|
+| **Pattern Detection** | Regex patterns for 8 sensitive action types | None - relies on explicit connector calls | ✅ **My Plan** (proactive detection) |
+| **Approval Storage** | In-memory dict with cleanup | In-memory dict with cleanup | 🤝 Tie |
+| **Approval Lifecycle** | `create_approval_request` + `submit_approval` | `confirm_action` with asyncio.Event | ✅ **Provided** (cleaner async pattern) |
+| **Logging** | Detailed approval request logging | None | ✅ **My Plan** (audit trail) |
+| **Auto-Approval** | Safe actions auto-approved | All actions require approval | ⚠️ **My Plan** (better UX) |
+
+**Assessment:** The provided `safety.py` has a **cleaner async implementation** but lacks the **pattern detection** that makes my version more secure. Best approach: **merge both**.
+
+---
+
+### 5. Model Routing (`model_routing.py`)
+
+| Aspect | My Plan | Provided Design | Winner |
+|--------|---------|-----------------|--------|
+| **Model Table** | 5 models (reasoning, research, code, speed, long_context) | 6 models (adds images) | ✅ **Provided** (more comprehensive) |
+| **API Clients** | Placeholder stubs | Full httpx implementations | ✅ **Provided** (ready to use) |
+| **Error Handling** | Basic try/except | `resp.raise_for_status()` | ✅ **Provided** (better HTTP error handling) |
+| **URL Correctness** | ✅ Correct | ❌ **Broken with trailing spaces** | ✅ **My Plan** |
+| **Timeout Configuration** | 120 seconds | 120 seconds | 🤝 Tie |
+
+**Critical Bug in Provided Code:**
+
+```python
+# ❌ Will fail - trailing spaces in URLs
+"https://api.anthropic.com/v1/messages  "
+"https://api.openai.com/v1/chat/completions  "
+"https://generativelanguage.googleapis.com/v1beta/models/  {model}:generateContent"
+
+# ✅ CORRECTED VERSION
+"https://api.anthropic.com/v1/messages"
+"https://api.openai.com/v1/chat/completions"
+"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+```
+
+---
+
+### 6. Connectors (`connectors.py`)
+
+| Aspect | My Plan | Provided Design | Winner |
+|--------|---------|-----------------|--------|
+| **Credential Loading** | Environment + encrypted JSON file | Environment variables only | ✅ **My Plan** (more flexible) |
+| **Service Registry** | `ConnectorRegistry` class with config | Direct function calls | ✅ **My Plan** (more extensible) |
+| **Confirmation Check** | Integrated with SafetyGate | Separate confirm_action call | 🤝 Tie |
+| **Implementation** | Stubs for 4 services | Stubs for 2 services | ✅ **My Plan** (more services) |
+| **Error Handling** | Try/except with logging | Basic return dict | ✅ **My Plan** (better observability) |
+
+**Security Concern in Provided Code:**
+
+```python
+# ❌ Credentials in environment visible to any process
+token = os.getenv("GMAIL_TOKEN")
+
+# ✅ BETTER - Encrypted file storage
+import cryptography.fernet
+def load_encrypted_token(service: str) -> str:
+    key = os.getenv("ENCRYPTION_KEY")
+    f = cryptography.fernet.Fernet(key)
+    with open(f"/workspace/memory/credentials/{service}.enc") as f:
+        return f.decrypt(f.read()).decode()
+```
+
+---
+
+### 7. Memory Layer
+
+| Aspect | My Plan | Provided Design | Winner |
+|--------|---------|-----------------|--------|
+| **Implementation** | SQLite with 3 tables | **MISSING** | ✅ **My Plan** |
+| **Persistence** | Cross-session workflow state | In-memory only | ✅ **My Plan** |
+| **Similarity Search** | Hash-based (upgradeable to vectors) | N/A | ✅ **My Plan** |
+| **Preference Storage** | Key-value table | N/A | ✅ **My Plan** |
+| **Cleanup** | `cleanup_old_memories(days=30)` | N/A | ✅ **My Plan** |
+
+**Critical Gap:** The provided design has **no memory implementation** despite referencing it in the architecture. This means:
+- Workflows lost on container restart
+- No cross-session context
+- No user preference persistence
+- No conversation history
+
+---
+
+### 8. Web UI (`templates/index.html`)
+
+| Aspect | My Plan | Provided Design | Winner |
+|--------|---------|-----------------|--------|
+| **Framework** | None (API-only) | Basic HTML + JavaScript | ✅ **Provided** (has UI) |
+| **Task Polling** | N/A | 2-second polling interval | ✅ **Provided** |
+| **Approval UI** | N/A | Approve/Reject buttons | ✅ **Provided** |
+| **Error Display** | N/A | Basic JSON output | ⚠️ **My Plan** (would add better error handling) |
+| **Styling** | N/A | Minimal CSS | 🤝 Tie |
+
+**Assessment:** The provided UI is **functional but basic**. For production, consider:
+- WebSocket for real-time updates (instead of polling)
+- Better error visualization
+- Task history view
+- Approval notification system
+
+---
+
+## 🛠️ CORRECTED & ENHANCED IMPLEMENTATION
+
+Below are the **fixed versions** of critical files with all issues addressed:
+
+### 1. Fixed `model_routing.py`
+
+```python
+# app/model_routing.py
+import os
+import httpx
+from typing import Optional
+
+MODEL_ROUTING = {
+    "reasoning": "claude-3-5-sonnet-20241022",
+    "research":  "gemini-2.0-pro-exp-02-05",
+    "code":      "claude-3-5-sonnet-20241022",
+    "speed":     "gpt-4o-mini",
+    "long_ctx":  "gemini-2.0-flash-thinking-exp",
+    "images":    "dall-e-3",
+}
+
+def route_task(task_type: str, description: str) -> str:
+    return MODEL_ROUTING.get(task_type, MODEL_ROUTING["reasoning"])
+
+async def call_llm(model: str, prompt: str, temperature: float = 0.7) -> str:
+    if model.startswith("claude"):
+        return await _call_anthropic(model, prompt, temperature)
+    elif model.startswith("gpt"):
+        return await _call_openai(model, prompt, temperature)
+    elif model.startswith("gemini"):
+        return await _call_google(model, prompt, temperature)
+    else:
+        raise ValueError(f"Unknown model: {model}")
+
+async def _call_anthropic(model: str, prompt: str, temperature: float) -> str:
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    if not api_key:
+        raise RuntimeError("ANTHROPIC_API_KEY not set")
+    async with httpx.AsyncClient(timeout=120.0) as client:
+        resp = await client.post(
+            "https://api.anthropic.com/v1/messages",  # ✅ FIXED
+            headers={
+                "x-api-key": api_key,
+                "anthropic-version": "2023-06-01",
+                "content-type": "application/json"
+            },
+            json={
+                "model": model,
+                "max_tokens": 4096,
+                "temperature": temperature,
+                "messages": [{"role": "user", "content": prompt}]
+            }
+        )
+        resp.raise_for_status()
+        return resp.json()["content"][0]["text"]
+
+async def _call_openai(model: str, prompt: str, temperature: float) -> str:
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key:
+        raise RuntimeError("OPENAI_API_KEY not set")
+    async with httpx.AsyncClient(timeout=120.0) as client:
+        resp = await client.post(
+            "https://api.openai.com/v1/chat/completions",  # ✅ FIXED
+            headers={"Authorization": f"Bearer {api_key}"},
+            json={
+                "model": model,
+                "messages": [{"role": "user", "content": prompt}],
+                "temperature": temperature
+            }
+        )
+        resp.raise_for_status()
+        return resp.json()["choices"][0]["message"]["content"]
+
+async def _call_google(model: str, prompt: str, temperature: float) -> str:
+    api_key = os.getenv("GOOGLE_API_KEY")
+    if not api_key:
+        raise RuntimeError("GOOGLE_API_KEY not set")
+    async with httpx.AsyncClient(timeout=120.0) as client:
+        # ✅ FIXED - no trailing spaces
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+        resp = await client.post(
+            url,
+            json={"contents": [{"parts": [{"text": prompt}]}]}
+        )
+        resp.raise_for_status()
+        return resp.json()["candidates"][0]["content"]["parts"][0]["text"]
+```
+
+---
+
+### 2. New `memory.py` (Missing from Provided Design)
+
+```python
+# app/memory.py
+import sqlite3
+import json
+import hashlib
+from datetime import datetime, timedelta
+from pathlib import Path
+from typing import List, Dict, Any, Optional
+
+class AgentMemory:
+    """Persistent memory system for cross-session context"""
+    
+    def __init__(self, memory_dir: str = "/workspace/memory"):
+        self.memory_dir = Path(memory_dir)
+        self.memory_dir.mkdir(parents=True, exist_ok=True)
+        self.db_path = self.memory_dir / "agent_memory.db"
+        self._init_database()
+    
+    def _init_database(self):
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS memories (
+                id TEXT PRIMARY KEY,
+                content TEXT NOT NULL,
+                embedding_hash TEXT NOT NULL,
+                metadata TEXT,
+                created_at TEXT NOT NULL,
+                workflow_id TEXT
+            )
+        ''')
+        
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS workflows (
+                id TEXT PRIMARY KEY,
+                goal TEXT NOT NULL,
+                status TEXT,
+                created_at TEXT NOT NULL,
+                completed_at TEXT,
+                state TEXT
+            )
+        ''')
+        
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS preferences (
+                key TEXT PRIMARY KEY,
+                value TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            )
+        ''')
+        
+        cursor.execute('CREATE INDEX IF NOT EXISTS idx_workflow_id ON memories(workflow_id)')
+        conn.commit()
+        conn.close()
+    
+    def _generate_hash(self, content: str) -> str:
+        return hashlib.sha256(content.encode()).hexdigest()
+    
+    def store_context(self, context_id: str, content: str, 
+                      metadata: Optional[Dict] = None, 
+                      workflow_id: Optional[str] = None):
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            INSERT OR REPLACE INTO memories 
+            (id, content, embedding_hash, metadata, created_at, workflow_id)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (
+            context_id, content, self._generate_hash(content),
+            json.dumps(metadata or {}), datetime.utcnow().isoformat(), workflow_id
+        ))
+        
+        conn.commit()
+        conn.close()
+    
+    def retrieve_context(self, query: str, limit: int = 5, 
+                         workflow_id: Optional[str] = None) -> List[Dict]:
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        if workflow_id:
+            cursor.execute('''
+                SELECT id, content, metadata, created_at, workflow_id
+                FROM memories WHERE workflow_id = ?
+                ORDER BY created_at DESC LIMIT ?
+            ''', (workflow_id, limit))
+        else:
+            cursor.execute('''
+                SELECT id, content, metadata, created_at, workflow_id
+                FROM memories ORDER BY created_at DESC LIMIT ?
+            ''', (limit,))
+        
+        results = []
+        for row in cursor.fetchall():
+            results.append({
+                'id': row[0], 'content': row[1],
+                'metadata': json.loads(row[2]) if row[2] else {},
+                'created_at': row[3], 'workflow_id': row[4]
+            })
+        
+        conn.close()
+        return results
+    
+    def store_workflow_state(self, workflow_id: str, goal: str, 
+                             status: str, state: Dict):
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            INSERT OR REPLACE INTO workflows
+            (id, goal, status, created_at, completed_at, state)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (
+            workflow_id, goal, status, datetime.utcnow().isoformat(),
+            None, json.dumps(state)
+        ))
+        
+        conn.commit()
+        conn.close()
+    
+    def get_workflow_state(self, workflow_id: str) -> Optional[Dict]:
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            SELECT id, goal, status, created_at, completed_at, state
+            FROM workflows WHERE id = ?
+        ''', (workflow_id,))
+        
+        row = cursor.fetchone()
+        conn.close()
+        
+        if row:
+            return {
+                'id': row[0], 'goal': row[1], 'status': row[2],
+                'created_at': row[3], 'completed_at': row[4],
+                'state': json.loads(row[5]) if row[5] else {}
+            }
+        return None
+    
+    def store_preference(self, key: str, value: Any):
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        cursor.execute('''
+            INSERT OR REPLACE INTO preferences (key, value, updated_at)
+            VALUES (?, ?, ?)
+        ''', (key, json.dumps(value), datetime.utcnow().isoformat()))
+        conn.commit()
+        conn.close()
+    
+    def get_preference(self, key: str, default: Any = None) -> Any:
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        cursor.execute('SELECT value FROM preferences WHERE key = ?', (key,))
+        row = cursor.fetchone()
+        conn.close()
+        return json.loads(row[0]) if row else default
+    
+    def cleanup_old_memories(self, days: int = 30) -> int:
+        cutoff = (datetime.utcnow() - timedelta(days=days)).isoformat()
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        cursor.execute('DELETE FROM memories WHERE created_at < ?', (cutoff,))
+        deleted = cursor.rowcount
+        conn.commit()
+        conn.close()
+        return deleted
+```
+
+---
+
+### 3. Enhanced `docker-entrypoint.sh`
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+readonly LOGS_DIR="/workspace/logs"
+readonly ORCHESTRATOR_PORT="${APP_PORT:-7860}"
+readonly TERMINAL_PORT="${TTYD_PORT:-7681}"
+
+declare -a PIDS=()
+
+log_info() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] [INFO] $*" | tee -a "${LOGS_DIR}/entrypoint.log"
+}
+
+log_error() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] [ERROR] $*" | tee -a "${LOGS_DIR}/entrypoint.log" >&2
+}
+
+start_cron() {
+    log_info "Starting cron service..."
+    if [ -f "/app/crontab" ]; then
+        crontab /app/crontab
+        log_info "Loaded crontab from /app/crontab"
+    fi
+    sudo /usr/sbin/cron -f >> "${LOGS_DIR}/cron.log" 2>&1 &
+    PIDS+=($!)
+    log_info "Cron started with PID: ${PIDS[-1]}"
+}
+
+start_ttyd() {
+    log_info "Starting ttyd web terminal on port ${TERMINAL_PORT}..."
+    /usr/local/bin/ttyd \
+        -p "${TERMINAL_PORT}" \
+        --writable \
+        -t theme='{"background": "#0a0a0a", "foreground": "#ffffff"}' \
+        bash --login >> "${LOGS_DIR}/terminal.log" 2>&1 &
+    PIDS+=($!)
+    log_info "ttyd started with PID: ${PIDS[-1]}"
+}
+
+start_app() {
+    log_info "Starting FastAPI orchestrator on port ${ORCHESTRATOR_PORT}..."
+    
+    # Validate API keys
+    if [[ -z "${ANTHROPIC_API_KEY:-}" && -z "${GOOGLE_API_KEY:-}" && -z "${OPENAI_API_KEY:-}" ]]; then
+        log_error "WARNING: No API keys configured. Set ANTHROPIC_API_KEY, GOOGLE_API_KEY, or OPENAI_API_KEY"
+    fi
+    
+    uvicorn main:app --host 0.0.0.0 --port "${ORCHESTRATOR_PORT}" >> "${LOGS_DIR}/orchestrator.log" 2>&1 &
+    PIDS+=($!)
+    log_info "FastAPI started with PID: ${PIDS[-1]}"
+}
+
+cleanup() {
+    log_info "Received shutdown signal, cleaning up..."
+    for pid in "${PIDS[@]}"; do
+        if kill -0 "$pid" 2>/dev/null; then
+            log_info "Stopping PID: $pid"
+            kill -TERM "$pid" 2>/dev/null || true
+        fi
+    done
+    sleep 2
+    for pid in "${PIDS[@]}"; do
+        if kill -0 "$pid" 2>/dev/null; then
+            log_info "Force killing PID: $pid"
+            kill -9 "$pid" 2>/dev/null || true
+        fi
+    done
+    log_info "Shutdown complete"
+    exit 0
+}
+
+trap cleanup SIGINT SIGTERM SIGQUIT
+
+init_workspace() {
+    log_info "Initializing workspace directories..."
+    mkdir -p /workspace/{ipc,tasks,artifacts,logs,memory}
+    chmod 755 /workspace/*
+    log_info "Workspace initialized at /workspace"
+}
+
+main() {
+    log_info "=========================================="
+    log_info "Perplexity Computer Clone - Starting"
+    log_info "=========================================="
+    log_info "Workspace: /workspace"
+    log_info "Orchestrator Port: ${ORCHESTRATOR_PORT}"
+    log_info "Terminal Port: ${TERMINAL_PORT}"
+    
+    init_workspace
+    
+    case "${1:-start}" in
+        "start")
+            start_app
+            sleep 2  # Give app time to bind
+            start_ttyd
+            start_cron
+            ;;
+        "app-only")
+            start_app
+            ;;
+        "ttyd-only")
+            start_ttyd
+            ;;
+        "cron-only")
+            start_cron
+            ;;
+        *)
+            exec "$@"
+            ;;
+    esac
+    
+    log_info "All services started successfully"
+    wait -n
+}
+
+main "$@"
+```
+
+---
+
+## 📊 FINAL RECOMMENDATION
+
+| Component | Use Provided | Use My Plan | Merge Both |
+|-----------|--------------|-------------|------------|
+| Dockerfile | ⚠️ (fix bun/uv installation) | - | ✅ **Merge** |
+| Entrypoint | - | ✅ | ✅ **Use My Plan** (better logging) |
+| Orchestrator | ✅ (cleaner async) | ✅ (type-safe) | ✅ **Merge** |
+| Safety Gate | ✅ (cleaner async) | ✅ (pattern detection) | ✅ **Merge** |
+| Model Routing | ⚠️ (fix URLs) | - | ✅ **Use Provided** (fixed) |
+| Connectors | - | ✅ | ✅ **Use My Plan** |
+| Memory | ❌ (missing) | ✅ | ✅ **Use My Plan** |
+| Web UI | ✅ | - | ✅ **Use Provided** |
+
+---
+
+## 🎯 ACTION ITEMS BEFORE DEPLOYMENT
+
+1. **🔴 CRITICAL:** Fix all trailing spaces in API URLs (`model_routing.py`)
+2. **🔴 CRITICAL:** Add `memory.py` implementation (missing from provided design)
+3. **🟡 HIGH:** Update Dockerfile to use official bun/uv installers
+4. **🟡 HIGH:** Add log file redirection to entrypoint script
+5. **🟡 HIGH:** Restrict sudo permissions to cron only
+6. **🟢 MEDIUM:** Add dependency enforcement in orchestrator
+7. **🟢 MEDIUM:** Add encrypted credential storage
+8. **🟢 MEDIUM:** Add WebSocket support for real-time UI updates
+
+---
+
+## ✅ CONCLUSION
+
+The provided design is **80% production-ready** with excellent architecture that closely mirrors Perplexity Computer's patterns. However, the **critical URL bugs** and **missing memory layer** must be fixed before deployment.
+
+**My recommendation:** Use the provided design as the **foundation**, but integrate the fixes and enhancements from my plan above. This gives you:
+- ✅ Working LLM integrations (fixed URLs)
+- ✅ Persistent memory (SQLite implementation)
+- ✅ Better observability (logging to files)
+- ✅ Stronger security (restricted sudo, encrypted credentials)
+- ✅ Better UX (pattern-based safety detection)
+
+---
+
 # https://chat.qwen.ai/s/1d2dcdfb-0111-4032-bf7a-81cf91a70be1?fev=0.2.14
