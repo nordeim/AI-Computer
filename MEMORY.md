@@ -2,7 +2,7 @@
 
 > **Purpose:** Distilled wisdom, patterns, preferences, and operational notes.
 > **Security:** **ONLY loaded in main session** (direct chats with Matt). Never in shared contexts.
-> **Last Updated:** 2026-03-15 14:18 SGT
+> **Last Updated:** 2026-03-15 19:24 SGT
 > **External Channel:** Telegram only (WhatsApp permanently disabled)
 
 ---
@@ -224,6 +224,7 @@ agent-browser snapshot -i             # Interactive tree
 | **PRD.md** | Canonical feature inventory (source of truth) | 2026-02-17 |
 | **AGENTS.md** | Rules of engagement, task execution, safety | (see file) |
 | **SOUL.md** | Personality, communication style | (see file) |
+| **memory-architecture skill** | 3-layer memory system (Workspace + LCM + QMD) | 2026-03-15 |
 
 ---
 
@@ -611,6 +612,82 @@ qmd get "path/to/file.md"     # Retrieve specific document
 - **Index:** `~/.cache/qmd/index.sqlite` — SQLite with FTS5 + vectors
 - **Embeddings:** `~/.cache/qmd/models/` — embeddinggemma (~300MB)
 - **Logs:** `/home/pete/.cache/qmd/mcp.log` — MCP server logs
+
+---
+
+## Memory Architecture — 3-Layer System
+
+**Validated:** 2026-03-15 | **Status:** ✅ All systems healthy (0 errors, 0 warnings)
+**Skill:** `skills/memory-architecture/SKILL.md` | **Health check:** `skills/memory-architecture/health-check.sh`
+
+### The Three Layers
+
+```
+Layer 1: Workspace Files (Markdown) — Human-readable source of truth
+Layer 2: LCM (Lossless Context Management) — Every message in SQLite, summary DAG
+Layer 3: QMD (Semantic Search) — BM25 + vector embeddings + reranking
+```
+
+### Layer 1: Workspace Markdown Files
+
+| File | Purpose | Loaded When |
+|------|---------|-------------|
+| `MEMORY.md` | Curated long-term memory | Main session only (security) |
+| `memory/daily/YYYY/MM/DD.md` | Daily raw notes | Session start (today + yesterday) |
+| `memory/context/active/*.yml` | Active task tracking | As needed |
+| `memory/reference/*.md` | Stable reference docs (WHOAMI, PRD) | As needed |
+
+**Format:** QMD hierarchical (`memory/daily/2026/03/15.md`), NOT flat (`memory/2026-03-15.md`).
+
+### Layer 2: LCM — Lossless Context Management
+
+**Plugin:** `@martian-engineering/lossless-claw` v0.3.0
+**Database:** `~/.openclaw/lcm.db` (SQLite)
+**Config:** `plugins.slots.contextEngine: "lossless-claw"` in `openclaw.json`
+
+**Settings (current):**
+```json5
+{
+  freshTailCount: 32,         // Raw messages kept unsummarized
+  contextThreshold: 0.75,     // Compacts at 75% context full
+  incrementalMaxDepth: -1,    // Unlimited summary depth
+  session.reset.idleMinutes: 10080  // 7-day session idle
+}
+```
+
+**Tools for recall:**
+- `lcm_grep` — Search compacted history by regex/full-text
+- `lcm_describe` — Inspect a specific summary by ID (cheap)
+- `lcm_expand` — Deep recall, expands DAG with citations
+- `lcm_expand_query` — Focused question against expanded summaries
+
+**When to use LCM vs memory_search:**
+- "What did we discuss about X?" → `lcm_grep` / `lcm_expand_query` (conversation history)
+- "What do I know about X?" → `memory_search` (workspace knowledge)
+
+**Current stats (2026-03-15):** 214 messages, 4 summaries, 1.6M DB
+
+### Layer 3: QMD — Semantic Search
+
+**Binary:** `/usr/bin/qmd`
+**Index:** `~/.cache/qmd/index.sqlite`
+**Collections:** daily, system, projects, skills, reference
+
+**Keep index fresh:** Run `qmd update && qmd embed` after significant file changes.
+**Note:** QMD runs on CPU (no GPU/Vulkan on this machine). Embeddings are slower but accurate.
+
+### Operational Notes
+
+- LCM and QMD are complementary — LCM for conversation history, QMD for workspace knowledge
+- `compaction.mode: "safeguard"` is set as a safety net even with LCM active
+- Built-in memory index (`~/.openclaw/memory/main.sqlite`) has 0 chunks — QMD is the primary backend
+- The `health-check.sh` script validates all three layers in one pass
+
+### Health Check
+
+```bash
+bash /home/pete/.openclaw/workspace/skills/memory-architecture/health-check.sh
+```
 
 ---
 
