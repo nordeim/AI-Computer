@@ -4,6 +4,7 @@
 > **Security:** **ONLY loaded in main session** (direct chats with Matt). Never in shared contexts.
 > **Last Updated:** 2026-03-16 08:21 SGT
 > **External Channel:** Telegram only (WhatsApp permanently disabled)
+> **TODO List:** `/home/pete/.openclaw/workspace/TODO.md` (daily review, KIV items)
 
 ---
 
