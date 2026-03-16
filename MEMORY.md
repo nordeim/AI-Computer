@@ -2,7 +2,7 @@
 
 > **Purpose:** Distilled wisdom, patterns, preferences, and operational notes.
 > **Security:** **ONLY loaded in main session** (direct chats with Matt). Never in shared contexts.
-> **Last Updated:** 2026-03-15 19:24 SGT
+> **Last Updated:** 2026-03-16 08:21 SGT
 > **External Channel:** Telegram only (WhatsApp permanently disabled)
 
 ---
@@ -187,6 +187,47 @@ agent-browser snapshot -i             # Interactive tree
 
 **Skill:** `/home/pete/.openclaw/workspace/skills/browser-automation/SKILL.md`
 **Covers:** When to use which tool, all commands, gotchas, `profile="user"` setup, E2E testing pattern
+
+## chrome-devtools-mcp
+
+**Skill:** `/home/pete/.openclaw/workspace/skills/chrome-devtools-mcp/SKILL.md`
+**Status:** ✅ v0.20.0 | Chrome 144 headless | via mcporter
+**Created:** 2026-03-16
+**What it is:** Google-official MCP server providing full Chrome DevTools Protocol access (29 tools). Installed via npm, configured in mcporter.
+
+### Key Capabilities (beyond built-in browser tool)
+- **Lighthouse audits** — Accessibility, Best Practices, SEO scores with reports
+- **Performance traces** — LCP, CLS, INP with actionable insights (LCPBreakdown, CLSCulprits, NetworkDependencyTree, ThirdParties, Cache)
+- **Network inspection** — list/get requests with full headers, body, timing
+- **Console log access** — filter by type (error/warning/info)
+- **JavaScript evaluation** — run arbitrary JS in page context
+- **Mobile emulation** — device profiles (iPhone, Pixel), network throttling (3G), CPU throttling
+- **Memory snapshots** — heap dump capture for leak debugging
+
+### Quick Reference
+```bash
+# Via mcporter
+mcporter call chrome-devtools.navigate_page url=https://example.com
+mcporter call chrome-devtools.take_snapshot          # A11y tree with UIDs
+mcporter call chrome-devtools.lighthouse_audit       # Full Lighthouse run
+mcporter call chrome-devtools.performance_start_trace
+mcporter call chrome-devtools.performance_stop_trace
+mcporter call chrome-devtools.evaluate_script --args '{"function": "() => document.title"}'
+mcporter call chrome-devtools.list_network_requests
+mcporter call chrome-devtools.emulate viewport="375x812x2,mobile,touch"
+
+# CLI wrapper
+/usr/bin/chrome-devtools <tool_name> [args...]
+```
+
+### Configuration
+**Config:** `~/.mcporter/mcporter.json` — stdio transport, headless mode
+**Flags:** `--headless`, `--no-usage-statistics`, `--no-performance-crux`
+**Connect to existing Chrome:** `--browserUrl=http://127.0.0.1:9222`
+
+### When to Use
+- Use **built-in browser tool** for: quick nav, screenshots, simple snapshots, profile switching
+- Use **chrome-devtools-mcp** for: Lighthouse audits, performance debugging, network inspection, console logs, JS evaluation, mobile testing, memory analysis
 
 ## UI/UX Design Guide
 
