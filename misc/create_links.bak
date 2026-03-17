@@ -1,0 +1,160 @@
+ls -l /opt/venv/
+ls -l /Home1/venv/
+rm -rf /opt/venv/
+ln -sf /Home1/venv /opt/venv
+ls -l /opt/venv
+ls -l /opt/venv/
+
+#ls -l /usr/lib/node_modules
+#ls -l /Home1/project/cli/node_modules
+#mv /usr/lib/node_modules/corepack /Home1/project/cli/node_modules/
+#ls -l /Home1/project/cli/node_modules/corepack
+rm -rf /usr/lib/node_modules
+#ln -sf /Home1/project/cli/node_modules /usr/lib/node_modules
+ln -sf /home/node-v22/lib/node_modules /usr/lib/node_modules
+rm -f /usr/bin/node
+ln -sf /home/node-v22/bin/node /usr/bin/node
+rm -f /usr/bin/corepack
+ln -sf /home/node-v22/lib/node_modules/corepack/dist/corepack.js /usr/bin/corepack
+ls -l /usr/bin/corepack
+rm -f /usr/bin/npm
+ln -sf /home/node-v22/lib/node_modules/npm/bin/npm-cli.js /usr/bin/npm
+rm -f /usr/bin/npx
+ln -sf /home/node-v22/lib/node_modules/npm/bin/npx-cli.js /usr/bin/npx
+rm -f /usr/bin/pnpm
+ln -sf /home/node-v22/lib/node_modules/pnpm/bin/pnpm.cjs /usr/bin/pnpm
+rm -f /usr/bin/pnpx
+ln -sf /home/node-v22/lib/node_modules/pnpm/bin/pnpx.cjs /usr/bin/pnpx
+
+
+ls -l /usr/bin/gemini
+rm -rf /opt/project
+ln -sf /home/node-v22/lib /opt/project
+ls -l /opt/project
+
+ls -l /usr/share/code
+rm -rf /usr/share/code
+ln -sf /Home1/code /usr/share/code
+ls -l /usr/share/code
+ls -l /usr/share/cursor
+rm -rf /usr/share/cursor
+ln -sf /Home1/cursor /usr/share/cursor
+ls -l /usr/share/cursor
+
+rm -rf /usr/lib/libreoffice
+ln -sf /Home1/libreoffice /usr/lib/libreoffice
+rm -rf /etc/libreoffice
+ln -sf /Home1/libreoffice/etc /etc/libreoffice
+rsync -av /Home1/libreoffice/apparmor.d/ /etc/apparmor.d/
+
+rm -rf /usr/share/antigravity
+ln -sf /Home1/antigravity /usr/share/antigravity
+
+rm -rf /opt/microsoft
+ln -sf /Home1/microsoft /opt/microsoft
+
+ln -sf /Home1/mise/bin/mise /usr/bin/mise
+ln -sf /Home1/mise/bin/mise.d /usr/bin/mise.d
+ln -sf /Home1/mise/share/fish/vendor_conf.d/mise-activate.fish /usr/share/fish/vendor_conf.d/mise-activate.fish
+
+#ln -sf /Home1/venv/bin/uv /usr/bin/uv
+#ln -sf /Home1/venv/bin/uvx /usr/bin/uvx
+ln -sf /home/pete/.local/bin/uv /usr/bin/uv
+ln -sf /home/pete/.local/bin/uvx /usr/bin/uvx 
+ln -sf /Home1/venv/bin/uvicorn /usr/bin/uvicorn
+ln -sf /usr/bin/python3 /usr/bin/python
+
+systemctl stop container
+systemctl stop docker.socket
+systemctl stop docker
+cd /usr/bin && ln -sf /Home1/docker/bin/containerd . && ln -sf /Home1/docker/bin/containerd-shim-runc-v2 . && ln -sf /Home1/docker/bin/docker . && ln -sf /Home1/docker/bin/docker-compose . && ln -sf /Home1/docker/bin/dockerd . && cp -a /Home1/docker/bin/dockerd-rootless* /Home1/docker/bin/docker-proxy /Home1/docker/bin/rootlesskit .
+
+rm /usr/bin/pip && ln -sf /opt/venv/bin/pip /usr/bin/pip
+
+systemctl restart containerd
+systemctl restart docker.socket
+systemctl restart docker
+
+cp -a /home/mongodb/group /home/mongodb/passwd /etc && ln -sf /home/mongodb/mongod.conf /etc/mongod.conf && ln -sf /home/mongodb/mongod /usr/bin/mongod
+
+#ln -sf /home/node-v22/lib/bun /usr/bin/bun
+#ln -sf /home/node-v22/lib/bun /usr/bin/bunx
+rm /usr/bin/bun /usr/bin/bunx
+ln -sf /Home1/bun /usr/bin/bun
+ln -sf /Home1/bun /usr/bin/bunx
+
+rm -rf /opt/brave.com && ln -sf /Home1/brave.com /opt/brave.com && ls -l /opt/brave.com
+
+rm -rf /opt/google && ln -sf /Home1/google /opt/google && ls -l /opt/google
+
+rm -rf /usr/share/windsurf && ln -sf /Home1/windsurf /usr/share/windsurf && ls -l /usr/share/windsurf
+
+ln -sf /Home1/bin/antigravity_tools /usr/bin/antigravity_tools
+ln -sf /Home1/bin/cc-switch /usr/bin/cc-switch
+
+ln -sf /Home1/bin/OpenCode /usr/bin/OpenCode
+#ln -sf /Home1/bin/opencode-cli /usr/bin/opencode-cli
+ls -l /usr/bin/opencode || ln -sf /home/node-v22/lib/node_modules/opencode-linux-x64/bin/opencode /usr/bin/opencode
+ln -sf /home/node-v22/lib/node_modules/opencode-linux-x64/bin/opencode /usr/bin/opencode-cli
+exit 0
+
+# ==================================
+
+## ls -lt /usr/share | grep ' ->'
+# cursor -> /usr/share/cursor/bin/cursor
+# antigravity -> /usr/share/antigravity/bin/antigravity
+# uvx -> /home/pete/.local/bin/uvx
+# uv -> /home/pete/.local/bin/uv
+# brave-browser-stable -> /opt/brave.com/brave/brave-browser
+# code -> /usr/share/code/bin/code
+# windsurf -> /usr/share/windsurf/bin/windsurf
+# bunx -> /home/node-v22/lib/bun
+# bun -> /home/node-v22/lib/bun
+# mongod -> /home/mongodb/mongod
+# dockerd -> /Home1/docker/bin/dockerd
+# docker-compose -> /Home1/docker/bin/docker-compose
+# docker -> /Home1/docker/bin/docker
+# containerd-shim-runc-v2 -> /Home1/docker/bin/containerd-shim-runc-v2
+# containerd -> /Home1/docker/bin/containerd
+# python -> /usr/bin/python3
+# uvicorn -> /Home1/venv/bin/uvicorn
+# mise.d -> /Home1/mise/bin/mise.d
+# mise -> /Home1/mise/bin/mise
+# pnpx -> /home/node-v22/lib/node_modules/pnpm/bin/pnpx.cjs
+# pnpm -> /home/node-v22/lib/node_modules/pnpm/bin/pnpm.cjs
+# npx -> /home/node-v22/lib/node_modules/npm/bin/npx-cli.js
+# npm -> /home/node-v22/lib/node_modules/npm/bin/npm-cli.js
+# corepack -> /home/node-v22/lib/node_modules/corepack/dist/corepack.js
+# node -> /home/node-v22/bin/node
+# google-chrome-stable -> /opt/google/chrome/google-chrome
+# microsoft-edge-stable -> /opt/microsoft/msedge/microsoft-edge
+
+# ls -lt /usr/bin | grep ' ->'
+# cursor -> /usr/share/cursor/bin/cursor
+# antigravity -> /usr/share/antigravity/bin/antigravity
+# uvx -> /home/pete/.local/bin/uvx
+# uv -> /home/pete/.local/bin/uv
+# brave-browser-stable -> /opt/brave.com/brave/brave-browser
+# code -> /usr/share/code/bin/code
+# windsurf -> /usr/share/windsurf/bin/windsurf
+# bunx -> /home/node-v22/lib/bun
+# bun -> /home/node-v22/lib/bun
+# mongod -> /home/mongodb/mongod
+# dockerd -> /Home1/docker/bin/dockerd
+# docker-compose -> /Home1/docker/bin/docker-compose
+# docker -> /Home1/docker/bin/docker
+# containerd-shim-runc-v2 -> /Home1/docker/bin/containerd-shim-runc-v2
+# containerd -> /Home1/docker/bin/containerd
+# python -> /usr/bin/python3
+# uvicorn -> /Home1/venv/bin/uvicorn
+# mise.d -> /Home1/mise/bin/mise.d
+# mise -> /Home1/mise/bin/mise
+# pnpx -> /home/node-v22/lib/node_modules/pnpm/bin/pnpx.cjs
+# pnpm -> /home/node-v22/lib/node_modules/pnpm/bin/pnpm.cjs
+# npx -> /home/node-v22/lib/node_modules/npm/bin/npx-cli.js
+# npm -> /home/node-v22/lib/node_modules/npm/bin/npm-cli.js
+# corepack -> /home/node-v22/lib/node_modules/corepack/dist/corepack.js
+# node -> /home/node-v22/bin/node
+# google-chrome-stable -> /opt/google/chrome/google-chrome
+# microsoft-edge-stable -> /opt/microsoft/msedge/microsoft-edge
+
