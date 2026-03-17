@@ -2,7 +2,7 @@
 
 > **Purpose:** Distilled wisdom, patterns, preferences, and operational notes.
 > **Security:** **ONLY loaded in main session** (direct chats with Matt). Never in shared contexts.
-> **Last Updated:** 2026-03-16 08:21 SGT
+> **Last Updated:** 2026-03-17 13:55 SGT
 > **External Channel:** Telegram only (WhatsApp permanently disabled)
 > **TODO List:** `/home/pete/.openclaw/workspace/TODO.md` (daily review, KIV items)
 
@@ -254,6 +254,77 @@ mcporter call chrome-devtools.emulate viewport="375x812x2,mobile,touch"
 **Skill:** `/home/pete/.openclaw/workspace/skills/e2e-testing-lessons/SKILL.md`
 **Source:** LedgerSG 15-phase E2E report (2026-03-14)
 **Key takeaway:** Hybrid API+UI pattern — API for auth/data, UI for visual proof only. HttpOnly cookies break automation; always authenticate via API in tests.
+
+---
+
+## Orchestrator Toolkit
+
+**What:** Pure-Python orchestration toolkit extracted from OpenCode Industrial Orchestrator patterns. 119 tests passing, zero external dependencies.
+
+**Location:** `/home/pete/.openclaw/workspace/orchestrator/`
+**Skill:** `/home/pete/.openclaw/workspace/skills/orchestrator-toolkit/SKILL.md`
+
+### When to Use for Sub-Agent Delegation
+
+Use when delegating coding projects that need:
+- **Task decomposition** — Break complex work into subtasks with 6 templates
+- **Complexity analysis** — Estimate effort and identify risk factors
+- **Progress tracking** — Hierarchical task state with dependencies
+- **Workflow management** — State machine, health scoring, checkpointing
+
+### Quick Reference
+
+```python
+# Core imports
+from orchestrator.tasks.entity import TaskEntity, TaskPriority, TaskEstimate
+from orchestrator.tasks.complexity import ComplexityAnalyzer
+from orchestrator.tasks.decomposition import TaskDecompositionService
+from orchestrator.recovery.health import HealthScorer
+from orchestrator.storage.json_store import JsonStore
+
+# Typical workflow
+task = TaskEntity(title="Build Feature X", priority=TaskPriority.HIGH)
+analyzer = ComplexityAnalyzer()
+task.estimate = analyzer.analyze(task.description, task.title).estimate
+result = TaskDecompositionService().decompose(task)
+```
+
+### Templates (6)
+
+| Template | Subtasks | Use Case |
+|----------|----------|----------|
+| microservice | 8 | Backend service with API |
+| crud | 8 | Create/read/update/delete |
+| ui_component | 7 | Frontend component |
+| security | 7 | Auth/security feature |
+| api | 6 | REST API endpoint |
+| refactor | 6 | Code restructuring |
+
+### Gotchas
+
+1. **JsonStore hierarchy** — Loaded tasks have 0 children by design. Reconstruct manually from `_stored_children_ids`
+2. **Status not restored** — Deserialized tasks start in "pending" state. Use state machine API to restore
+3. **TemplateRegistry integrated** — All 6 templates available via TaskDecompositionService
+
+### Commands
+
+```bash
+# Run tests
+cd /home/pete/.openclaw/workspace
+PYTHONPATH=/home/pete/.openclaw/workspace python3 -m pytest orchestrator/tests/ -v
+
+# Examples
+PYTHONPATH=/home/pete/.openclaw/workspace python3 orchestrator/examples/decompose_task.py
+PYTHONPATH=/home/pete/.openclaw/workspace python3 orchestrator/examples/state_machine_demo.py
+PYTHONPATH=/home/pete/.openclaw/workspace python3 orchestrator/examples/basic_usage.py
+```
+
+### Validation
+
+- Usage Guide validated 2026-03-17
+- All 119 tests passing
+- Examples verified working
+- SKILL.md consolidated (single authoritative copy)
 
 ---
 
