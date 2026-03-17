@@ -9,9 +9,8 @@
 - **Location:** Singapore
 - **Timezone:** Asia/Singapore (GMT+8)
 - **Notes:** 
-  - WhatsApp connected: +6591127357
-  - Backup phone: +6597730111
-  - Backup phone: +6597730111
+  - WhatsApp connected: +6594953518
+  - Backup phone: +6598840111
 
 ## Background
 - Former IT engineer, now retired
