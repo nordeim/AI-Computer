@@ -55,21 +55,6 @@ Navigation is "disappeared" when ANY of these are true:
 
 ---
 
-## Root-Cause Taxonomy
-
-| Class | Symptom | Fix |
-|-------|---------|-----|
-| **A** | No visible nav on mobile | Add mobile trigger + overlay |
-| **B** | Hidden by opacity/visibility | Verify state toggling logic |
-| **C** | Clipped by overflow | Use `position: fixed` overlay |
-| **D** | Behind another layer | Check z-index scale |
-| **E** | Breakpoint mismatch | Verify viewport meta |
-| **F** | JavaScript failure | Guard selectors, check console |
-| **G** | Keyboard inaccessible | Use real `<button>` elements |
-| **H** | Click-outside race condition | Exclude trigger from handler |
-
----
-
 ## React + shadcn/ui Implementation
 
 ### MobileNav Component
@@ -135,62 +120,6 @@ export function DesktopNav() {
 
 ---
 
-## Anti-Patterns (Avoid!)
-
-### ❌ Anti-Pattern 1: Hide Nav Without Menu Trigger
-```css
-@media (max-width: 768px) {
-  .nav-links { display: none; } /* Creates dead-end */
-}
-```
-
-### ❌ Anti-Pattern 2: Random Z-Index
-```css
-.nav { z-index: 999999; } /* Hides architectural problems */
-```
-
-### ❌ Anti-Pattern 3: Non-Semantic Clickables
-```tsx
-<div onClick={toggleMenu}>Menu</div> /* Invisible to keyboard */
-```
-
-### ❌ Anti-Pattern 4: Missing Trigger at Correct Breakpoint
-```tsx
-<nav className="hidden md:flex">...</nav>
-<button className="hidden md:inline-flex">Menu</button>
-/* Nothing visible on mobile! */
-```
-
-### ❌ Anti-Pattern 5: SSR Conditional Nav
-```tsx
-const isMobile = window.innerWidth < 768; // Breaks on SSR
-return isMobile ? <MobileNav/> : <DesktopNav/>;
-```
-
-### ❌ Anti-Pattern 6: Click-Outside Race Condition
-```tsx
-useEffect(() => {
-  const handleClick = (e: MouseEvent) => {
-    if (!menuRef.current?.contains(e.target as Node)) {
-      setIsOpen(false); // Closes when toggle clicked!
-    }
-  };
-  document.addEventListener('click', handleClick);
-}, []);
-```
-
-**Fix:** Check both menu AND trigger:
-```tsx
-const handleClickOutside = (e: MouseEvent) => {
-  const target = e.target as HTMLElement;
-  if (menu && !menu.contains(target) && !trigger?.contains(target)) {
-    setIsOpen(false);
-  }
-};
-```
-
----
-
 ## Verification Checklist
 
 ### Keyboard Accessibility
@@ -216,3 +145,7 @@ const handleClickOutside = (e: MouseEvent) => {
 - [ ] No purge issues (classes in production)
 - [ ] Menu not clipped: top items visible
 - [ ] Menu not behind header/hero layers
+
+---
+
+**See Also:** [`mobile-nav-debugging.md`](mobile-nav-debugging.md) for root-cause taxonomy and anti-patterns.

@@ -1,4 +1,8 @@
-# Tailwind CSS v4 Migration & Patterns
+# Tailwind CSS v4 Migration
+
+CSS-first architecture with no `tailwind.config.js`.
+
+---
 
 ## Critical: CSS-First Architecture
 
@@ -163,56 +167,4 @@ module.exports = {
 
 ---
 
-## Common Pitfalls
-
-### Gradient Persistence
-```html
-<!-- v3: to-yellow-400 would reset in dark mode -->
-<div class="bg-gradient-to-r from-red-500 to-yellow-400 dark:from-blue-500">
-
-<!-- v4: Gradients persist - use explicit reset -->
-<div class="bg-linear-to-r from-red-500 via-orange-400 to-yellow-400
-  dark:via-none dark:from-blue-500 dark:to-teal-400">
-```
-
-### Border Color Default
-```html
-<!-- v3: Implicit gray-200 -->
-<div class="border px-2 py-3">
-
-<!-- v4: Must specify color -->
-<div class="border border-gray-200 px-2 py-3">
-```
-
-### Hover Media Query
-```css
-/* v4: Only applies when primary input supports hover */
-@media (hover: hover) {
-  .hover\:underline:hover { text-decoration: underline; }
-}
-
-/* Override for touch */
-@custom-variant hover (&:hover);
-```
-
----
-
-## Performance Benchmarks
-
-| Metric | Improvement |
-|--------|-------------|
-| Full build | 3.78x faster |
-| Incremental rebuild | 8.8x faster |
-| No-change rebuild | 182x faster |
-
----
-
-## Browser Requirements
-
-| Browser | Minimum Version |
-|---------|-----------------|
-| Safari | 16.4+ |
-| Chrome | 111+ |
-| Firefox | 128+ |
-
-Projects requiring older browsers **must remain on v3.4**.
+**See Also:** [`tailwind-v4-pitfalls.md`](tailwind-v4-pitfalls.md) for common pitfalls and browser requirements.
