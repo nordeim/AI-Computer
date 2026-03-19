@@ -1,7 +1,13 @@
 ---
 name: avant-garde-design
 description: |
-  Elite web design skill for producing distinctive, production-grade frontend interfaces. Use when: (1) Building new web UI from scratch, (2) Creating luxury/premium brand experiences, (3) Designing landing pages, marketing sites, or product showcases, (4) Reviewing UI designs for Anti-Generic compliance, (5) Establishing design direction for a project, (6) User asks for "avant-garde", "distinctive", "non-generic", "luxury", or "premium" design. Triggers on phrases like "create a beautiful website", "design a landing page", "build a luxury UI", "make it distinctive", "avoid generic design".
+  Elite web design skill for producing distinctive, production-grade frontend interfaces.
+  Use when: (1) Building new web UI from scratch, (2) Creating luxury/premium brand experiences,
+  (3) Designing landing pages, marketing sites, or product showcases, (4) Reviewing UI designs for Anti-Generic compliance,
+  (5) Establishing design direction for a project, (6) Migrating from Tailwind v3 to v4,
+  (7) Debugging mobile navigation issues, (8) User asks for "avant-garde", "distinctive", "non-generic", "luxury", or "premium" design.
+  Triggers on phrases like "create a beautiful website", "design a landing page", "build a luxury UI",
+  "make it distinctive", "avoid generic design", "mobile nav not working", "tailwind v4 migration".
 ---
 
 # Avant-Garde Web Design
@@ -45,20 +51,17 @@ Answer these four questions:
 Place your project on this matrix:
 
 ```
-                    AUDIENCE: RISK-AVERSE
-                            │
-        Q1: THE GUARDIAN   │   Q2: LEGACY INNOVATOR
-        (iTrust Academy)   │   (Harvard AI Program)
-        Perfect execution   │   Trusted + bold accents
-        of classic forms    │
-────────────────────────────┼────────────────────────────
-        Q3: TRUSTWORTHY    │   Q4: THE VISIONARY
-        UPSTART            │   (AI Academy)
-        Modern + ultra-    │   Full commitment to bold
-        clear + trust      │   experience-driven
-        signals            │   aesthetic
-                            │
-                    AUDIENCE: ASPIRATION-DRIVEN
+AUDIENCE: RISK-AVERSE          │  Q1: THE GUARDIAN          │  Q2: LEGACY INNOVATOR
+                                │  (iTrust Academy)          │  (Harvard AI Program)
+                                │  Perfect execution         │  Trusted + bold accents
+                                │  of classic forms          │  
+────────────────────────────────┼────────────────────────────
+                                │  Q3: TRUSTWORTHY           │  Q4: THE VISIONARY
+                                │  UPSTART                   │  
+                                │  Modern + ultra-           │  Full commitment to
+                                │  clear + trust signals     │  bold, experience-driven
+                                │                            │  aesthetic
+AUDIENCE: ASPIRATION-DRIVEN     
 ```
 
 ### Step 3: Anti-Generic Litmus Test (10 min)
@@ -121,6 +124,7 @@ Choose ONE direction. Execute with precision.
 | **Premium** | Deep backgrounds, metallic accents | Exclusivity, sophistication |
 
 **Implementation:**
+
 ```css
 /* Trust-Focused (iTrust-inspired) */
 --primary: #F27A1A;
@@ -145,6 +149,60 @@ Choose ONE direction. Execute with precision.
 | **Hero** | Text-focused, centered | Two-column, floating elements |
 | **Whitespace** | Structural separator | Dramatic isolation |
 | **Cards** | Subtle shadows, borders | Colored tops, illustrations |
+
+---
+
+## Tailwind CSS v4 (CSS-First Architecture)
+
+**CRITICAL:** No `tailwind.config.js` — use CSS-only configuration.
+
+```css
+@import "tailwindcss";
+
+@theme {
+  --color-primary: oklch(0.84 0.18 117.33);
+  --font-display: "Space Grotesk", sans-serif;
+}
+```
+
+**Key Changes from v3:**
+- `bg-gradient-to-r` → `bg-linear-to-r`
+- `bg-opacity-50` → `bg-red-500/50`
+- `bg-[--color]` → `bg-(--color)`
+- `shadow-sm` → `shadow-xs`
+
+**References:**
+- [`tailwind-v4-migration.md`](references/tailwind-v4-migration.md) — Setup, utility mappings, syntax changes
+- [`tailwind-v4-pitfalls.md`](references/tailwind-v4-pitfalls.md) — Common pitfalls, performance, browser requirements
+
+---
+
+## Mobile Navigation Patterns
+
+### Non-Negotiable Guardrails
+
+1. **Viewport meta required:** `<meta name="viewport" content="width=device-width, initial-scale=1">`
+2. **Never destroy nav without substitution** — Add mobile trigger + overlay
+3. **Symmetrical breakpoints:** Desktop `hidden md:flex`, Mobile `md:hidden`
+4. **Semantic controls:** Use `<button>`, not `<div onClick>`
+5. **Overlay positioning:** `position: fixed`, `overflow-y: auto`
+
+### Root-Cause Taxonomy (Classes A-H)
+
+| Class | Symptom | Fix |
+|-------|---------|-----|
+| **A** | No visible nav | Add mobile trigger + overlay |
+| **B** | Hidden by opacity | Verify state toggling |
+| **C** | Clipped by overflow | Use `position: fixed` |
+| **D** | Behind another layer | Check z-index scale |
+| **E** | Breakpoint mismatch | Verify viewport meta |
+| **F** | JavaScript failure | Guard selectors, check console |
+| **G** | Keyboard inaccessible | Use real `<button>` elements |
+| **H** | Click-outside race | Exclude trigger from handler |
+
+**References:**
+- [`mobile-navigation.md`](references/mobile-navigation.md) — Implementation patterns
+- [`mobile-nav-debugging.md`](references/mobile-nav-debugging.md) — Debugging workflow
 
 ---
 
@@ -230,6 +288,22 @@ Before marking any design complete:
 
 ---
 
+## Reference Files
+
+| File | When to Read |
+|------|--------------|
+| [`intentionality-compass.md`](references/intentionality-compass.md) | Always — Strategic positioning framework |
+| [`anti-generic-checklist.md`](references/anti-generic-checklist.md) | Design review — Forbidden patterns & prompts |
+| [`color-typography-specs.md`](references/color-typography-specs.md) | Color/typography decisions |
+| [`patterns-catalog.md`](references/patterns-catalog.md) | UI patterns to steal |
+| [`tech-commitments.md`](references/tech-commitments.md) | Technical requirements by position |
+| [`tailwind-v4-migration.md`](references/tailwind-v4-migration.md) | v3→v4 migration or v4 setup |
+| [`tailwind-v4-pitfalls.md`](references/tailwind-v4-pitfalls.md) | Debugging v4 issues |
+| [`mobile-navigation.md`](references/mobile-navigation.md) | Nav implementation |
+| [`mobile-nav-debugging.md`](references/mobile-nav-debugging.md) | Nav debugging |
+
+---
+
 ## Related Skills
 
 | Skill | When to Use |
@@ -241,9 +315,4 @@ Before marking any design complete:
 
 ---
 
-## References
-
-For deep-dive design analysis, see:
-- **references/intentionality-compass.md** — Strategic positioning framework
-- **references/color-typography-specs.md** — Validated color/typography specifications
-- **references/patterns-catalog.md** — Complete pattern extraction from analysis
+> Technical excellence requires both rigorous implementation and distinctive design.
