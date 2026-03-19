@@ -443,4 +443,4 @@ mcporter config add chrome-devtools --command chrome-devtools-mcp \
 
 ---
 
-*Skill created: 2026-03-16 | Tested against chrome-devtools-mcp v0.20.0 with Chrome 144 headless*
+*Skill created: 2026-03-16 | Last tested: 2026-03-19 | chrome-devtools-mcp v0.20.2 with Chrome 144 headless*
