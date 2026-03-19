@@ -1,6 +1,7 @@
 ---
 name: avant-garde-web-design
-description: Create distinctive, production-grade web interfaces that avoid generic "AI slop" aesthetics. Use when building UI components, pages, or applications requiring avant-garde design with intentional minimalism. Covers Tailwind CSS v4 CSS-first theming, Anti-Generic philosophy, WCAG AAA accessibility, mobile navigation patterns, and systematic design workflows. Includes strategic positioning frameworks, typography/color specifications, and implementation patterns for Next.js + Tailwind v4 + shadcn/ui stacks.
+description: |
+  Elite web design skill for producing distinctive, production-grade frontend interfaces that avoid generic "AI slop" aesthetics. Use when: (1) Building new web UI from scratch, (2) Creating luxury/premium brand experiences, (3) Designing landing pages, marketing sites, or product showcases, (4) Migrating from Tailwind v3 to v4, (5) Debugging mobile navigation issues, (6) Conducting UI code reviews, (7) User asks for "avant-garde", "distinctive", "non-generic", "luxury", or "premium" design. Triggers on: "create a beautiful website", "design a landing page", "build a luxury UI", "make it distinctive", "avoid generic design", "mobile nav not working", "tailwind v4 migration". Covers Tailwind CSS v4 CSS-first theming, Anti-Generic philosophy, WCAG AAA accessibility, mobile navigation patterns, strategic positioning frameworks, and implementation patterns for Next.js + Tailwind v4 + shadcn/ui stacks.
 ---
 
 # Avant-Garde Web Design
@@ -10,44 +11,29 @@ description: Create distinctive, production-grade web interfaces that avoid gene
 
 ---
 
-## When to Use This Skill
-
-Use when:
-- Building Next.js applications with Tailwind CSS v4 CSS-first architecture
-- Creating distinctive, non-generic web interfaces
-- Designing luxury, high-end, or memorable user experiences
-- Implementing shadcn/ui components with custom styling
-- Conducting code reviews for React/Next.js/TypeScript projects
-- Debugging mobile navigation or visual layout issues
-- Migrating from Tailwind v3 to v4
-
----
-
 ## Core Workflow: The 40-Minute Pre-Design Ritual
 
-**Before writing any code, complete this ritual:**
+**Before writing code, complete this ritual:**
 
 ### Phase 1: Strategic Positioning (15 min)
 
 Read [`references/strategic-positioning.md`](references/strategic-positioning.md) and answer:
 
-1. **Audience Psychographic Assessment**
+1. **Audience Assessment**
    - Primary fear? → Institutional Clarity (risk) vs Dynamic Modernism (FOMO)
    - Decision style? → Rational (provide data) vs Emotional (create desire)
    - Trust source? → Institutions (signal legacy) vs Peers (signal community)
-   - Category relationship? → New (build confidence) vs Experienced (signal superiority)
 
-2. **Place on Strategic Positioning Matrix** — See [`references/strategic-positioning.md`](references/strategic-positioning.md) §2.1
+2. **Place on Strategic Positioning Matrix**
 
 ### Phase 2: Design Direction (10 min)
 
 Select aesthetic direction from [`references/design-directions.md`](references/design-directions.md):
-- Brutally Minimal / Maximalist Chaos / Retro-Futuristic / Organic/Natural
-- Luxury/Refined / Editorial/Magazine / Brutalist/Raw / Art Deco/Geometric
+Brutally Minimal / Maximalist Chaos / Retro-Futuristic / Organic/Natural / Luxury/Refined / Editorial/Magazine / Brutalist/Raw / Art Deco/Geometric
 
 ### Phase 3: Anti-Generic Litmus Test (10 min)
 
-Answer for every major design decision:
+Answer for every major decision:
 - **Why?** — Tie to specific user need/psychology
 - **Only?** — Challenge defaults, is this the only way?
 - **Without?** — Would removal diminish the core experience?
@@ -62,25 +48,18 @@ From [`references/tech-commitments.md`](references/tech-commitments.md), pick to
 
 **CRITICAL:** No `tailwind.config.js` — use CSS-only configuration.
 
-### Required globals.css Structure
-
 ```css
 @import "tailwindcss";
 
 @theme {
-  /* Colors - OKLCH color space */
   --color-primary: oklch(0.84 0.18 117.33);
-  --color-text: #111827;
   --font-display: "Space Grotesk", sans-serif;
-  --font-body: "Inter", sans-serif;
-  --spacing-18: 4.5rem;
 }
 ```
 
-See [`references/tailwind-v4-migration.md`](references/tailwind-v4-migration.md) for:
-- v3 → v4 utility mappings (`shadow-sm` → `shadow-xs`, `bg-gradient-*` → `bg-linear-*`)
-- CSS variable syntax changes (`bg-[--color]` → `bg-(--color)`)
-- Container queries, custom utilities, variant stacking
+**References:**
+- [`tailwind-v4-migration.md`](references/tailwind-v4-migration.md) — Setup, utility mappings, syntax changes
+- [`tailwind-v4-pitfalls.md`](references/tailwind-v4-pitfalls.md) — Common pitfalls, performance, browser requirements
 
 ---
 
@@ -90,11 +69,10 @@ See [`references/tailwind-v4-migration.md`](references/tailwind-v4-migration.md)
 
 | Avoid | Why | Think Instead |
 |-------|-----|---------------|
-| Bento grids | Modern cliché | Why does this content NEED a grid? |
-| Hero split (left/right) | Predictable | Massive typography or vertical narrative |
+| Bento grids | Modern cliché | Why does this NEED a grid? |
+| Hero split (left/right) | Predictable | Massive typography |
 | Mesh/Aurora gradients | Lazy background | Radical color pairing |
-| Glassmorphism (blue/white) | AI's "premium" | Solid, high-contrast flat |
-| Deep Cyan / Fintech Blue | Safe harbor | Red, Black, or Neon Green |
+| Glassmorphism (blue/white) | AI's "premium" | High-contrast flat |
 | Inter/Roboto defaults | Without hierarchy | Distinctive type pairings |
 | Purple-gradient-on-white | Cliché | Unexpected combinations |
 
@@ -105,25 +83,25 @@ See [`references/tailwind-v4-migration.md`](references/tailwind-v4-migration.md)
 3. **Whitespace is voice** — Structural material, not empty space
 4. **Accessibility is mastery** — Engineer for inclusion from the start
 
-See [`references/anti-generic-checklist.md`](references/anti-generic-checklist.md) for complete checklist.
+**Reference:** [`anti-generic-checklist.md`](references/anti-generic-checklist.md)
 
 ---
 
-## Validated Design Specifications
+## Design Specifications
 
-### Typography Systems
+### Typography
 
 | Approach | Fonts | Use Case |
 |----------|-------|----------|
-| **Institutional (Single Family)** | DM Sans only | Corporate, fast-loading, cohesive |
-| **Expressive (Two-Family)** | Space Grotesk + Inter | Modern tech, personality + readability |
-| **With Mono Labels** | Either + JetBrains Mono | Technical/data-heavy |
+| **Institutional** | DM Sans only | Corporate, cohesive |
+| **Expressive** | Space Grotesk + Inter | Modern tech, personality |
+| **With Mono** | Either + JetBrains Mono | Technical/data-heavy |
 
-H1 Scale: 60-77px, line-height 1.0-1.06, letter-spacing -0.03em to -0.04em
+H1 Scale: 60-77px, line-height 1.0-1.06
 
 ### Color Palettes
 
-See [`references/color-palettes.md`](references/color-palettes.md) for:
+**Reference:** [`color-palettes.md`](references/color-palettes.md)
 - **Warm Authority:** `#F27A1A` primary, white background, single accent
 - **Tech Ambition:** `#4F46E5` primary, multi-accent (cyan, emerald, amber, violet)
 
@@ -139,12 +117,12 @@ See [`references/color-palettes.md`](references/color-palettes.md) for:
 4. **Semantic controls:** Use `<button>`, not `<div onClick>`
 5. **Overlay positioning:** `position: fixed`, `overflow-y: auto`
 
-### Root-Cause Taxonomy
+### Root-Cause Taxonomy (Classes A-H)
 
 | Class | Symptom | Fix |
 |-------|---------|-----|
-| **A** | No visible nav on mobile | Add mobile trigger + overlay |
-| **B** | Hidden by opacity/visibility | Verify state toggling |
+| **A** | No visible nav | Add mobile trigger + overlay |
+| **B** | Hidden by opacity | Verify state toggling |
 | **C** | Clipped by overflow | Use `position: fixed` |
 | **D** | Behind another layer | Check z-index scale |
 | **E** | Breakpoint mismatch | Verify viewport meta |
@@ -152,7 +130,9 @@ See [`references/color-palettes.md`](references/color-palettes.md) for:
 | **G** | Keyboard inaccessible | Use real `<button>` elements |
 | **H** | Click-outside race | Exclude trigger from handler |
 
-See [`references/mobile-navigation.md`](references/mobile-navigation.md) for complete patterns.
+**References:**
+- [`mobile-navigation.md`](references/mobile-navigation.md) — Implementation patterns
+- [`mobile-nav-debugging.md`](references/mobile-nav-debugging.md) — Debugging workflow
 
 ---
 
@@ -160,22 +140,18 @@ See [`references/mobile-navigation.md`](references/mobile-navigation.md) for com
 
 **CRITICAL:** If shadcn/Radix/MUI detected, USE IT. Don't rebuild.
 
-| Component | Library Primitive | Styling |
-|-----------|------------------|---------|
-| Buttons | Shadcn `Button` | CVA variants |
-| Cards | Shadcn `Card` | Custom top borders |
-| Navigation | Shadcn `NavigationMenu` | Backdrop blur |
-| Modals | Shadcn `Dialog` | Theme-aligned |
-| Forms | Radix primitives | Validation with Zod |
+| Component | Library Primitive |
+|-----------|------------------|
+| Buttons | Shadcn `Button` + CVA variants |
+| Cards | Shadcn `Card` + custom top borders |
+| Navigation | Shadcn `NavigationMenu` + backdrop blur |
+| Modals | Shadcn `Dialog` + theme-aligned |
 
 ### useReducedMotion Hook (Required)
 
 ```tsx
 const prefersReducedMotion = useReducedMotion();
-<motion.div
-  initial={prefersReducedMotion ? {} : { opacity: 0 }}
-  animate={{ opacity: 1 }}
-/>
+<motion.div initial={prefersReducedMotion ? {} : { opacity: 0 }} />
 ```
 
 ---
@@ -185,11 +161,7 @@ const prefersReducedMotion = useReducedMotion();
 ### Pre-Commit Checklist
 
 ```bash
-npx tsc --noEmit      # Type check
-npm run lint          # Lint
-npm test              # Tests
-npm run build         # Build
-npm audit             # Security
+npx tsc --noEmit && npm run lint && npm test && npm run build && npm audit
 ```
 
 ### Design Quality Gate
@@ -199,7 +171,6 @@ npm audit             # Security
 - [ ] Typography hierarchy is clear
 - [ ] Animations respect `prefers-reduced-motion`
 - [ ] Color contrast meets WCAG AAA (preferred) or AA
-- [ ] Micro-interactions 150-300ms
 
 ---
 
@@ -207,26 +178,23 @@ npm audit             # Security
 
 | File | When to Read |
 |------|--------------|
-| [`references/strategic-positioning.md`](references/strategic-positioning.md) | Always — Strategic framework |
-| [`references/tailwind-v4-migration.md`](references/tailwind-v4-migration.md) | v3→v4 migration or v4 specifics |
-| [`references/anti-generic-checklist.md`](references/anti-generic-checklist.md) | Design review |
-| [`references/color-palettes.md`](references/color-palettes.md) | Color decisions |
-| [`references/mobile-navigation.md`](references/mobile-navigation.md) | Navigation issues |
-| [`references/design-directions.md`](references/design-directions.md) | Aesthetic direction selection |
-| [`references/tech-commitments.md`](references/tech-commitments.md) | Technical requirements |
+| [`strategic-positioning.md`](references/strategic-positioning.md) | Always — Strategic framework |
+| [`tailwind-v4-migration.md`](references/tailwind-v4-migration.md) | v3→v4 migration or v4 setup |
+| [`tailwind-v4-pitfalls.md`](references/tailwind-v4-pitfalls.md) | Debugging v4 issues |
+| [`anti-generic-checklist.md`](references/anti-generic-checklist.md) | Design review |
+| [`color-palettes.md`](references/color-palettes.md) | Color decisions |
+| [`design-directions.md`](references/design-directions.md) | Aesthetic direction selection |
+| [`mobile-navigation.md`](references/mobile-navigation.md) | Nav implementation |
+| [`mobile-nav-debugging.md`](references/mobile-nav-debugging.md) | Nav debugging |
+| [`patterns-catalog.md`](references/patterns-catalog.md) | UI patterns to steal |
+| [`tech-commitments.md`](references/tech-commitments.md) | Technical requirements |
 
 ---
 
 ## Related Skills
 
-| Skill | When to Use |
-|-------|-------------|
-| [aesthetic](../aesthetic/SKILL.md) | Inspiration capture, design iteration |
-| [code-review](../code-review/SKILL.md) | Review protocols, feedback handling |
-| [nextjs-react-expert](../nextjs-react-expert/SKILL.md) | Performance optimization |
-| [ui-styling](../ui-styling/SKILL.md) | shadcn/ui implementation |
-| [web-design-guidelines](../web-design-guidelines/SKILL.md) | Accessibility audit |
+`aesthetic` (inspiration) • `code-review` (reviews) • `nextjs-react-expert` (performance) • `ui-styling` (shadcn) • `web-design-guidelines` (a11y)
 
 ---
 
-> **Remember:** Technical excellence requires both rigorous implementation and distinctive design. Every line of code and every pixel should demonstrate intentionality and craftsmanship.
+> Technical excellence requires both rigorous implementation and distinctive design.
