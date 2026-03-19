@@ -9,7 +9,7 @@ Comprehensive guide to all browser automation capabilities available on this sys
 | | agent-browser (CLI) | OpenClaw browser (built-in) |
 |---|---|---|
 | **Binary** | `/usr/bin/agent-browser` | Internal OpenClaw tool |
-| **Chrome** | 146 (at `~/.agent-browser/browsers/`) | 144 (system `/usr/bin/google-chrome`) |
+| **Chrome** | 146.0.7680.153 (at `~/.agent-browser/browsers/`) | 144.0.7559.109 (system `/usr/bin/google-chrome`) |
 | **Port** | Dynamic daemon socket | 18800 (CDP) |
 | **Best for** | CLI scripting, quick checks, screenshots | Programmatic control from agent sessions |
 | **Refs** | `@e1`, `@e2` (prefixed) | `e1`, `e2` (no prefix) |
@@ -61,6 +61,23 @@ agent-browser wait @e5                             # Wait for element
 agent-browser open <url2>                          # Navigate to new page
 agent-browser back / forward                       # Navigation history
 agent-browser close                                # Done
+
+# NEW in v0.21.1:
+agent-browser pdf <path>                   # Save as PDF
+agent-browser set viewport <w> <h>         # Set viewport size
+agent-browser set device <name>            # Emulate device
+agent-browser set geo <lat> <lng>          # Set geolocation
+agent-browser set offline [on|off]         # Toggle offline mode
+agent-browser set headers <json>           # Set request headers
+agent-browser set media [dark|light]       # Emulate color scheme
+agent-browser network requests             # List captured requests
+agent-browser network route <url>          # Route/block requests
+agent-browser network har <start|stop>     # HAR file capture
+agent-browser mouse move <x> <y>           # Move mouse
+agent-browser mouse down [btn]             # Mouse down
+agent-browser mouse up [btn]               # Mouse up
+agent-browser download <sel> <path>        # Download file by clicking
+agent-browser keyboard inserttext <text>   # Insert without key events
 ```
 
 ### Command Chaining
@@ -249,7 +266,7 @@ agent-browser screenshot /tmp/dashboard.png
 ## Skill Metadata
 
 - **Created:** 2026-03-14
-- **Last tested:** 2026-03-14
-- **agent-browser:** v0.20.0 / Chrome 146
-- **OpenClaw browser:** Chrome 144 / port 18800
+- **Last tested:** 2026-03-19
+- **agent-browser:** v0.21.1 / Chrome 146.0.7680.153
+- **OpenClaw browser:** Chrome 144.0.7559.109 / port 18800
 - **System:** Ubuntu (KDE neon), AppArmor active
