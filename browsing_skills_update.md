@@ -253,3 +253,20 @@
  2. Network capture needs HAR workflow — network har start/stop                                                                                                                                                                             
  3. Ref formats differ by tool — @e1 (agent-browser)
 
+---
+
+I'll check the available browsing and E2E testing capabilities from the skills directory
+→ Read skills/browser-automation/SKILL.md [limit=100]
+→ Read skills/e2e-testing-lessons/SKILL.md 
+→ Read skills/chrome-devtools-mcp/SKILL.md [limit=100]
+Thinking: Excellent! I now have a comprehensive understanding of the browsing and E2E testing capabilities available:
+1. agent-browser CLI - Quick CLI-based browser automation
+2. browser tool - OpenClaw's built-in browser automation
+3. chrome-devtools-mcp - Full Chrome DevTools via MCP
+4. e2e-testing-lessons - Best practices for E2E testing
+Key insights from the skills:
+- Golden Rule: Hybrid API + UI testing (don't rely on UI for auth)
+- Tool Selection: agent-browser for quick checks, Playwright for comprehensive suites
+- Session Persistence: Use API auth, not HttpOnly cookies
+- Best Practices: Create test data, validate schemas, screenshot errors
+
