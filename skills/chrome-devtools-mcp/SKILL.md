@@ -444,3 +444,23 @@ mcporter config add chrome-devtools --command chrome-devtools-mcp \
 ---
 
 *Skill created: 2026-03-16 | Last tested: 2026-03-19 | chrome-devtools-mcp v0.20.2 with Chrome 144 headless*
+
+---
+
+## Verification Report (2026-03-23)
+All 10 core capabilities tested and verified working:
+- **Navigation & Interaction (4/4):** navigate_page, take_snapshot, take_screenshot, click
+- **DevTools Features (6/6):** lighthouse_audit, performance_start_trace/stop_trace, evaluate_script, list_network_requests, list_console_messages, emulate
+
+### Key Findings
+1. **Tool name correction:** Use `click` (not `click_element`) — verified via `mcporter list chrome-devtools`
+2. **UID format confirmed:** `{snapshotIndex}_{elementIndex}` (e.g., `2_3`, `3_3`)
+3. **Performance trace returns:** LCP breakdown, CLS, insights array with drill-down capability
+4. **Lighthouse categories:** Accessibility, Best Practices, SEO (Performance excluded in headless mode)
+
+### Test Results (example.com)
+- Lighthouse: A11y 96, Best Practices 96, SEO 80 (34 passed, 4 failed)
+- Performance: LCP 124ms, TTFB 20ms, CLS 0.00
+- Network: 1 request captured (GET example.com [200])
+
+*Skill updated: 2026-03-23 | chrome-devtools-mcp v0.20.3 with Chrome 146 headless*

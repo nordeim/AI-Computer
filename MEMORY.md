@@ -2,7 +2,7 @@
 
 > **Purpose:** Distilled wisdom, patterns, preferences, and operational notes.
 > **Security:** **ONLY loaded in main session** (direct chats with Matt). Never in shared contexts.
-> **Last Updated:** 2026-03-17 13:55 SGT
+> **Last Updated:** 2026-03-23 04:15 SGT
 > **External Channel:** Telegram only (WhatsApp permanently disabled)
 > **TODO List:** `/home/pete/.openclaw/workspace/TODO.md` (daily review, KIV items)
 
@@ -126,7 +126,7 @@ Don't just scan inputs — monitor outputs and actions too.
 
 ## Browser Automation — agent-browser
 
-**Status:** ✅ v0.20.0 | Chrome 146 installed | `--no-sandbox` set in `~/.agent-browser/config.json`
+**Status:** ✅ v0.21.4 | Chrome 146.0.7680.80 | `--no-sandbox` set in `~/.agent-browser/config.json`
 
 ```bash
 agent-browser open <url>              # Navigate
@@ -192,7 +192,7 @@ agent-browser snapshot -i             # Interactive tree
 ## chrome-devtools-mcp
 
 **Skill:** `/home/pete/.openclaw/workspace/skills/chrome-devtools-mcp/SKILL.md`
-**Status:** ✅ v0.20.0 | Chrome 144 headless | via mcporter
+**Status:** ✅ v0.20.3 | Chrome 146 headless | via mcporter
 **Created:** 2026-03-16
 **What it is:** Google-official MCP server providing full Chrome DevTools Protocol access (29 tools). Installed via npm, configured in mcporter.
 

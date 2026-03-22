@@ -9,7 +9,7 @@ Comprehensive guide to all browser automation capabilities available on this sys
 | | agent-browser (CLI) | OpenClaw browser (built-in) |
 |---|---|---|
 | **Binary** | `/usr/bin/agent-browser` | Internal OpenClaw tool |
-| **Chrome** | 146.0.7680.153 (at `~/.agent-browser/browsers/`) | 144.0.7559.109 (system `/usr/bin/google-chrome`) |
+| **Chrome** | 146.0.7680.80 (at `~/.agent-browser/browsers/`) | 144.0.7559.109 (system `/usr/bin/google-chrome`) |
 | **Port** | Dynamic daemon socket | 18800 (CDP) |
 | **Best for** | CLI scripting, quick checks, screenshots | Programmatic control from agent sessions |
 | **Refs** | `@e1`, `@e2` (prefixed) | `e1`, `e2` (no prefix) |
@@ -270,3 +270,16 @@ agent-browser screenshot /tmp/dashboard.png
 - **agent-browser:** v0.21.1 / Chrome 146.0.7680.153
 - **OpenClaw browser:** Chrome 144.0.7559.109 / port 18800
 - **System:** Ubuntu (KDE neon), AppArmor active
+
+---
+
+## Verification Report (2026-03-23)
+All capabilities tested and verified working:
+- **agent-browser core (10/10):** open, snapshot -i, screenshot, screenshot --annotate, eval, click, fill, get, find, screenshot --full
+- **agent-browser new features (7/7):** pdf, set viewport, set device, set geo, set offline, set media, network har
+- **OpenClaw browser tool (4/4):** open, snapshot, screenshot, act(click)
+
+### Key Findings
+1. **`find` command always performs an action** — Default is click. Use `find role button --json` to locate without acting.
+2. **Network capture requires HAR workflow** — `network requests` shows nothing without `network har start/stop`.
+3. **Ref prefixes differ** — agent-browser: `@e1`, OpenClaw: `e1`, chrome-devtools: `uid=X_Y`
