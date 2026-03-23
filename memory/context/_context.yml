@@ -1,0 +1,8 @@
+# Context Collection
+# Active tasks, decisions, in-progress work
+# Path: qmd://context/
+
+context: |
+  This collection tracks current state and active work.
+  active/: In-progress tasks and current focus
+  decisions/: Important decisions made with rationale

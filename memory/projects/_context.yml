@@ -1,0 +1,8 @@
+# Projects Collection Context
+# Projects: GitHub repos, YouTube content, CRM work, etc.
+# Path: qmd://projects/
+
+context: |
+  This collection tracks active projects and initiatives.
+  Includes GitHub repositories, YouTube channel planning,
+  CRM contacts, and any ongoing work streams.

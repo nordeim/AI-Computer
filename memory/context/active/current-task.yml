@@ -1,0 +1,11 @@
+title: "Context Anchor Skill Integration"
+status: "in-progress"
+started: "2026-03-10"
+blockers: []
+next_steps:
+  - "Complete AGENTS.md updates"
+  - "Populate projects/ collection"
+  - "Document adapted skills in MEMORY.md"
+notes: |
+  Adapting context-anchor skill for better session recovery.
+  Using anchor-v2.sh as the primary context recovery tool.
