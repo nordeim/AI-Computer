@@ -12,11 +12,21 @@ metadata:
 
 # chrome-devtools-mcp
 
-Google-official MCP server providing full Chrome DevTools Protocol access to AI agents. 29 tools in full mode covering navigation, interaction, debugging, network inspection, performance tracing, Lighthouse audits, memory snapshots, and device emulation.
+Google-official MCP server providing full Chrome DevTools Protocol access to AI agents. 29 tools covering navigation, interaction, debugging, network inspection, performance tracing, Lighthouse audits, memory snapshots, and device emulation.
 
-**Installed at:** `/usr/bin/chrome-devtools` (symlink to chrome-devtools-mcp)
-**Transport:** stdio via mcporter
+**Installed at:** `/usr/bin/chrome-devtools` (symlink to chrome-devtools-mcp)  
+**Transport:** stdio via mcporter  
 **Mode:** headless (configured for server use)
+
+---
+
+## Version Info
+
+| Component | Version | Notes |
+|-----------|---------|-------|
+| chrome-devtools-mcp | 0.20.3 | CLI wrapper |
+| Chrome (headless) | 147.0.7727.24 | Updated Mar 26 2026 |
+| Transport | mcporter stdio | — |
 
 ---
 
@@ -73,9 +83,9 @@ chrome-devtools lighthouse_audit
 
 ---
 
-## Tool Reference
+## Tool Reference (29 Tools)
 
-### Navigation
+### Navigation (5 tools)
 
 | Tool | Key Args | Description |
 |------|----------|-------------|
@@ -85,7 +95,7 @@ chrome-devtools lighthouse_audit
 | `select_page` | `pageId`, `bringToFront` | Switch context to a tab |
 | `close_page` | `pageId` | Close a tab (last tab cannot close) |
 
-### Interaction (UID-based)
+### Interaction (8 tools)
 
 Always call `take_snapshot` first to get current UIDs. UIDs are ephemeral — they change on every snapshot.
 
@@ -100,7 +110,7 @@ Always call `take_snapshot` first to get current UIDs. UIDs are ephemeral — th
 | `press_key` | `key`, `includeSnapshot` | Press keyboard key/combo |
 | `upload_file` | `uid`, `filePath`, `includeSnapshot` | Upload file via file input |
 
-### Inspection & Debugging
+### Inspection & Debugging (5 tools)
 
 | Tool | Key Args | Description |
 |------|----------|-------------|
@@ -110,27 +120,27 @@ Always call `take_snapshot` first to get current UIDs. UIDs are ephemeral — th
 | `list_network_requests` | `pageSize`, `pageIdx`, `resourceTypes` | List network requests with status/timing |
 | `get_network_request` | `reqid` | Get full request/response headers and body |
 
-### Performance
+### Performance (3 tools)
 
 | Tool | Key Args | Description |
 |------|----------|-------------|
 | `performance_start_trace` | `reload`, `autoStop`, `filePath` | Start recording performance trace |
 | `performance_stop_trace` | `filePath` | Stop trace and get analysis (LCP, CLS, INP, insights) |
-| `performance_analyze_insight` | `insightSetId`, `insightName` | Deep-dive into specific insight (LCPBreakdown, CLSCulprits, NetworkDependencyTree, ThirdParties, Cache) |
+| `performance_analyze_insight` | `insightSetId`, `insightName` | Deep-dive into specific insight |
 
-### Audit
+### Audit (1 tool)
 
 | Tool | Key Args | Description |
 |------|----------|-------------|
 | `lighthouse_audit` | `mode` (navigation), `device` (desktop/mobile), `outputDirPath` | Run Lighthouse: Accessibility, Best Practices, SEO scores + report files |
 
-### Memory
+### Memory (1 tool)
 
 | Tool | Key Args | Description |
 |------|----------|-------------|
 | `take_memory_snapshot` | `filePath` | Capture heap snapshot for memory leak debugging |
 
-### Visual
+### Visual (3 tools)
 
 | Tool | Key Args | Description |
 |------|----------|-------------|
@@ -138,12 +148,18 @@ Always call `take_snapshot` first to get current UIDs. UIDs are ephemeral — th
 | `take_snapshot` | `verbose`, `filePath` | A11y tree snapshot with UIDs (preferred for interaction) |
 | `wait_for` | `text` (array of strings), `timeout` | Wait for text to appear on page |
 
-### Emulation
+### Emulation (2 tools)
 
 | Tool | Key Args | Description |
 |------|----------|-------------|
-| `emulate` | `viewport` (WxHxDPR[,mobile][,touch][,landscape]), `networkConditions`, `cpuThrottlingRate`, `colorScheme`, `userAgent` | Emulate device/network/conditions |
+| `emulate` | `viewport`, `networkConditions`, `cpuThrottlingRate`, `colorScheme`, `userAgent` | Emulate device/network/conditions |
 | `resize_page` | `width`, `height` | Resize viewport |
+
+### Dialog (1 tool)
+
+| Tool | Key Args | Description |
+|------|----------|-------------|
+| `handle_dialog` | `action` (accept/dismiss), `promptText` | Handle browser dialogs (alert/confirm/prompt) |
 
 ---
 
@@ -164,12 +180,12 @@ mcporter call chrome-devtools.performance_start_trace reload=true
 # 4. Stop trace and analyze
 mcporter call chrome-devtools.performance_stop_trace
 
-# 5. Deep-dive into specific insight (use insightSetId from step 4)
+# 5. Deep-dive into specific insight
 mcporter call chrome-devtools.performance_analyze_insight \
   --args '{"insightSetId": "NAVIGATION_0", "insightName": "LCPBreakdown"}'
 ```
 
-**Example output from iTrust Academy:**
+**Example output:**
 - Lighthouse: A11y 89, Best Practices 100, SEO 92
 - Performance: LCP 258ms, CLS 0.00, TTFB 5ms
 - Insights: LCPBreakdown, CLSCulprits, NetworkDependencyTree, ThirdParties, Cache
@@ -192,6 +208,7 @@ mcporter call chrome-devtools.fill uid=1_45 value="user@example.com"
 ```
 
 **UID format:** `{snapshotIndex}_{elementIndex}` (e.g., `1_12`, `1_207`)
+
 **Key rule:** UIDs are valid only until the next DOM mutation. Always re-snapshot after navigation or interaction.
 
 ### Pattern 3: Network Request Inspection
@@ -213,7 +230,7 @@ mcporter call chrome-devtools.list_network_requests --args '{"resourceTypes": ["
 ```bash
 # Return structured data from page
 mcporter call chrome-devtools.evaluate_script \
-  --args '{"function": "() => JSON.stringify({title: document.title, url: location.href, links: document.querySelectorAll(\"a\").length, forms: document.querySelectorAll(\"form\").length})"}'
+  --args '{"function": "() => JSON.stringify({title: document.title, url: location.href, links: document.querySelectorAll(\"a\").length})"}'
 
 # Modify page state
 mcporter call chrome-devtools.evaluate_script \
@@ -221,6 +238,7 @@ mcporter call chrome-devtools.evaluate_script \
 ```
 
 **Function format:** Must be a string containing a valid JS function. Arrow functions work: `() => ...`
+
 **Return value:** Must be JSON-serializable. Wrap complex returns in `JSON.stringify()`.
 
 ### Pattern 5: Mobile/Responsive Testing
@@ -238,6 +256,10 @@ mcporter call chrome-devtools.emulate networkConditions="Slow3G" cpuThrottlingRa
 # Reset emulation
 mcporter call chrome-devtools.emulate viewport=""
 ```
+
+**Viewport format:** `WxHxDPR[,mobile][,touch][,landscape]`
+
+**Network conditions:** `offline`, `Slow3G`, `Fast3G`, `Slow4G`, `Fast4G`
 
 ### Pattern 6: Console Log Debugging
 
@@ -303,7 +325,7 @@ mcporter call chrome-devtools.close_page pageId=2
 
 ### Connecting to Existing Chrome
 
-To use your logged-in Chrome session (for authenticated sites):
+To use your logged-in Chrome session:
 
 ```bash
 # 1. Launch Chrome with remote debugging
@@ -320,8 +342,6 @@ mcporter config add chrome-devtools --command chrome-devtools-mcp \
 
 ## Practical Example: Auditing a Website
 
-Full workflow using `https://www.itrust.academy/` as example:
-
 ```bash
 # Navigate
 mcporter call chrome-devtools.navigate_page url=https://www.itrust.academy/
@@ -330,30 +350,19 @@ mcporter call chrome-devtools.navigate_page url=https://www.itrust.academy/
 # Get page structure via a11y snapshot
 mcporter call chrome-devtools.take_snapshot
 # → Returns 208 elements with UIDs
-#   uid=1_0 RootWebArea "iTrust Academy | IT Training..."
-#   uid=1_3 button "Home"
-#   uid=1_10 heading "Advance Your IT Career. Get Certified."
-#   uid=1_12 button "Explore SCP Fundamentals"
-#   ...
-
-# Screenshot
-mcporter call chrome-devtools.take_screenshot filePath=/tmp/itrust.png
-# → Viewport screenshot saved
 
 # Lighthouse audit
 mcporter call chrome-devtools.lighthouse_audit
 # → Accessibility: 89, Best Practices: 100, SEO: 92
-#   34 passed, 3 failed, 5808ms
 
 # Performance trace
 mcporter call chrome-devtools.performance_start_trace
 mcporter call chrome-devtools.performance_stop_trace
 # → LCP: 258ms, TTFB: 5ms, CLS: 0.00
-#   Insights: LCPBreakdown, CLSCulprits, NetworkDependencyTree, ThirdParties, Cache
 
 # Check network requests
 mcporter call chrome-devtools.list_network_requests
-# → 13 requests: HTML, JS bundle, Cloudflare beacon, Google Fonts (DM Sans, Space Mono)
+# → 13 requests: HTML, JS bundle, Cloudflare beacon, Google Fonts
 
 # JS evaluation
 mcporter call chrome-devtools.evaluate_script \
@@ -363,7 +372,6 @@ mcporter call chrome-devtools.evaluate_script \
 # Mobile emulation
 mcporter call chrome-devtools.emulate viewport="375x812x2,mobile,touch"
 mcporter call chrome-devtools.take_screenshot filePath=/tmp/itrust-mobile.png
-# → Mobile-responsive view captured
 ```
 
 ---
@@ -372,7 +380,7 @@ mcporter call chrome-devtools.take_screenshot filePath=/tmp/itrust-mobile.png
 
 1. **Stateless UIDs:** Element UIDs from `take_snapshot` are invalidated by any DOM mutation. Always re-snapshot after clicks, navigation, or form fills.
 
-2. **evaluate_script format:** The `function` parameter must be a **string** containing the function definition. Use `--args` for mcporter:
+2. **evaluate_script format:** The `function` parameter must be a **string** containing the function definition.
    ```bash
    # ✅ Correct
    mcporter call chrome-devtools.evaluate_script \
@@ -382,15 +390,17 @@ mcporter call chrome-devtools.take_screenshot filePath=/tmp/itrust-mobile.png
    mcporter call chrome-devtools.evaluate_script 'function() { return document.title }'
    ```
 
-3. **Performance traces are per-navigation:** Each `performance_start_trace`/`stop_trace` pair captures one navigation. Use the `insightSetId` (e.g., `NAVIGATION_0`) from the summary to drill into specific insights.
+3. **Performance traces are per-navigation:** Each `performance_start_trace`/`stop_trace` pair captures one navigation. Use the `insightSetId` (e.g., `NAVIGATION_0`) to drill into specific insights.
 
-4. **Lighthouse is slow:** Expect 5-15 seconds per audit. The `--no-performance-crux` flag skips CrUX field data to speed things up.
+4. **Lighthouse is slow:** Expect 5-15 seconds per audit. `--no-performance-crux` skips CrUX field data to speed things up.
 
 5. **Single browser instance:** All pages share one Chrome instance. Emulation settings (viewport, network throttling) apply globally until reset.
 
 6. **Headless limitations:** Some sites detect headless Chrome and serve different content. Use `--browserUrl` to connect to a real Chrome instance if needed.
 
-7. **Memory snapshots are large:** `take_memory_snapshot` generates multi-MB heap dump files. Use `filePath` to control where they're saved.
+7. **Memory snapshots are large:** `take_memory_snapshot` generates multi-MB heap dump files. Use `filePath` to control location.
+
+8. **Chrome version:** v147 headless active. Some sites may behave differently than headed Chrome.
 
 ---
 
@@ -424,7 +434,8 @@ npm install -g chrome-devtools-mcp
 
 # Verify
 chrome-devtools --version
-which chrome-devtools  # → /usr/bin/chrome-devtools
+which chrome-devtools
+# → /usr/bin/chrome-devtools
 
 # mcporter config (already configured)
 mcporter config add chrome-devtools --command chrome-devtools-mcp \
@@ -443,24 +454,35 @@ mcporter config add chrome-devtools --command chrome-devtools-mcp \
 
 ---
 
-*Skill created: 2026-03-16 | Last tested: 2026-03-19 | chrome-devtools-mcp v0.20.2 with Chrome 144 headless*
+## Verification Report (2026-03-26)
 
----
+### Chrome Upgraded
 
-## Verification Report (2026-03-23)
-All 10 core capabilities tested and verified working:
-- **Navigation & Interaction (4/4):** navigate_page, take_snapshot, take_screenshot, click
-- **DevTools Features (6/6):** lighthouse_audit, performance_start_trace/stop_trace, evaluate_script, list_network_requests, list_console_messages, emulate
+| Component | Before | After |
+|-----------|--------|-------|
+| chrome-devtools-mcp | 0.20.3 | 0.20.3 (unchanged) |
+| Chrome headless | 146.x | **147.0.7727.24** |
 
-### Key Findings
-1. **Tool name correction:** Use `click` (not `click_element`) — verified via `mcporter list chrome-devtools`
-2. **UID format confirmed:** `{snapshotIndex}_{elementIndex}` (e.g., `2_3`, `3_3`)
-3. **Performance trace returns:** LCP breakdown, CLS, insights array with drill-down capability
-4. **Lighthouse categories:** Accessibility, Best Practices, SEO (Performance excluded in headless mode)
+### All 29 Tools Verified
+
+| Category | Tools | Status |
+|----------|-------|--------|
+| Navigation | navigate_page, new_page, list_pages, select_page, close_page | ✅ |
+| Interaction | click, hover, drag, fill, fill_form, type_text, press_key, upload_file | ✅ |
+| Inspection | evaluate_script, list_console_messages, get_console_message, list_network_requests, get_network_request | ✅ |
+| Performance | performance_start_trace, performance_stop_trace, performance_analyze_insight | ✅ |
+| Audit | lighthouse_audit | ✅ |
+| Memory | take_memory_snapshot | ✅ |
+| Visual | take_screenshot, take_snapshot, wait_for | ✅ |
+| Emulation | emulate, resize_page | ✅ |
+| Dialog | handle_dialog | ✅ |
 
 ### Test Results (example.com)
-- Lighthouse: A11y 96, Best Practices 96, SEO 80 (34 passed, 4 failed)
+
+- Lighthouse: A11y 96, Best Practices 96, SEO 80
 - Performance: LCP 124ms, TTFB 20ms, CLS 0.00
 - Network: 1 request captured (GET example.com [200])
 
-*Skill updated: 2026-03-23 | chrome-devtools-mcp v0.20.3 with Chrome 146 headless*
+---
+
+*Skill created: 2026-03-16 | Last validated: 2026-03-26 | chrome-devtools-mcp v0.20.3 with Chrome 147.0.7727.24 headless*

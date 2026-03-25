@@ -27,6 +27,8 @@ This skill documents the complete frontend UI testing methodology developed duri
 
 ---
 
+**Navigate first to the project root folder at `/home/project/AI-Academy/` before performing the operations mentioned below.**
+
 ## Testing Workflow (5 Phases)
 
 ### Phase 1: Planning & Reconnaissance
