@@ -3094,3 +3094,19 @@ $ ls -l skills/frontend-ui-testing-journey/*
  tools, enhanced patterns | | frontend-ui-testing-journey | 24 KB | 911 | ✅ All three tools, mobile focus | | mobile-navigation.md | 16 KB | 673 | ✅ Device presets, batch testing | All browser testing skills now comprehensively cover 
  agent-browser v0.22.3 and chrome-devtools-mcp capabilities. 🦞
 
+---
+
+ awesome meticulous job so far. please keep up the good work. now, please meticulously review /home/project/cloudflare_tunnel_howto.txt and then plan and create a skill to add new local service to an existing cloudflare tunnel.         
+                                                                                                                                                                                                                                            
+
+ Now I have a clear picture. Let me create the skill:Now let me verify the skill works by testing the key commands:All verification tests passed. Here's the summary: ---## Cloudflare Tunnel Skill Created ✅Location:                     
+ /home/pete/.openclaw/workspace/skills/cloudflare-tunnel/SKILL.mdSize: 10.7 KB (442 lines)### Skill Structure| Section | Content ||---------|---------|| Overview | What the skill does, prerequisites || Current Configuration | Tunnel    
+ info, active services table || Adding a New Service | 5-step process with examples || Complete Example | End-to-end walkthrough || Quick Reference | Status checks, service management, DNS management || Troubleshooting | 5 common       
+ issues with diagnosis/solutions || Advanced | Multiple tunnels, non-HTTP services || Security | Considerations and best practices |### Key Information Documented| Property | Value ||----------|| Tunnel Name | baking || Tunnel ID |     
+ 2784ef2b-a6b5-4c29-b1e5-5beaea4b5fd2 || Domain | jesspete.shop || Config File | ~/.cloudflared/config.yml || Binary Path | /home/pete/.local/bin/cloudflared || Active Services | 4 (baking, artisan-baking, atelier, ai-academy) |###     
+ 5-Step Process to Add New Service1. Verify Prerequisites — Check cloudflared, tunnel, service status2. Create DNS Route — cloudflared tunnel route dns baking <subdomain>.jesspete.shop3. Edit Config — Add ingress rule to                
+ ~/.cloudflared/config.yml4. Restart Service — systemctl --user restart cloudflared-tunnel.service5. Verify Tunnel — Test with curl or browser### Verification Tests ✅| Test | Result ||------|--------|| cloudflared tunnel list | ✓      
+ Tunnel 'baking' with 4 connections || systemctl --user is-active | ✓ active || config.yml hostname count | ✓ 4 services configured |---## Summary of Skills Created Today| Skill | Size | Purpose ||-------|------|--------||              
+ browser-automation | 15 KB | All browser automation tools || chrome-devtools-mcp | 17 KB | DevTools-grade debugging || webapp-testing-journey | 20 KB | Webapp testing methodology || frontend-ui-testing-journey | 24 KB | Frontend UI    
+ testing || mobile-navigation.md | 16 KB | Mobile nav debugging taxonomy || cloudflare-tunnel | 10.7 KB | Add services to Cloudflare Tunnel |🦞
+
