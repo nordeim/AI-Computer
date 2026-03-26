@@ -2,9 +2,9 @@
 name: cloudflare-tunnel
 description: |
   Add new local services to an existing Cloudflare Tunnel for secure public access. Use when you need to expose a local development server, web application, or service running on localhost to the public internet via Cloudflare's tunnel infrastructure.
-  
+
   Prerequisites: cloudflared installed and authenticated, existing tunnel created.
-  
+
   Triggers: "add tunnel", "expose local service", "cloudflare tunnel", "port forward", "public access to localhost", "expose localhost".
 ---
 
@@ -116,11 +116,11 @@ ingress:
     service: http://localhost:4173
   - hostname: ai-academy.jesspete.shop
     service: http://localhost:5173
-  
+
   # NEW SERVICE - add here
   - hostname: myapp.jesspete.shop
     service: http://localhost:8080
-  
+
   # Catch-all must be last
   - service: http_status:404
 ```
@@ -404,6 +404,142 @@ Note: Non-HTTP services require Cloudflare Access policies for security.
 
 ---
 
+## Critical: Frontend API Proxy Configuration
+
+### The Problem
+
+When tunnelling an existing web application with a separate frontend and backend, the **frontend will fail to load API data** if:
+
+1. Frontend is hardcoded to call `http://localhost:<backend-port>/api`
+2. Browser resolves `localhost` to the **user's machine**, not the server
+3. API calls fail with "Failed to load..." errors
+
+### Why It Happens
+
+```
+Browser at https://myapp.example.com/
+    │
+    ├── Loads frontend HTML/JS ✅ (works)
+    │
+    └── JavaScript makes API call to VITE_API_URL
+            │
+            └── VITE_API_URL = http://localhost:8000/api/v1
+                    │
+                    └── Browser resolves localhost → user's machine
+                            │
+                            └── ❌ Connection refused (no backend there)
+```
+
+### Symptoms
+
+- Frontend loads, displays "Failed to load {data}. Please try again later."
+- Browser console shows `ERR_CONNECTION_REFUSED` to `localhost:<port>`
+- Backend is running and healthy on the server
+- Local development works perfectly
+
+### Solution: Add Vite Proxy (Development Mode)
+
+**Add to `vite.config.ts`:**
+
+```typescript
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    host: '0.0.0.0',  // Allow external connections
+    port: 5173,
+    allowedHosts: ['myapp.example.com', 'localhost', '127.0.0.1'],
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8000',  // Backend URL
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
+});
+```
+
+**What this does:**
+- Routes `/api/*` requests through the Vite dev server
+- Vite forwards requests to the backend (same machine)
+- Browser sees same-origin requests (no CORS issues)
+- Works for both local and tunneled access
+
+**After adding proxy:**
+```
+Browser → https://myapp.example.com/api/v1/courses/
+                │
+                └── Vite proxy forwards to localhost:8000
+                        │
+                        └── Backend responds ✅
+```
+
+### Verification Steps
+
+After adding the proxy configuration:
+
+```bash
+# 1. Restart frontend dev server
+cd /path/to/frontend && npm run dev
+
+# 2. Test API through tunnel
+curl -s https://myapp.example.com/api/v1/courses/ | jq '.success'
+# Expected: true
+
+# 3. Check browser console - no CORS or connection errors
+```
+
+### Production Considerations
+
+The Vite proxy only works in development mode. For production:
+
+**Option A: Path-Based Routing (Recommended)**
+
+Add separate ingress rule for API:
+
+```yaml
+ingress:
+  - hostname: myapp.example.com
+    path: /api/*
+    service: http://localhost:8000  # Backend
+  - hostname: myapp.example.com
+    service: http://localhost:5173  # Frontend
+  - service: http_status:404
+```
+
+**Option B: Separate API Subdomain**
+
+```yaml
+ingress:
+  - hostname: myapp.example.com
+    service: http://localhost:5173  # Frontend
+  - hostname: api.myapp.example.com
+    service: http://localhost:8000  # Backend
+  - service: http_status:404
+```
+
+Then update frontend env: `VITE_API_URL=https://api.myapp.example.com/api/v1`
+
+### Checklist for New Web App Tunnel
+
+When adding an existing web application to the tunnel:
+
+- [ ] Verify frontend dev server runs on expected port
+- [ ] Verify backend API server runs on expected port
+- [ ] Add Vite proxy configuration (if dev mode)
+- [ ] Update `allowedHosts` in Vite config to include tunnel domain
+- [ ] Restart frontend dev server after config changes
+- [ ] Test API endpoint through tunnel URL
+- [ ] Check browser console for connection errors
+- [ ] For production: configure path-based routing or separate API subdomain
+
+### Related Documentation
+
+- Vite Server Options: https://vite.dev/config/server-options.html#server-proxy
+- Cloudflare Tunnel Path-Based Routing: https://developers.cloudflare.com/cloudflare-one/networks/cloudflare-tunnel/reference/configuration/
+
+---
+
 ## Security Considerations
 
 1. **All services are publicly accessible** by default
@@ -412,8 +548,8 @@ Note: Non-HTTP services require Cloudflare Access policies for security.
    - GitHub OAuth
    - Google OAuth
    - Pin codes
-3. **HTTPS is automatic** — no certificates needed
-4. **Origin is hidden** — your localhost is not exposed
+3. **HTTPS is automatic** - no certificates needed
+4. **Origin is hidden** - your localhost is not exposed
 5. **DDoS protection** included with Cloudflare
 
 ---
@@ -437,6 +573,12 @@ Note: Non-HTTP services require Cloudflare Access policies for security.
 
 ---
 
-**Skill Version:** 1.0.0  
-**Last Updated:** March 26, 2026  
+**Skill Version:** 1.1.0
+**Last Updated:** March 26, 2026
 **Status:** Production Ready ✅
+
+---
+
+## Related Analysis Reports
+
+- [Cloudflare Tunnel API Integration Analysis Report](../../reports/Cloudflare_Tunnel_API_Integration_Analysis_Report.md) — Root cause analysis and solution options for frontend/backend tunneling issues
