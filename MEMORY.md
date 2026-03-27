@@ -2,9 +2,65 @@
 
 > **Purpose:** Distilled wisdom, patterns, preferences, and operational notes.
 > **Security:** **ONLY loaded in main session** (direct chats with Matt). Never in shared contexts.
-> **Last Updated:** 2026-03-27 09:32 SGT
+> **Last Updated:** 2026-03-27 09:35 SGT
 > **External Channel:** Telegram only (WhatsApp permanently disabled)
 > **TODO List:** `/home/pete/.openclaw/workspace/TODO.md` (daily review, KIV items)
+
+---
+
+## Agent-Kit (Antigravity Kit) — AI Agent Capability Expansion Toolkit
+
+**Location:** `/home/pete/.openclaw/workspace/agent-kit/`
+
+**Purpose:** Modular system for AI agent capability expansion — 20 specialist agents, 36 skills, 11 workflows, and master validation scripts. Originally designed for Gemini CLI (see `rules/GEMINI.md`) but skills are framework-agnostic.
+
+### Structure
+```
+agent-kit/
+├── ARCHITECTURE.md          # System overview (11.5 KB)
+├── mcp_config.json          # MCP server configs (context7, shadcn)
+├── rules/GEMINI.md          # Global rules for Gemini CLI (11.9 KB)
+├── agents/                  # 20 Specialist Agents (role-based AI personas)
+├── skills/                  # 36 Domain-specific knowledge modules
+├── workflows/               # 11 Slash command procedures
+└── scripts/                 # Master validation scripts (checklist.py, verify_all.py)
+```
+
+### Agents (20) — Key Specialists
+| Agent | Focus | Skills Used |
+|-------|-------|-------------|
+| `orchestrator` | Multi-agent coordination | parallel-agents, behavioral-modes |
+| `frontend-specialist` | Web UI/UX | frontend-design, react-best-practices, tailwind-patterns |
+| `backend-specialist` | API, business logic | api-patterns, nodejs-best-practices |
+| `database-architect` | Schema, SQL | database-design |
+| `security-auditor` | Security compliance | vulnerability-scanner, red-team-tactics |
+| `debugger` | Root cause analysis | systematic-debugging |
+| `project-planner` | Discovery, task planning | brainstorming, plan-writing |
+
+### Skills (36) — Organized by Domain
+- **Frontend & UI:** react-best-practices, web-design-guidelines, tailwind-patterns, frontend-design, ui-ux-pro-max
+- **Backend & API:** api-patterns, nodejs-best-practices, python-patterns, nestjs-expert
+- **Database:** database-design, prisma-expert
+- **Testing & QA:** testing-patterns, webapp-testing, tdd-workflow, code-review-checklist, lint-and-validate
+- **Security:** vulnerability-scanner, red-team-tactics
+- **Architecture:** app-builder, architecture, plan-writing, brainstorming, intelligent-routing, parallel-agents, behavioral-modes, mcp-builder
+- **Operations:** deployment-procedures, server-management, bash-linux, powershell-windows
+
+### Workflows (11) — Slash Commands
+`/brainstorm`, `/create`, `/debug`, `/deploy`, `/enhance`, `/orchestrate`, `/plan`, `/preview`, `/status`, `/test`, `/ui-ux-pro-max`
+
+### Master Validation Scripts
+- `checklist.py` — Priority-based validation (security, code quality, schema, tests, UX, SEO)
+- `verify_all.py` — Full suite including Lighthouse, Playwright E2E, bundle analysis, mobile audit
+
+### Key Architecture Files
+- `ARCHITECTURE.md` — Full system overview, agent/skill mappings, statistics
+- `rules/GEMINI.md` — Global rules: request classifier, agent routing protocol, skill loading rules
+- `skills/README.md` — Skills index organized by domain (5 categories, 37 skills)
+- `SKILLS_SECURITY_AUDIT_REPORT.md` — TrustSkill v3.0 audit: 37 skills scanned, all passed
+
+### Security Audit Status (2026-03-27)
+✅ **PASSED** — All 36 skills verified safe. 3 false positives in documentation (vulnerability-scanner, web-design-guidelines, nextjs-react-expert).
 
 ---
 

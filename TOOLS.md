@@ -121,6 +121,53 @@ All require: `RUBE_SEARCH_TOOLS` available + OAuth connection via `RUBE_MANAGE_C
 
 > See `memory/knowledge-work-plugins-inventory.md` for full details
 
+## Agent-Kit Skills Integration
+
+**Location:** `/home/pete/.openclaw/workspace/agent-kit/skills/`
+
+High-quality domain knowledge modules to load on-demand. Use when working in these domains:
+
+### Priority Skills to Load
+
+| Skill | Use Case | Load Command |
+|-------|----------|--------------|
+| `plan-writing` | Task breakdown, multi-step work | Read `agent-kit/skills/plan-writing/SKILL.md` |
+| `systematic-debugging` | Root cause analysis, bug fixes | Read `agent-kit/skills/systematic-debugging/SKILL.md` |
+| `web-design-guidelines` | UI audit, accessibility, UX | Read `agent-kit/skills/web-design-guidelines/SKILL.md` |
+| `testing-patterns` | Test strategy, coverage | Read `agent-kit/skills/testing-patterns/SKILL.md` |
+| `code-review-checklist` | PR reviews, code quality | Read `agent-kit/skills/code-review-checklist/SKILL.md` |
+| `api-patterns` | REST/GraphQL design | Read `agent-kit/skills/api-patterns/SKILL.md` |
+| `performance-profiling` | Optimization, Web Vitals | Read `agent-kit/skills/performance-profiling/SKILL.md` |
+| `vulnerability-scanner` | Security auditing | Read `agent-kit/skills/vulnerability-scanner/SKILL.md` |
+
+### Skill Loading Protocol
+
+**Before complex tasks:**
+1. Classify the request: QUESTION | SURVEY | SIMPLE CODE | COMPLEX CODE | DESIGN/UI
+2. If COMPLEX CODE or DESIGN/UI → Load relevant skill's SKILL.md
+3. Apply domain expertise to task
+4. No need to memorize — load on demand
+
+**Example:**
+```
+Task: "Debug why the API returns 500 errors"
+  → Load: agent-kit/skills/systematic-debugging/SKILL.md
+  → Apply: 4-phase debugging (Reproduce → Isolate → Understand → Fix)
+  → Output: Root cause documented + regression test added
+```
+
+### Request Classification Quick Reference
+
+| Type | Trigger Words | Action |
+|------|---------------|--------|
+| QUESTION | "what is", "how does", "explain" | Direct answer, no skills |
+| SURVEY | "analyze", "list", "overview" | Load skill if domain-specific |
+| SIMPLE CODE | "fix", "add" (single file) | Direct edit, minimal skill load |
+| COMPLEX CODE | "build", "create", "implement", "refactor" | Load skill, plan, then execute |
+| DESIGN/UI | "design", "UI", "page", "dashboard" | Load design skills |
+
+---
+
 ## User Contacts
 - Primary phone: +6591127357
 - Backup phone: +6597730111 (task completion notifications)
