@@ -2,7 +2,7 @@
 
 > **Purpose:** Distilled wisdom, patterns, preferences, and operational notes.
 > **Security:** **ONLY loaded in main session** (direct chats with Matt). Never in shared contexts.
-> **Last Updated:** 2026-03-23 04:15 SGT
+> **Last Updated:** 2026-03-27 09:32 SGT
 > **External Channel:** Telegram only (WhatsApp permanently disabled)
 > **TODO List:** `/home/pete/.openclaw/workspace/TODO.md` (daily review, KIV items)
 
@@ -484,6 +484,28 @@ PYTHONPATH=/home/pete/.openclaw/workspace python3 orchestrator/examples/basic_us
 | `geo-fundamentals` | Generative Engine Optimization for AI search (ChatGPT, Claude, Perplexity) | Read, Glob, Grep |
 | `i18n-localization` | Internationalization — hardcoded strings, translations, RTL | Read, Glob, Grep |
 | `problem-solving` | Multi-faceted problem solving toolkit | Multiple sub-tools |
+
+---
+
+## Skills Addition
+
+**Location:** `/home/pete/.openclaw/workspace/agent-kit/`
+
+**Documents:**
+- `SKILLS_SECURITY_AUDIT_REPORT.md` — Full audit of 37 skills, TrustSkill v3.0 deep scan
+- `SKILL_SCANNING_HANDBOOK.md` — Step-by-step procedure for skill security auditing
+- `skills/README.md` — Skills index organized by domain (5 categories, 37 skills)
+
+**Skill Categories (5 domains):**
+1. Intelligence & Orchestration (7 skills): app-builder, behavioral-modes, brainstorming, intelligent-routing, parallel-agents, plan-writing, mcp-builder
+2. Architecture & Development (9 skills): architecture, clean-code, database-design, api-patterns, python-patterns, rust-pro, nodejs-best-practices, nextjs-react-expert, game-development
+3. Frontend & Design (7 skills): frontend-design, mobile-design, tailwind-patterns, web-design-guidelines, seo-fundamentals, i18n-localization, geo-fundamentals
+4. Engineering Standards & QA (8 skills): tdd-workflow, testing-patterns, webapp-testing, lint-and-validate, code-review-checklist, systematic-debugging, performance-profiling, doc-templates
+5. Operations & Security (6 skills): vulnerability-scanner, red-team-tactics, server-management, deployment-procedures, bash-linux, powershell-windows
+
+**Manual Validation Protocol (from Handbook):**
+- Case A (Safe): Finding in `.md`, `.txt`, or checklists — recommendation, placeholder, code example in markdown block, or public URL
+- Case B (Risk): Finding in `.py`, `.js`, `.sh`, `.go` — variable into sink, hardcoded secrets, network uploads of system files
 
 ---
 
