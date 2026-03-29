@@ -1,0 +1,109 @@
+{
+  "providers": {
+    "nvidia": {
+      "baseUrl": "https://integrate.api.nvidia.com/v1",
+      "apiKey": "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",
+      "api": "openai-completions",
+      "models": [
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "name": "Kimi K2.5",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "contextWindow": 256000,
+          "maxTokens": 65535,
+          "api": "openai-completions"
+        }
+      ]
+    },
+    "moonshot": {
+      "baseUrl": "https://api.moonshot.ai/v1",
+      "api": "openai-completions",
+      "models": [
+        {
+          "id": "kimi-k2.5",
+          "name": "Kimi K2.5",
+          "reasoning": false,
+          "input": [
+            "text",
+            "image"
+          ],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "contextWindow": 256000,
+          "maxTokens": 8192
+        }
+      ],
+      "apiKey": "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"
+    },
+    "openrouter": {
+      "baseUrl": "https://openrouter.ai/api/v1",
+      "api": "openai-completions",
+      "models": [
+        {
+          "id": "auto",
+          "name": "OpenRouter Auto",
+          "reasoning": false,
+          "input": [
+            "text",
+            "image"
+          ],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "contextWindow": 200000,
+          "maxTokens": 8192
+        },
+        {
+          "id": "openrouter/hunter-alpha",
+          "name": "Hunter Alpha",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "contextWindow": 1048576,
+          "maxTokens": 65536
+        },
+        {
+          "id": "openrouter/healer-alpha",
+          "name": "Healer Alpha",
+          "reasoning": true,
+          "input": [
+            "text",
+            "image"
+          ],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "contextWindow": 262144,
+          "maxTokens": 65536
+        }
+      ],
+      "apiKey": "OPENROUTER_API_KEY"
+    }
+  }
+}

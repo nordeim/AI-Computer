@@ -1,0 +1,231 @@
+{
+  "meta": {
+    "lastTouchedVersion": "2026.3.24",
+    "lastTouchedAt": "2026-03-25T22:32:27.756Z"
+  },
+  "env": {
+    "OPENROUTER_API_KEY": "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"
+  },
+  "wizard": {
+    "lastRunAt": "2026-03-25T22:32:27.692Z",
+    "lastRunVersion": "2026.3.24",
+    "lastRunCommand": "configure",
+    "lastRunMode": "local"
+  },
+  "auth": {
+    "profiles": {
+      "nvidia:default": {
+        "provider": "nvidia",
+        "mode": "api_key"
+      },
+      "openrouter:default": {
+        "provider": "openrouter",
+        "mode": "api_key"
+      }
+    }
+  },
+  "models": {
+    "mode": "merge",
+    "providers": {
+      "nvidia": {
+        "baseUrl": "https://integrate.api.nvidia.com/v1",
+        "apiKey": "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",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "moonshotai/kimi-k2.5",
+            "name": "Kimi K2.5",
+            "reasoning": true,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 256000,
+            "maxTokens": 65535
+          }
+        ]
+      },
+      "openrouter": {
+        "baseUrl": "https://openrouter.ai/api/v1",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "nvidia/nemotron-3-super-120b-a12b:free",
+            "name": "Nemotron 3 Super 120B",
+            "cost": {
+              "input": 0,
+              "output": 0
+            },
+            "contextWindow": 4096,
+            "maxTokens": 1024
+          },
+          {
+            "id": "stepfun/step-3.5-flash:free",
+            "name": "Step 3.5 Flash",
+            "cost": {
+              "input": 0,
+              "output": 0
+            },
+            "contextWindow": 4096,
+            "maxTokens": 1024
+          }
+        ]
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "nvidia/moonshotai/kimi-k2.5",
+        "fallbacks": [
+          "nvidia/z-ai/glm5",
+          "openrouter/nvidia/nemotron-3-super-120b-a12b:free",
+          "openrouter/stepfun/step-3.5-flash:free"
+        ]
+      },
+      "models": {
+        "nvidia/moonshotai/kimi-k2.5": {},
+        "nvidia/z-ai/glm5": {},
+        "openrouter/openrouter/hunter-alpha": {},
+        "openrouter/nvidia/nemotron-3-super-120b-a12b:free": {}
+      },
+      "workspace": "/home/pete/.openclaw/workspace",
+      "compaction": {
+        "mode": "safeguard"
+      },
+      "maxConcurrent": 4,
+      "subagents": {
+        "maxConcurrent": 8
+      }
+    }
+  },
+  "tools": {
+    "web": {
+      "search": {
+        "enabled": true
+      },
+      "fetch": {
+        "enabled": true
+      }
+    }
+  },
+  "messages": {
+    "ackReactionScope": "group-mentions"
+  },
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto",
+    "restart": true,
+    "ownerDisplay": "raw"
+  },
+  "session": {
+    "reset": {
+      "mode": "idle",
+      "idleMinutes": 10080
+    }
+  },
+  "hooks": {
+    "internal": {
+      "enabled": true,
+      "entries": {
+        "boot-md": {
+          "enabled": true
+        },
+        "command-logger": {
+          "enabled": true
+        },
+        "session-memory": {
+          "enabled": true
+        }
+      }
+    }
+  },
+  "channels": {
+    "whatsapp": {
+      "enabled": false,
+      "dmPolicy": "pairing",
+      "groupPolicy": "allowlist",
+      "debounceMs": 0,
+      "mediaMaxMb": 50
+    },
+    "telegram": {
+      "name": "Nordeim",
+      "enabled": true,
+      "dmPolicy": "pairing",
+      "botToken": "8303430088:AAFESeOqMd6luI_XTl2v9P98GZa08AzP2Y0",
+      "groupPolicy": "allowlist",
+      "streaming": "partial"
+    }
+  },
+  "gateway": {
+    "port": 18789,
+    "mode": "local",
+    "bind": "loopback",
+    "auth": {
+      "mode": "token",
+      "token": "286db1f825ee2661b3186dea33d3615edd8ef0a48eefd487"
+    },
+    "tailscale": {
+      "mode": "off",
+      "resetOnExit": false
+    }
+  },
+  "skills": {
+    "install": {
+      "nodeManager": "bun"
+    }
+  },
+  "plugins": {
+    "allow": [
+      "lossless-claw",
+      "telegram"
+    ],
+    "slots": {
+      "contextEngine": "lossless-claw"
+    },
+    "entries": {
+      "whatsapp": {
+        "enabled": false
+      },
+      "telegram": {
+        "enabled": true
+      },
+      "lossless-claw": {
+        "enabled": true,
+        "config": {
+          "freshTailCount": 32,
+          "contextThreshold": 0.75,
+          "incrementalMaxDepth": -1
+        }
+      },
+      "brave": {
+        "enabled": true,
+        "config": {
+          "webSearch": {
+            "apiKey": "BSAn0FK_6_goDKMfBFOVEMy80zyY7t4"
+          }
+        }
+      }
+    },
+    "installs": {
+      "lossless-claw": {
+        "source": "npm",
+        "spec": "@martian-engineering/lossless-claw",
+        "installPath": "/home/pete/.openclaw/extensions/lossless-claw",
+        "version": "0.3.0",
+        "resolvedName": "@martian-engineering/lossless-claw",
+        "resolvedVersion": "0.3.0",
+        "resolvedSpec": "@martian-engineering/lossless-claw@0.3.0",
+        "integrity": "sha512-SsY0bp3SoSzEu+KB8fOBke46MFhTmslfWg6OvC4pShq34ig2+V+jkTFAHib8PTZ0MoethAddR+ZmRN9OASorAA==",
+        "shasum": "bc9725d6d59d9b1523128ab528f1258c4258fa3f",
+        "resolvedAt": "2026-03-15T06:02:37.358Z",
+        "installedAt": "2026-03-15T06:03:52.345Z"
+      }
+    }
+  }
+}

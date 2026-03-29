@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "profiles": {
+    "opencode:default": {
+      "type": "api_key",
+      "provider": "opencode",
+      "key": "sk-zP8407rFK2yYtOnLyLYIXtlBaLwkuex8h6FNXFtIAhKo7s75xFlx0d46UreNvpID"
+    },
+    "openrouter:default": {
+      "type": "api_key",
+      "provider": "openrouter",
+      "key": "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"
+    },
+    "moonshot:default": {
+      "type": "api_key",
+      "provider": "moonshot",
+      "key": "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"
+    }
+  },
+  "lastGood": {
+    "opencode": "opencode:default",
+    "moonshot": "moonshot:default",
+    "openrouter": "openrouter:default"
+  },
+  "usageStats": {
+    "opencode:default": {
+      "lastUsed": 1770206714373,
+      "errorCount": 0,
+      "lastFailureAt": 1770206714365
+    },
+    "openrouter:default": {
+      "errorCount": 0,
+      "lastFailureAt": 1771001091143,
+      "lastUsed": 1773694666933
+    },
+    "moonshot:default": {
+      "lastUsed": 1770562940244,
+      "errorCount": 2,
+      "failureCounts": {
+        "model_not_found": 2
+      },
+      "lastFailureAt": 1771744270562,
+      "cooldownUntil": 1771744570562
+    }
+  }
+}
