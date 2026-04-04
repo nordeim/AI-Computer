@@ -10,7 +10,9 @@ description: |
 
 # Webapp Testing Journey
 
-Systematic methodology for testing web applications. Built from real-world QA testing of AI Academy (2026-03-24), enhanced with agent-browser v0.22.3 and chrome-devtools-mcp capabilities.
+Systematic methodology for testing web applications. Built from real-world QA testing of AI Academy (2026-03-24), enhanced with agent-browser v0.24.0, chrome-devtools-mcp v0.21.0, and @playwright/mcp.
+
+**Last Validated:** April 4, 2026
 
 ## Core Philosophy
 

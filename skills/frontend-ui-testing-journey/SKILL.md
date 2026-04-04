@@ -906,6 +906,8 @@ agent-browser screenshot --annotate /tmp/mobile.png
 ---
 
 **Skill Version:** 2.0.0  
-**Last Updated:** March 26, 2026  
-**Source:** AI Academy Project + agent-browser v0.22.3 + chrome-devtools-mcp  
+**Last Updated:** April 1, 2026  
+**Source:** AI Academy Project + agent-browser v0.24.0 + chrome-devtools-mcp v0.21.0 + @playwright/mcp
+
+**Last Validated:** April 4, 2026  
 **Status:** Production Ready ✅

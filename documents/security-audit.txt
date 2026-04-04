@@ -1,0 +1,72 @@
+$ openclaw security audit --fix
+
+🦞 OpenClaw 2026.3.31 (213a704) — Ah, the fruit tree company! 🍎
+
+OpenClaw security audit
+Summary: 1 critical · 4 warn · 1 info
+Run deeper: openclaw security audit --deep
+Fix: openclaw security audit --fix
+
+FIX
+  skip chmod 700 ~/.openclaw (already)
+  skip chmod 600 ~/.openclaw/openclaw.json (already)
+  skip chmod 700 ~/.openclaw/credentials (already)
+  skip chmod 600 ~/.openclaw/credentials/telegram-allowFrom.json (already)
+  skip chmod 600 ~/.openclaw/credentials/telegram-default-allowFrom.json (already)
+  skip chmod 600 ~/.openclaw/credentials/telegram-pairing.json (already)
+  skip chmod 700 ~/.openclaw/agents/main (already)
+  skip chmod 700 ~/.openclaw/agents/main/agent (already)
+  skip chmod 600 ~/.openclaw/agents/main/agent/auth-profiles.json (already)
+  chmod 700 ~/.openclaw/agents/main/sessions
+  skip chmod 600 ~/.openclaw/agents/main/sessions/sessions.json (already)
+  chmod 600 ~/.openclaw/agents/main/sessions/f951762a-dc82-4158-add8-dd14432af89a.jsonl
+
+CRITICAL
+models.small_params Small models require sandboxing and web tools disabled
+  Small models (<=300B params) detected:
+- openrouter/nvidia/nemotron-3-super-120b-a12b:free (120B) @ agents.defaults.model.fallbacks (unsafe; sandbox=off; web=[web_search, web_fetch, browser])
+Uncontrolled input tools allowed: web_search, web_fetch, browser.
+Small models are not recommended for untrusted inputs.
+  Fix: If you must use small models, enable sandboxing for all sessions (agents.defaults.sandbox.mode="all") and disable web_search/web_fetch/browser (tools.deny=["group:web","browser"]).
+
+WARN
+gateway.trusted_proxies_missing Reverse proxy headers are not trusted
+  gateway.bind is loopback and gateway.trustedProxies is empty. If you expose the Control UI through a reverse proxy, configure trusted proxies so local-client checks cannot be spoofed.
+  Fix: Set gateway.trustedProxies to your proxy IPs or keep the Control UI local-only.
+skills.workspace.symlink_escape Workspace skill files resolve outside the workspace root
+  Detected workspace `skills/**/SKILL.md` paths whose realpath escapes their workspace root:
+- workspace=/home/pete/.openclaw/workspace
+  skill=/home/pete/.openclaw/workspace/skills/aesthetic/SKILL.md
+  realpath=/home/pete/.claude/skills/aesthetic/SKILL.md
+- workspace=/home/pete/.openclaw/workspace
+  skill=/home/pete/.openclaw/workspace/skills/avant-garde-design-v4/SKILL.md
+  realpath=/home/pete/.claude/skills/avant-garde-design-v4/SKILL.md
+- workspace=/home/pete/.openclaw/workspace
+  skill=/home/pete/.openclaw/workspace/skills/code-review/SKILL.md
+  realpath=/home/pete/.claude/skills/code-review/SKILL.md
+- workspace=/home/pete/.openclaw/workspace
+  skill=/home/pete/.openclaw/workspace/skills/nextjs-tailwind-v4-luxe/SKILL.md
+  realpath=/home/pete/.claude/skills/nextjs-tailwind-v4-luxe/SKILL.md
+- workspace=/home/pete/.openclaw/workspace
+  skill=/home/pete/.openclaw/workspace/skills/ui-styling/SKILL.md
+  realpath=/home/pete/.claude/skills/ui-styling/SKILL.md
+  Fix: Keep workspace skills inside the workspace root (replace symlinked escapes with real in-workspace files), or move trusted shared skills to managed/bundled skill locations.
+plugins.tools_reachable_permissive_policy Extension plugin tools may be reachable under permissive tool policy
+  Enabled extension plugins: lossless-claw.
+Permissive tool policy contexts:
+- default
+  Fix: Use restrictive profiles (`minimal`/`coding`) or explicit tool allowlists that exclude plugin tools for agents handling untrusted input.
+plugins.installs_unpinned_npm_specs Plugin installs include unpinned npm specs
+  Unpinned plugin install records:
+- lossless-claw (@martian-engineering/lossless-claw)
+  Fix: Pin install specs to exact versions (for example, `@scope/pkg@1.2.3`) for higher supply-chain stability.
+
+INFO
+summary.attack_surface Attack surface summary
+  groups: open=0, allowlist=2
+tools.elevated: enabled
+hooks.webhooks: disabled
+hooks.internal: enabled
+browser control: enabled
+trust model: personal assistant (one trusted operator boundary), not hostile multi-tenant on one shared gateway
+
