@@ -3,7 +3,7 @@
 Comprehensive guide to all browser automation capabilities on this system.
 
 Covers:
-- `agent-browser` v0.24.0 (standalone CLI)
+- `agent-browser` v0.25.1 (standalone CLI)
 - OpenClaw built-in `browser` tool
 - chrome-devtools-mcp v0.21.0
 - @playwright/mcp (new addition)
@@ -21,7 +21,7 @@ Covers:
 
 ---
 
-## agent-browser v0.24.0
+## agent-browser v0.25.1
 
 **Standalone CLI tool** with managed Chrome instance.
 
@@ -56,10 +56,11 @@ agent-browser get title / url / text @ref
 agent-browser close                 # Stop daemon
 ```
 
-### Batch & Advanced Features (v0.24.0 validated)
+### Batch & Advanced Features (v0.25.1 validated)
 ```bash
 # Batch execution
 agent-browser batch < commands.json
+agent-browser batch --bail "cmd1" "cmd2" "cmd3"  # Stop on first error
 
 # Diff/comparison
 agent-browser diff snapshot
@@ -73,13 +74,73 @@ agent-browser record stop
 # Auth vault
 agent-browser auth save <name>
 agent-browser auth login <name>
+agent-browser auth list
+agent-browser auth delete <name>
 
 # WebSocket streaming
 agent-browser stream enable --port 8080
+agent-browser stream status
+agent-browser stream disable
 
 # Clipboard
 agent-browser clipboard read
+agent-browser clipboard write "text"
 agent-browser clipboard paste
+```
+
+### Debug & Profiling (v0.25.1 NEW)
+```bash
+# Chrome DevTools profiler
+agent-browser profiler start
+agent-browser profiler stop /tmp/profile.json
+
+# Chrome DevTools trace
+agent-browser trace start
+agent-browser trace stop /tmp/trace.json
+
+# Console & errors
+agent-browser console
+agent-browser console --clear
+agent-browser errors
+agent-browser errors --clear
+
+# Debug helpers
+agent-browser highlight @e3
+agent-browser inspect  # Open Chrome DevTools
+
+# HAR capture (network)
+agent-browser network har start
+agent-browser network har stop /tmp/requests.har
+
+# Storage
+agent-browser storage local
+agent-browser storage session
+```
+
+### AI & Dashboard (v0.25.1 NEW)
+```bash
+# AI natural language commands
+agent-browser chat "open google.com and search for cats"
+agent-browser chat  # Interactive REPL mode (requires AI_GATEWAY_API_KEY)
+
+# Observability dashboard
+agent-browser dashboard start           # Default port 4848
+agent-browser dashboard start --port 8080
+agent-browser dashboard stop
+
+# Session management
+agent-browser session
+agent-browser session list
+```
+
+### Confirmation Workflow (v0.25.1 NEW)
+```bash
+# Action confirmation (for sensitive operations)
+agent-browser --confirm-actions "navigation,form" open https://example.com
+
+# Pending actions require explicit approval
+agent-browser confirm <action-id>
+agent-browser deny <action-id>
 ```
 
 ### Semantic Locators
@@ -289,4 +350,106 @@ agent-browser diff screenshot --baseline /tmp/baseline.png
 ### Pattern 2: Performance Audit
 ```bash
 # chrome-devtools-mcp approach
-mcporter call chrome-devtools.navigate_page url
+mcporter call chrome-devtools.navigate_page url=https://example.com
+mcporter call chrome-devtools.performance_start_trace
+# ... interact with page ...
+mcporter call chrome-devtools.performance_stop_trace
+mcporter call chrome-devtools.analyze_insight
+```
+
+### Pattern 3: Debug & Profiling (agent-browser v0.25.1)
+```bash
+# Profile page interactions
+agent-browser open https://example.com
+agent-browser profiler start
+agent-browser fill @e1 "search term"
+agent-browser click @e2
+agent-browser profiler stop /tmp/profile.json
+
+# Capture network traffic
+agent-browser network har start
+agent-browser click @e3
+agent-browser network har stop /tmp/network.har
+
+# Debug JS errors
+agent-browser errors
+agent-browser console
+```
+
+---
+
+## Gotchas & Pitfalls
+
+### agent-browser
+- **Daemon persists** - `close` only stops browser, daemon keeps running
+- **Refs change** - Snapshot refs invalidate after DOM changes
+- **No sandbox** - Required on Ubuntu AppArmor, not security issue for local use
+- **Profile path** - Default Chrome stored in `~/.agent-browser/browsers/`
+
+### OpenClaw browser
+- **Port conflict** - Default 18800 may conflict if another Chrome CDP running
+- **Profile=user** - Requires manual `DevToolsActivePort` setup
+- **No chrome://** - Cannot navigate to internal Chrome URLs
+
+### General
+- **Race conditions** - Add waits between actions if page is slow
+- **Dynamic content** - Re-snapshot after AJAX loads
+- **Mobile emulation** - Some CSS may differ from real device
+
+---
+
+## Diagnostic Commands
+
+```bash
+# Check if agent-browser daemon is running
+pgrep -f "agent-browser" || echo "daemon not running"
+
+# Check Chrome processes
+ps aux | grep chrome | grep -v grep
+
+# Check listening ports
+ss -tlnp | grep chrome
+
+# Check CDP endpoint
+curl -s http://127.0.0.1:18800/json/version  # OpenClaw Chrome
+curl -s http://127.0.0.1:9222/json/version   # User Chrome (if running)
+
+# Check DevToolsActivePort
+cat ~/.config/google-chrome/DevToolsActivePort
+
+# Restart agent-browser daemon
+agent-browser close
+agent-browser open https://example.com
+```
+
+---
+
+## E2E Testing Pattern (Hybrid API + UI)
+
+For automated testing, don't rely on browser auth. Use the hybrid pattern:
+
+```python
+# 1. Authenticate via API (not browser)
+tokens = await api_login()
+
+# 2. Create test data via API
+headers = {"Authorization": f"Bearer {tokens['access']}"}
+await api_post("/invoices/", data, headers)
+
+# 3. Use browser only for visual verification
+agent-browser open http://localhost:3000/dashboard
+agent-browser screenshot /tmp/dashboard.png
+```
+
+**Why:** HttpOnly cookies and JWT tokens in JS memory break browser automation. API auth is reliable.
+
+---
+
+## Skill Metadata
+
+- **Created:** 2026-03-14
+- **Last updated:** 2026-04-08
+- **agent-browser:** v0.25.1 / Chrome 147
+- **OpenClaw browser:** Chrome 144 / port 18800
+- **chrome-devtools-mcp:** v0.21.0 / Chrome 147 headless
+- **System:** Ubuntu (KDE neon), AppArmor active

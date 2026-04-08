@@ -44,6 +44,10 @@ This skill documents the complete frontend UI testing methodology. It covers rea
 | Mobile emulation | `agent-browser set device` | Device profiles |
 | Form filling | `agent-browser fill @ref` | Ref-based interaction |
 | React state debugging | `agent-browser eval` | Direct JS execution |
+| **Profiler traces** | `agent-browser profiler` | Chrome DevTools CPU profiling |
+| **Network HAR** | `agent-browser network har` | HTTP archive capture |
+| **Console/errors** | `agent-browser console/errors` | JS error tracking |
+| **Visual highlights** | `agent-browser highlight` | Element debugging |
 
 ---
 
@@ -907,7 +911,7 @@ agent-browser screenshot --annotate /tmp/mobile.png
 
 **Skill Version:** 2.0.0  
 **Last Updated:** April 1, 2026  
-**Source:** AI Academy Project + agent-browser v0.24.0 + chrome-devtools-mcp v0.21.0 + @playwright/mcp
+**Source:** AI Academy Project + agent-browser v0.25.1 + chrome-devtools-mcp v0.21.0 + @playwright/mcp
 
 **Last Validated:** April 4, 2026  
 **Status:** Production Ready ✅

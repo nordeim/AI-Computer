@@ -24,7 +24,7 @@ Google-official MCP server providing full Chrome DevTools Protocol access to AI 
 
 | Component | Version | Notes |
 |-----------|---------|-------|
-| chrome-devtools-mcp | 0.20.3 | CLI wrapper |
+| chrome-devtools-mcp | 0.21.0 | CLI wrapper |
 | Chrome (headless) | 147.0.7727.24 | Updated Mar 26 2026 |
 | Transport | mcporter stdio | — |
 
@@ -460,7 +460,7 @@ mcporter config add chrome-devtools --command chrome-devtools-mcp \
 
 | Component | Before | After |
 |-----------|--------|-------|
-| chrome-devtools-mcp | 0.20.3 | 0.20.3 (unchanged) |
+| chrome-devtools-mcp | 0.21.0 | 0.20.3 (unchanged) |
 | Chrome headless | 146.x | **147.0.7727.24** |
 
 ### All 29 Tools Verified
@@ -485,4 +485,4 @@ mcporter config add chrome-devtools --command chrome-devtools-mcp \
 
 ---
 
-*Skill created: 2026-03-16 | Last validated: 2026-03-26 | chrome-devtools-mcp v0.20.3 with Chrome 147.0.7727.24 headless*
+*Skill created: 2026-03-16 | Last validated: 2026-04-08 | chrome-devtools-mcp v0.21.0 with Chrome 147.0.7727.24 headless*
