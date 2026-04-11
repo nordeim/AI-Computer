@@ -10,9 +10,9 @@ description: |
 
 # Webapp Testing Journey
 
-Systematic methodology for testing web applications. Built from real-world QA testing of AI Academy (2026-03-24), enhanced with agent-browser v0.25.1, chrome-devtools-mcp v0.21.0, and @playwright/mcp.
+Systematic methodology for testing web applications. Built from real-world QA testing of AI Academy (2026-03-24), enhanced with agent-browser v0.25.3, chrome-devtools-mcp v0.21.0, and @playwright/mcp.
 
-**Last Validated:** April 8, 2026
+**Last Validated:** April 11, 2026
 
 ## Core Philosophy
 
@@ -89,23 +89,23 @@ agent-browser fill @e3 "text"
 agent-browser press Enter
 agent-browser eval "document.title"
 
-# NEW v0.25.1: Annotated Screenshots
+# NEW v0.25.3: Annotated Screenshots
 agent-browser screenshot --annotate /tmp/proof.png
 
-# NEW v0.25.1: Video Recording
+# NEW v0.25.3: Video Recording
 agent-browser record start /tmp/test.webm
 agent-browser record stop
 
-# NEW v0.25.1: Visual Diff
+# NEW v0.25.3: Visual Diff
 agent-browser diff snapshot              # Current vs last
 agent-browser diff screenshot --baseline # Current vs baseline
 agent-browser diff url <url1> <url2>     # Side-by-side pages
 
-# NEW v0.25.1: Auth Testing
+# NEW v0.25.3: Auth Testing
 agent-browser auth save myapp --url https://app.com --username test@example.com
 agent-browser auth login myapp
 
-# NEW v0.25.1: Debug & Profiling
+# NEW v0.25.3: Debug & Profiling
 agent-browser profiler start
 agent-browser profiler stop /tmp/profile.json
 agent-browser trace start
@@ -114,11 +114,11 @@ agent-browser console --clear
 agent-browser errors --clear
 agent-browser highlight @e3
 
-# NEW v0.25.1: Network HAR Capture
+# NEW v0.25.3: Network HAR Capture
 agent-browser network har start
 agent-browser network har stop /tmp/requests.har
 
-# NEW v0.25.1: AI Natural Language
+# NEW v0.25.3: AI Natural Language
 agent-browser chat "open example.com and click the login button"
 
 # NEW: Batch Testing

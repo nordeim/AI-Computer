@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document provides a comprehensive taxonomy of mobile navigation failures and testing patterns, enhanced with agent-browser v0.22.3 and chrome-devtools-mcp capabilities.
+This document provides a comprehensive taxonomy of mobile navigation failures and testing patterns, enhanced with agent-browser v0.25.3 and chrome-devtools-mcp capabilities.
 
 ---
 
@@ -669,5 +669,5 @@ agent-browser eval 'getComputedStyle(document.querySelector(".scroll-container")
 
 **Reference Version:** 2.0.0  
 **Last Updated:** March 26, 2026  
-**Source:** AI Academy Project + agent-browser v0.22.3 + chrome-devtools-mcp  
+**Source:** AI Academy Project + agent-browser v0.25.3 + chrome-devtools-mcp  
 **Status:** Production Ready ✅

@@ -1,6 +1,6 @@
 $ openclaw doctor --fix
 
-🦞 OpenClaw 2026.4.1 (da64a97) — Alexa, but with taste.
+🦞 OpenClaw 2026.4.10 (44e5b62) — Type the command with confidence—nature will provide the stack trace if needed.
 
 ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 ██░▄▄▄░██░▄▄░██░▄▄▄██░▀██░██░▄▄▀██░████░▄▄▀██░███░██
@@ -25,17 +25,29 @@ $ openclaw doctor --fix
 │                                                                                            │
 ├────────────────────────────────────────────────────────────────────────────────────────────╯
 │
+◇  State integrity ─────────────────────────────────────────────────────────────────────╮
+│                                                                                       │
+│  - 1/5 recent sessions are missing transcripts.                                       │
+│    Verify sessions in store: openclaw sessions --store                                │
+│    "/home/pete/.openclaw/agents/main/sessions/sessions.json"                          │
+│    Preview cleanup impact: openclaw sessions cleanup --store                          │
+│    "/home/pete/.openclaw/agents/main/sessions/sessions.json" --dry-run                │
+│    Prune missing entries: openclaw sessions cleanup --store                           │
+│    "/home/pete/.openclaw/agents/main/sessions/sessions.json" --enforce --fix-missing  │
+│                                                                                       │
+├───────────────────────────────────────────────────────────────────────────────────────╯
+│
 ◇  Security ─────────────────────────────────╮
 │                                            │
 │  - No channel security warnings detected.  │
 │  - Run: openclaw security audit --deep     │
 │                                            │
 ├────────────────────────────────────────────╯
-01:46:57+08:00 [skills] Skipping skill path that resolves outside its configured root.
-01:46:57+08:00 [skills] Skipping skill path that resolves outside its configured root.
-01:46:57+08:00 [skills] Skipping skill path that resolves outside its configured root.
-01:46:57+08:00 [skills] Skipping skill path that resolves outside its configured root.
-01:46:57+08:00 [skills] Skipping skill path that resolves outside its configured root.
+19:40:04+08:00 [skills] Skipping skill path that resolves outside its configured root.
+19:40:04+08:00 [skills] Skipping skill path that resolves outside its configured root.
+19:40:04+08:00 [skills] Skipping skill path that resolves outside its configured root.
+19:40:04+08:00 [skills] Skipping skill path that resolves outside its configured root.
+19:40:04+08:00 [skills] Skipping skill path that resolves outside its configured root.
 │
 ◇  Skills status ────────────╮
 │                            │
@@ -44,12 +56,13 @@ $ openclaw doctor --fix
 │  Blocked by allowlist: 0   │
 │                            │
 ├────────────────────────────╯
-01:46:58+08:00 [plugins] [lcm] Plugin loaded (enabled=true, db=/home/pete/.openclaw/lcm.db, threshold=0.75)
+19:40:07+08:00 [plugins] [lcm] Plugin loaded (enabled=true, db=/home/pete/.openclaw/lcm.db, threshold=0.75)
 │
 ◇  Plugins ──────╮
 │                │
-│  Loaded: 40    │
-│  Disabled: 46  │
+│  Loaded: 48    │
+│  Imported: 49  │
+│  Disabled: 52  │
 │  Errors: 0     │
 │                │
 ├────────────────╯
@@ -66,13 +79,16 @@ $ openclaw doctor --fix
 ├────────────────────────────────────────────────────────────────────────╯
 │
 ◇  
-Telegram: ok (@Nordeim_bot) (1068ms)
+Telegram: ok (@Nordeim_bot) (331ms)
 Agents: main (default)
 Heartbeat interval: 30m (main)
-Session store (main): /home/pete/.openclaw/agents/main/sessions/sessions.json (3 entries)
-- agent:main:main (39m ago)
-- agent:main:cron:10a19bb7-7afb-4b24-8478-62555b540c2d (1081m ago)
-- agent:main:cron:10a19bb7-7afb-4b24-8478-62555b540c2d:run:92326eee-e4f4-4fe6-88cf-9b2b24e537e8 (1127m ago)
+Session store (main): /home/pete/.openclaw/agents/main/sessions/sessions.json (9 entries)
+- agent:main:main (30m ago)
+- agent:main:tui-77161787-2778-4f89-af27-a031a9c7c21d (558m ago)
+- agent:main:cron:96581978-d878-4527-8afb-e74fcefebdc4 (760m ago)
+- agent:main:cron:96581978-d878-4527-8afb-e74fcefebdc4:run:8a32be35-579b-42a4-902b-39cd918ed478 (760m ago)
+- agent:main:cron:10a19bb7-7afb-4b24-8478-62555b540c2d (760m ago)
+19:40:09+08:00 [plugins] [lcm] Plugin loaded (enabled=true, db=/home/pete/.openclaw/lcm.db, threshold=0.75)
 │
 ◇  Memory search ────────────────────────────────────────────────────────────────────────────╮
 │                                                                                            │
@@ -111,4 +127,30 @@ Session store (main): /home/pete/.openclaw/agents/main/sessions/sessions.json (3
 ├────────────────────────────────────────────────────────────────────────────────────────────╯
 │
 └  Doctor complete.
+
+$ openclaw sessions cleanup --store "/home/pete/.openclaw/agents/main/sessions/sessions.json" --enforce --fix-missing 
+
+🦞 OpenClaw 2026.4.10 (44e5b62) — Welcome to the command line: where dreams compile and confidence segfaults.
+
+Session store: /home/pete/.openclaw/agents/main/sessions/sessions.json
+Applied maintenance. Current entries: 7
+19:42:59+08:00 [plugins] [lcm] Plugin loaded (enabled=true, db=/home/pete/.openclaw/lcm.db, threshold=0.75)
+19:43:00+08:00 [plugins] [lcm] Plugin loaded (enabled=true, db=/home/pete/.openclaw/lcm.db, threshold=0.75)
+(venv) pete@pop-os:~/.openclaw/workspace
+$ openclaw sessions --store "/home/pete/.openclaw/agents/main/sessions/sessions.json"
+
+🦞 OpenClaw 2026.4.10 (44e5b62) — I don't just autocomplete—I auto-commit (emotionally), then ask you to review (logically).
+
+Session store: /home/pete/.openclaw/agents/main/sessions/sessions.json
+Sessions listed: 7
+Kind   Key                        Age       Model          Tokens (ctx %)       Flags
+direct agent:main:main            4m ago    moonshotai/kimi-k2.5 32k/256k (13%)       system id:f951762a-dc82-4158-add8-dd14432af89a
+direct agent:main:tui-7...c7c21d  9h ago    moonshotai/kimi-k2.5 36k/256k (14%)       system id:5b58603c-f669-49c4-9606-ed94b7ce9441
+direct agent:main:cron:...febdc4  13h ago   moonshotai/kimi-k2.5 36k/256k (14%)       system id:8a32be35-579b-42a4-902b-39cd918ed478
+direct agent:main:cron:...8ed478  13h ago   moonshotai/kimi-k2.5 36k/256k (14%)       system id:8a32be35-579b-42a4-902b-39cd918ed478
+direct agent:main:tui-a...e7f906  4d ago    z-ai/glm5      58k/200k (29%)       system id:847de13e-06e4-4d58-9dca-c121ca3e8dcb
+direct agent:main:tui-1...0f32c4  6d ago    z-ai/glm5      31k/200k (16%)       system id:804f35d4-b71f-43b3-934e-b48c64b8197a
+direct agent:main:tui-2...6f237f  7d ago    z-ai/glm5      44k/256k (17%)       system id:81bb7229-d14f-4aab-813c-c3459bbf6266
+19:43:58+08:00 [plugins] [lcm] Plugin loaded (enabled=true, db=/home/pete/.openclaw/lcm.db, threshold=0.75)
+19:43:59+08:00 [plugins] [lcm] Plugin loaded (enabled=true, db=/home/pete/.openclaw/lcm.db, threshold=0.75)
 
