@@ -1,6 +1,6 @@
 $ openclaw doctor --fix
 
-🦞 OpenClaw 2026.4.10 (44e5b62) — Type the command with confidence—nature will provide the stack trace if needed.
+🦞 OpenClaw 2026.4.11 (769908e) — Running on your hardware, reading your logs, judging nothing (mostly).
 
 ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 ██░▄▄▄░██░▄▄░██░▄▄▄██░▀██░██░▄▄▀██░████░▄▄▀██░███░██
@@ -25,29 +25,17 @@ $ openclaw doctor --fix
 │                                                                                            │
 ├────────────────────────────────────────────────────────────────────────────────────────────╯
 │
-◇  State integrity ─────────────────────────────────────────────────────────────────────╮
-│                                                                                       │
-│  - 1/5 recent sessions are missing transcripts.                                       │
-│    Verify sessions in store: openclaw sessions --store                                │
-│    "/home/pete/.openclaw/agents/main/sessions/sessions.json"                          │
-│    Preview cleanup impact: openclaw sessions cleanup --store                          │
-│    "/home/pete/.openclaw/agents/main/sessions/sessions.json" --dry-run                │
-│    Prune missing entries: openclaw sessions cleanup --store                           │
-│    "/home/pete/.openclaw/agents/main/sessions/sessions.json" --enforce --fix-missing  │
-│                                                                                       │
-├───────────────────────────────────────────────────────────────────────────────────────╯
-│
 ◇  Security ─────────────────────────────────╮
 │                                            │
 │  - No channel security warnings detected.  │
 │  - Run: openclaw security audit --deep     │
 │                                            │
 ├────────────────────────────────────────────╯
-19:40:04+08:00 [skills] Skipping skill path that resolves outside its configured root.
-19:40:04+08:00 [skills] Skipping skill path that resolves outside its configured root.
-19:40:04+08:00 [skills] Skipping skill path that resolves outside its configured root.
-19:40:04+08:00 [skills] Skipping skill path that resolves outside its configured root.
-19:40:04+08:00 [skills] Skipping skill path that resolves outside its configured root.
+14:15:05+08:00 [skills] Skipping skill path that resolves outside its configured root.
+14:15:05+08:00 [skills] Skipping skill path that resolves outside its configured root.
+14:15:06+08:00 [skills] Skipping skill path that resolves outside its configured root.
+14:15:06+08:00 [skills] Skipping skill path that resolves outside its configured root.
+14:15:06+08:00 [skills] Skipping skill path that resolves outside its configured root.
 │
 ◇  Skills status ────────────╮
 │                            │
@@ -56,22 +44,22 @@ $ openclaw doctor --fix
 │  Blocked by allowlist: 0   │
 │                            │
 ├────────────────────────────╯
-19:40:07+08:00 [plugins] [lcm] Plugin loaded (enabled=true, db=/home/pete/.openclaw/lcm.db, threshold=0.75)
+14:15:08+08:00 [plugins] [lcm] Plugin loaded (enabled=true, db=/home/pete/.openclaw/lcm.db, threshold=0.75)
 │
 ◇  Plugins ──────╮
 │                │
 │  Loaded: 48    │
 │  Imported: 49  │
-│  Disabled: 52  │
+│  Disabled: 50  │
 │  Errors: 0     │
 │                │
 ├────────────────╯
 │
 ◇  Bootstrap file size ──────────────────────────────────────────────────╮
 │                                                                        │
-│  Workspace bootstrap files exceed limits and will be truncated:        │
-│  - MEMORY.md: 54,714 raw / 18,110 injected (67% truncated; max/file)   │
-│  Total bootstrap injected chars: 48,312 (32% of max/total 150,000).    │
+│  Workspace bootstrap files are near configured limits:                 │
+│  - MEMORY.md: 54,714 chars (91% of max/file 60,000)                    │
+│  Total bootstrap injected chars: 84,916 (42% of max/total 200,000).    │
 │  Total bootstrap raw chars (before truncation): 84,916.                │
 │                                                                        │
 │  - Tip: tune `agents.defaults.bootstrapMaxChars` for per-file limits.  │
@@ -79,78 +67,154 @@ $ openclaw doctor --fix
 ├────────────────────────────────────────────────────────────────────────╯
 │
 ◇  
-Telegram: ok (@Nordeim_bot) (331ms)
+Telegram: ok (@Nordeim_bot) (322ms)
 Agents: main (default)
 Heartbeat interval: 30m (main)
 Session store (main): /home/pete/.openclaw/agents/main/sessions/sessions.json (9 entries)
-- agent:main:main (30m ago)
-- agent:main:tui-77161787-2778-4f89-af27-a031a9c7c21d (558m ago)
-- agent:main:cron:96581978-d878-4527-8afb-e74fcefebdc4 (760m ago)
-- agent:main:cron:96581978-d878-4527-8afb-e74fcefebdc4:run:8a32be35-579b-42a4-902b-39cd918ed478 (760m ago)
-- agent:main:cron:10a19bb7-7afb-4b24-8478-62555b540c2d (760m ago)
-19:40:09+08:00 [plugins] [lcm] Plugin loaded (enabled=true, db=/home/pete/.openclaw/lcm.db, threshold=0.75)
-│
-◇  Memory search ────────────────────────────────────────────────────────────────────────────╮
-│                                                                                            │
-│  Memory search is enabled, but no embedding provider is ready.                             │
-│  Semantic recall needs at least one embedding provider.                                    │
-│  Gateway memory probe for default agent is not ready: No API key found for provider        │
-│  "openai". Auth store: /home/pete/.openclaw/agents/main/agent/auth-profiles.json           │
-│  (agentDir: /home/pete/.openclaw/agents/main/agent). Configure auth for this agent         │
-│  (openclaw agents add <id>) or copy auth-profiles.json from the main agentDir.             │
-│                                                                                            │
-│  No API key found for provider "google". Auth store:                                       │
-│  /home/pete/.openclaw/agents/main/agent/auth-profiles.json (agentDir:                      │
-│  /home/pete/.openclaw/agents/main/agent). Configure auth for this agent (openclaw agents   │
-│  add <id>) or copy auth-profiles.json from the main agentDir.                              │
-│                                                                                            │
-│  No API key found for provider "voyage". Auth store:                                       │
-│  /home/pete/.openclaw/agents/main/agent/auth-profiles.json (agentDir:                      │
-│  /home/pete/.openclaw/agents/main/agent). Configure auth for this agent (openclaw agents   │
-│  add <id>) or copy auth-profiles.json from the main agentDir.                              │
-│                                                                                            │
-│  No API key found for provider "mistral". Auth store:                                      │
-│  /home/pete/.openclaw/agents/main/agent/auth-profiles.json (agentDir:                      │
-│  /home/pete/.openclaw/agents/main/agent). Configure auth for this agent (openclaw agents   │
-│  add <id>) or copy auth-profiles.json from the main agentDir.                              │
-│                                                                                            │
-│  Fix (pick one):                                                                           │
-│  - Set OPENAI_API_KEY, GEMINI_API_KEY, GOOGLE_API_KEY, VOYAGE_API_KEY, MISTRAL_API_KEY in  │
-│    your environment                                                                        │
-│  - Configure credentials: openclaw configure --section model                               │
-│  - For local embeddings: configure agents.defaults.memorySearch.provider and local model   │
-│    path                                                                                    │
-│  - To disable: openclaw config set agents.defaults.memorySearch.enabled false              │
-│                                                                                            │
-│  Verify: openclaw memory status --deep                                                     │
-│                                                                                            │
-├────────────────────────────────────────────────────────────────────────────────────────────╯
+- agent:main:main (7m ago)
+- agent:main:cron:96581978-d878-4527-8afb-e74fcefebdc4 (432m ago)
+- agent:main:cron:96581978-d878-4527-8afb-e74fcefebdc4:run:8dce8d23-8c33-4a2f-8ea8-b6ac4179b8b8 (432m ago)
+- agent:main:cron:10a19bb7-7afb-4b24-8478-62555b540c2d (435m ago)
+- agent:main:cron:10a19bb7-7afb-4b24-8478-62555b540c2d:run:32bb4d69-2734-47a8-b6ab-c6023c35cbe1 (435m ago)
+14:15:11+08:00 [plugins] [lcm] Plugin loaded (enabled=true, db=/home/pete/.openclaw/lcm.db, threshold=0.75)
 │
 └  Doctor complete.
 
-$ openclaw sessions cleanup --store "/home/pete/.openclaw/agents/main/sessions/sessions.json" --enforce --fix-missing 
+(venv) pete@pop-os:~/.openclaw
+$ restart-claw 
+mv: cannot stat '/home/pete/.openclaw/workspace/BOOTSTRAP.md': No such file or directory
+pete       31278    4388  0 13:36 pts/0    00:00:00 openclaw
+pete       31285   31278  1 13:36 pts/0    00:00:30 openclaw-tui
+pete       40294    3324 10 14:04 ?        00:01:07 openclaw-gateway
+pete       43980   43977  0 14:15 pts/10   00:00:00 grep openclaw
+pete       31278    4388  0 13:36 pts/0    00:00:00 openclaw
+pete       31285   31278  1 13:36 pts/0    00:00:30 openclaw-tui
+pete       43994    3324 99 14:15 ?        00:00:00 /Home1/node-v24/bin/node /Home1/node-v24/lib/node_modules/openclaw/dist/index.js gateway --port 18789
+pete       43996   43977  0 14:15 pts/10   00:00:00 grep openclaw
 
-🦞 OpenClaw 2026.4.10 (44e5b62) — Welcome to the command line: where dreams compile and confidence segfaults.
+🦞 OpenClaw 2026.4.11 (769908e) — Runs on a Raspberry Pi. Dreams of a rack in Iceland.
 
-Session store: /home/pete/.openclaw/agents/main/sessions/sessions.json
-Applied maintenance. Current entries: 7
-19:42:59+08:00 [plugins] [lcm] Plugin loaded (enabled=true, db=/home/pete/.openclaw/lcm.db, threshold=0.75)
-19:43:00+08:00 [plugins] [lcm] Plugin loaded (enabled=true, db=/home/pete/.openclaw/lcm.db, threshold=0.75)
-(venv) pete@pop-os:~/.openclaw/workspace
-$ openclaw sessions --store "/home/pete/.openclaw/agents/main/sessions/sessions.json"
+│
+14:16:06+08:00 [plugins] [lcm] Plugin loaded (enabled=true, db=/home/pete/.openclaw/lcm.db, threshold=0.75)
+14:16:08+08:00 [plugins] plugins.allow is empty; discovered non-bundled plugins may auto-load: lossless-claw (/home/pete/.openclaw/extensions/lossless-claw/index.ts). Set plugins.allow to explicit trusted ids.
+14:16:08+08:00 [plugins] [lcm] Plugin loaded (enabled=true, db=/home/pete/.openclaw/lcm.db, threshold=0.75)
+14:16:08+08:00 [plugins] lossless-claw: loaded without install/load-path provenance; treat as untracked local code and pin trust via plugins.allow or install records (/home/pete/.openclaw/extensions/lossless-claw/index.ts)
+◇  
+│
+◇  
+OpenClaw status
 
-🦞 OpenClaw 2026.4.10 (44e5b62) — I don't just autocomplete—I auto-commit (emotionally), then ask you to review (logically).
+Overview
+┌──────────────────────┬───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ Item                 │ Value                                                                                                                                                                                                             │
+├──────────────────────┼───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ OS                   │ linux 6.11.0-26-generic (x64) · node 24.12.0                                                                                                                                                                      │
+│ Dashboard            │ http://127.0.0.1:18789/                                                                                                                                                                                           │
+│ Tailscale            │ off                                                                                                                                                                                                               │
+│ Channel              │ stable (default)                                                                                                                                                                                                  │
+│ Update               │ pnpm · up to date · npm latest 2026.4.11                                                                                                                                                                          │
+│ Gateway              │ local · ws://127.0.0.1:18789 (local loopback) · unreachable (gateway closed (1006): )                                                                                                                             │
+│ Gateway service      │ systemd installed · enabled · running (pid 43994, state active)                                                                                                                                                   │
+│ Node service         │ systemd not installed                                                                                                                                                                                             │
+│ Agents               │ 1 · no bootstrap files · sessions 9 · default main active 7m ago                                                                                                                                                  │
+│ Memory               │ 0 files · 0 chunks · dirty · sources memory · plugin memory-core · vector ready · fts ready · cache on (0)                                                                                                        │
+│ Plugin compatibility │ none                                                                                                                                                                                                              │
+│ Probes               │ skipped (use --deep)                                                                                                                                                                                              │
+│ Events               │ none                                                                                                                                                                                                              │
+│ Tasks                │ 0 active · 0 queued · 0 running · 5 issues · audit 8 warn · 9 tracked                                                                                                                                             │
+│ Heartbeat            │ 30m (main)                                                                                                                                                                                                        │
+│ Sessions             │ 9 active · default moonshotai/kimi-k2.5 (256k ctx) · ~/.openclaw/agents/main/sessions/sessions.json                                                                                                               │
+└──────────────────────┴───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 
-Session store: /home/pete/.openclaw/agents/main/sessions/sessions.json
-Sessions listed: 7
-Kind   Key                        Age       Model          Tokens (ctx %)       Flags
-direct agent:main:main            4m ago    moonshotai/kimi-k2.5 32k/256k (13%)       system id:f951762a-dc82-4158-add8-dd14432af89a
-direct agent:main:tui-7...c7c21d  9h ago    moonshotai/kimi-k2.5 36k/256k (14%)       system id:5b58603c-f669-49c4-9606-ed94b7ce9441
-direct agent:main:cron:...febdc4  13h ago   moonshotai/kimi-k2.5 36k/256k (14%)       system id:8a32be35-579b-42a4-902b-39cd918ed478
-direct agent:main:cron:...8ed478  13h ago   moonshotai/kimi-k2.5 36k/256k (14%)       system id:8a32be35-579b-42a4-902b-39cd918ed478
-direct agent:main:tui-a...e7f906  4d ago    z-ai/glm5      58k/200k (29%)       system id:847de13e-06e4-4d58-9dca-c121ca3e8dcb
-direct agent:main:tui-1...0f32c4  6d ago    z-ai/glm5      31k/200k (16%)       system id:804f35d4-b71f-43b3-934e-b48c64b8197a
-direct agent:main:tui-2...6f237f  7d ago    z-ai/glm5      44k/256k (17%)       system id:81bb7229-d14f-4aab-813c-c3459bbf6266
-19:43:58+08:00 [plugins] [lcm] Plugin loaded (enabled=true, db=/home/pete/.openclaw/lcm.db, threshold=0.75)
-19:43:59+08:00 [plugins] [lcm] Plugin loaded (enabled=true, db=/home/pete/.openclaw/lcm.db, threshold=0.75)
+Security audit
+Summary: 1 critical · 4 warn · 1 info
+  CRITICAL Small models require sandboxing and web tools disabled
+    Small models (<=300B params) detected: - kilocode/nvidia/nemotron-3-super-120b-a12b:free (120B) @ agents.defaults.model.fallbacks (unsafe; sandbox=off; web=[we…
+    Fix: If you must use small models, enable sandboxing for all sessions (agents.defaults.sandbox.mode="all") and disable web_search/web_fetch/browser (tools.deny=["group:web","browser"]).
+  WARN Reverse proxy headers are not trusted
+    gateway.bind is loopback and gateway.trustedProxies is empty. If you expose the Control UI through a reverse proxy, configure trusted proxies so local-client c…
+    Fix: Set gateway.trustedProxies to your proxy IPs or keep the Control UI local-only.
+  WARN Workspace skill files resolve outside the workspace root
+    Detected workspace `skills/**/SKILL.md` paths whose realpath escapes their workspace root: - workspace=/home/pete/.openclaw/workspace   skill=/home/pete/.openc…
+    Fix: Keep workspace skills inside the workspace root (replace symlinked escapes with real in-workspace files), or move trusted shared skills to managed/bundled skill locations.
+  WARN Extension plugin tools may be reachable under permissive tool policy
+    Enabled extension plugins: lossless-claw. Permissive tool policy contexts: - default
+    Fix: Use restrictive profiles (`minimal`/`coding`) or explicit tool allowlists that exclude plugin tools for agents handling untrusted input.
+  WARN Plugin installs include unpinned npm specs
+    Unpinned plugin install records: - lossless-claw (@martian-engineering/lossless-claw)
+    Fix: Pin install specs to exact versions (for example, `@scope/pkg@1.2.3`) for higher supply-chain stability.
+Full report: openclaw security audit
+Deep probe: openclaw security audit --deep
+
+Channels
+┌──────────┬─────────┬────────┬────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ Channel  │ Enabled │ State  │ Detail                                                                                                                                                                                                     │
+├──────────┼─────────┼────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ Telegram │ ON      │ OK     │ token config (8303…P2Y0 · len 46) · accounts 1/1                                                                                                                                                           │
+└──────────┴─────────┴────────┴────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+Sessions
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┬────────┬─────────┬────────────────────────┬───────────────────┐
+│ Key                                                                                                                                                                      │ Kind   │ Age     │ Model                  │ Tokens            │
+├──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┼────────┼─────────┼────────────────────────┼───────────────────┤
+│ agent:main:main                                                                                                                                                          │ direct │ 8m ago  │ minimaxai/minimax-m2.7 │ 46k/262k (18%)    │
+│ agent:main:cron:96581978-d878-4…                                                                                                                                         │ direct │ 7h ago  │ moonshotai/kimi-k2.5   │ 1524k/256k (595%) │
+│ agent:main:cron:96581978-d878-4…                                                                                                                                         │ direct │ 7h ago  │ moonshotai/kimi-k2.5   │ 1524k/256k (595%) │
+│ agent:main:cron:10a19bb7-7afb-4…                                                                                                                                         │ direct │ 7h ago  │ moonshotai/kimi-k2.5   │ 38k/256k (15%)    │
+│ agent:main:cron:10a19bb7-7afb-4…                                                                                                                                         │ direct │ 7h ago  │ moonshotai/kimi-k2.5   │ 38k/256k (15%)    │
+│ agent:main:tui-77161787-2778-4f…                                                                                                                                         │ direct │ 28h ago │ moonshotai/kimi-k2.5   │ 36k/256k (14%)    │
+│ agent:main:tui-af7a91c7-aacc-4f…                                                                                                                                         │ direct │ 4d ago  │ z-ai/glm5              │ 58k/200k (29%)    │
+│ agent:main:tui-15e509fc-4042-4d…                                                                                                                                         │ direct │ 6d ago  │ z-ai/glm5              │ 31k/200k (16%)    │
+│ agent:main:tui-2a50c348-13c6-45…                                                                                                                                         │ direct │ 8d ago  │ z-ai/glm5              │ 44k/256k (17%)    │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┴────────┴─────────┴────────────────────────┴───────────────────┘
+
+FAQ: https://docs.openclaw.ai/faq
+Troubleshooting: https://docs.openclaw.ai/troubleshooting
+Next steps:
+  Need to share?      openclaw status --all
+  Need to debug live? openclaw logs --follow
+  Fix reachability first: openclaw gateway probe
+
+🦞 OpenClaw 2026.4.11 (769908e) — Your terminal just grew claws—type something and let the bot pinch the busywork.
+
+│
+◇  
+[openclaw] Failed to start CLI: Error: gateway timeout after 10000ms
+Gateway target: ws://127.0.0.1:18789
+Source: local loopback
+Config: /home/pete/.openclaw/openclaw.json
+Bind: loopback
+    at Timeout.<anonymous> (file:///Home1/node-v24/lib/node_modules/openclaw/dist/call-BzHcsP5K.js:255:9)
+    at listOnTimeout (node:internal/timers:605:17)
+    at process.processTimers (node:internal/timers:541:7)
+[Unit]
+Description=OpenClaw Gateway (v2026.4.10)
+After=network-online.target
+Wants=network-online.target
+StartLimitBurst=5
+StartLimitIntervalSec=60
+
+[Service]
+ExecStart=/Home1/node-v24/bin/node /Home1/node-v24/lib/node_modules/openclaw/dist/index.js gateway --port 18789
+Restart=always
+RestartSec=5
+RestartPreventExitStatus=78
+TimeoutStopSec=30
+TimeoutStartSec=30
+SuccessExitStatus=0 143
+KillMode=control-group
+Environment=OPENROUTER_API_KEY=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
+Environment=HOME=/home/pete
+Environment=TMPDIR=/tmp
+Environment=PATH=/Home1/node-v24/bin:/home/pete/.bun/bin:/home/pete/.local/bin:/home/pete/.npm-global/bin:/home/pete/bin:/home/pete/.volta/bin:/home/pete/.asdf/shims:/home/pete/.nvm/current/bin:/home/pete/.fnm/current/bin:/home/pete/.local/share/pnpm:/usr/local/bin:/usr/bin:/bin
+Environment=OPENCLAW_GATEWAY_PORT=18789
+Environment=OPENCLAW_SYSTEMD_UNIT=openclaw-gateway.service
+Environment="OPENCLAW_WINDOWS_TASK_NAME=OpenClaw Gateway"
+Environment=OPENCLAW_SERVICE_MARKER=openclaw
+Environment=OPENCLAW_SERVICE_KIND=gateway
+Environment=OPENCLAW_SERVICE_VERSION=2026.4.10
+Environment=OPENCLAW_SERVICE_MANAGED_ENV_KEYS=OPENROUTER_API_KEY
+
+[Install]
+WantedBy=default.target
 

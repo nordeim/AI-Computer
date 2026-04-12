@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document provides a comprehensive taxonomy of mobile navigation failures and testing patterns, enhanced with agent-browser v0.22.3 and chrome-devtools-mcp capabilities.
+This document provides a comprehensive taxonomy of mobile navigation failures and testing patterns, enhanced with agent-browser v0.25.3 and chrome-devtools-mcp capabilities.
 
 ---
 

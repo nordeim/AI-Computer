@@ -3,7 +3,7 @@
 Comprehensive guide to all browser automation capabilities on this system.
 
 Covers:
-- `agent-browser` v0.25.1 (standalone CLI)
+- `agent-browser` v0.25.3 (standalone CLI)
 - OpenClaw built-in `browser` tool
 - chrome-devtools-mcp v0.21.0
 - @playwright/mcp (new addition)
@@ -21,7 +21,7 @@ Covers:
 
 ---
 
-## agent-browser v0.25.1
+## agent-browser v0.25.3
 
 **Standalone CLI tool** with managed Chrome instance.
 
@@ -56,7 +56,7 @@ agent-browser get title / url / text @ref
 agent-browser close                 # Stop daemon
 ```
 
-### Batch & Advanced Features (v0.25.1 validated)
+### Batch & Advanced Features (v0.25.3 validated)
 ```bash
 # Batch execution
 agent-browser batch < commands.json
@@ -88,7 +88,7 @@ agent-browser clipboard write "text"
 agent-browser clipboard paste
 ```
 
-### Debug & Profiling (v0.25.1 NEW)
+### Debug & Profiling (v0.25.3 NEW)
 ```bash
 # Chrome DevTools profiler
 agent-browser profiler start
@@ -117,7 +117,7 @@ agent-browser storage local
 agent-browser storage session
 ```
 
-### AI & Dashboard (v0.25.1 NEW)
+### AI & Dashboard (v0.25.3 NEW)
 ```bash
 # AI natural language commands
 agent-browser chat "open google.com and search for cats"
@@ -133,7 +133,7 @@ agent-browser session
 agent-browser session list
 ```
 
-### Confirmation Workflow (v0.25.1 NEW)
+### Confirmation Workflow (v0.25.3 NEW)
 ```bash
 # Action confirmation (for sensitive operations)
 agent-browser --confirm-actions "navigation,form" open https://example.com
@@ -357,7 +357,7 @@ mcporter call chrome-devtools.performance_stop_trace
 mcporter call chrome-devtools.analyze_insight
 ```
 
-### Pattern 3: Debug & Profiling (agent-browser v0.25.1)
+### Pattern 3: Debug & Profiling (agent-browser v0.25.3)
 ```bash
 # Profile page interactions
 agent-browser open https://example.com
@@ -448,8 +448,8 @@ agent-browser screenshot /tmp/dashboard.png
 ## Skill Metadata
 
 - **Created:** 2026-03-14
-- **Last updated:** 2026-04-08
-- **agent-browser:** v0.25.1 / Chrome 147
+- **Last updated:** 2026-04-12
+- **agent-browser:** v0.25.3 / Chrome 147
 - **OpenClaw browser:** Chrome 144 / port 18800
 - **chrome-devtools-mcp:** v0.21.0 / Chrome 147 headless
 - **System:** Ubuntu (KDE neon), AppArmor active
