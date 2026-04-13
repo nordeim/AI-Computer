@@ -6,7 +6,8 @@ Covers:
 - `agent-browser` v0.25.3 (standalone CLI)
 - OpenClaw built-in `browser` tool
 - chrome-devtools-mcp v0.21.0
-- @playwright/mcp (new addition)
+- @playwright/mcp (MCP server)
+- `playwright-cli` (standalone CLI)
 
 ---
 
@@ -18,6 +19,7 @@ Covers:
 | **OpenClaw browser** | Built-in MCP | v144 (system) | Agent-native, persistent sessions | ❌ No |
 | **chrome-devtools-mcp** | MCP server | v147 (headless) | Debugging, audits, performance traces | ❌ No |
 | **@playwright/mcp** | MCP server | Chromium | Accessibility-first, token-efficient | ❌ No |
+| **playwright-cli** | Standalone CLI | v147 (managed) | Token-efficient automation, testing | ❌ No |
 
 ---
 
@@ -305,6 +307,48 @@ mcporter call playwright.fill selector="#email" value="user@example.com"
 - Goose
 - Kiro
 - Opencode
+
+---
+
+## playwright-cli (NEW)
+
+**Token-efficient CLI wrapper** for Playwright MCP.
+
+### Key Features
+- 🔄 **CLI interface** - Wrapper for `@playwright/mcp` providing a command-line interface
+- 📦 **Token-efficient** - Accessibility tree approach, no vision models needed
+- 🎯 **Same engine** - Uses the same underlying Playwright/MCP technology as @playwright/mcp
+
+### Installation
+```bash
+# Install globally
+npm install -g playwright-cli
+
+# Or use via npx
+npx playwright-cli <command>
+```
+
+### Core Commands
+```bash
+# Navigate to URL
+playwright-cli open <url>
+
+# Take screenshot
+playwright-cli screenshot [path]
+
+# Interactive mode (accessibility tree)
+playwright-cli inspect <url>
+
+# Run a script
+playwright-cli run <script.ts>
+```
+
+### When to Use
+- **Use `@playwright/mcp`** when you need MCP server integration (for agents, VSCode, etc.)
+- **Use `playwright-cli`** when you want a simple CLI interface without MCP overhead
+- Both use the same underlying Playwright engine and accessibility-first approach
+
+See **`skills/playwright-cli/SKILL.md`** for full documentation.
 
 ---
 
