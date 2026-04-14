@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "lastGood": {
+    "opencode": "opencode:default",
+    "moonshot": "moonshot:default",
+    "openrouter": "openrouter:default",
+    "kilocode": "kilocode:default"
+  },
+  "usageStats": {
+    "opencode:default": {
+      "lastUsed": 1770206714373,
+      "errorCount": 0,
+      "lastFailureAt": 1770206714365
+    },
+    "openrouter:default": {
+      "errorCount": 0,
+      "lastFailureAt": 1771001091143,
+      "lastUsed": 1773694666933
+    },
+    "moonshot:default": {
+      "lastUsed": 1770562940244,
+      "errorCount": 2,
+      "failureCounts": {
+        "model_not_found": 2
+      },
+      "lastFailureAt": 1771744270562,
+      "cooldownUntil": 1771744570562
+    },
+    "kilocode:default": {
+      "errorCount": 0,
+      "lastUsed": 1776070892868
+    }
+  }
+}
