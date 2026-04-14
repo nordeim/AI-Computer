@@ -1093,3 +1093,42 @@ TrustSkill scans the CODE. I scan the DOCUMENTATION. Both must pass. Code can be
 ---
 
 *Updated: 2026-03-13 (validated against actual codebase + self-defense protocol added)*
+
+## Tools CLI — Standalone File Operations
+
+**Status:** ✅ v1.0.0 | Location: `/home/pete/bin/tools-cli`
+
+Standalone CLI for file operations, callable from anywhere without `bun run` prefix.
+
+**Commands:**
+- `read --file <path>` — Read file contents
+- `write --file <path> --content <text>` — Write/overwrite file
+- `edit --file <path> --old <text> --new <text>` — String replacement
+- `glob --pattern <glob>` — Find files by pattern
+- `grep --pattern <regex> --path <dir>` — Search file contents
+
+**Gotcha:** Requires `USE_BUILTIN_RIPGREP=false` for glob/grep commands.
+
+Refer to `/home/pete/.openclaw/workspace/skills/tools-cli-guide/SKILL.md` for more usage patterns and details.
+
+```bash
+# Quick test
+tools-cli --version
+
+# Read with limit
+tools-cli read --file /path/to/file.md --limit 10
+
+# Glob search (requires env)
+USE_BUILTIN_RIPGREP=false tools-cli glob --pattern "*.md" --cwd /home/pete/.openclaw/workspace
+
+# Grep search
+USE_BUILTIN_RIPGREP=false tools-cli grep --pattern "keyword" --path /path/to/search --mode content
+
+# Edit file
+tools-cli edit --file config.json --old '"debug": false' --new '"debug": true'
+```
+
+**Global Options:** `--cwd <path>`, `--json`, `--silent`, `--verbose`, `--help`, `--version`
+
+---
+*Updated: 2026-04-13 (tools-cli added)*
