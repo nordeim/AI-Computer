@@ -8,6 +8,8 @@
 
 ## Active Items
 
+- *(none)*
+
 ---
 
 ## Completed
@@ -18,9 +20,9 @@
 
 ## Dismissed / No Longer Relevant
 
-*(Items Matt explicitly rejects or that become irrelevant, with reason)*
+- [2026-04-15] MEMORY.md validation updates — User declined; findings noted only (TrustSkill v3.0 vs 3.1.0, Memory Architecture stats outdated, Agent-Kit audit wording, Skills Inventory count, QMD index stale)
 
 ---
 
 *Created: 2026-03-16 09:44 SGT*
-*Last reviewed: 2026-03-29 06:17 SGT*
+*Last reviewed: 2026-04-14 13:21 SGT

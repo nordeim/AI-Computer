@@ -182,7 +182,7 @@ Don't just scan inputs — monitor outputs and actions too.
 
 ## Browser Automation — agent-browser
 
-**Status:** ✅ v0.21.4 | Chrome 146.0.7680.80 | `--no-sandbox` set in `~/.agent-browser/config.json`
+**Status:** ✅ v0.25.3 | Chrome 147.0.7727.24 | `--no-sandbox` set in `~/.agent-browser/config.json`
 
 ```bash
 agent-browser open <url>              # Navigate
@@ -200,7 +200,7 @@ agent-browser close                   # Done
 
 ## OpenClaw Browser Tool (built-in)
 
-**Status:** ✅ Verified working (2026.3.14) | Chrome 144 on port 18800
+**Status:** ✅ Verified working (2026.4.14) | Chrome 147 on port 18800
 
 ### Profiles (new in 2026.3.13)
 - **`profile="openclaw"`** — Default managed Chrome. Works out of the box. Port 18800.
@@ -248,8 +248,8 @@ agent-browser snapshot -i             # Interactive tree
 ## chrome-devtools-mcp
 
 **Skill:** `/home/pete/.openclaw/workspace/skills/chrome-devtools-mcp/SKILL.md`
-**Status:** ✅ v0.20.3 | Chrome 146 headless | via mcporter
-**Created:** 2026-03-16
+**Status:** ✅ v0.21.0 | Chrome 147 headless | via mcporter
+**Created:** 2026-03-16 | **Updated:** 2026-04-14
 **What it is:** Google-official MCP server providing full Chrome DevTools Protocol access (29 tools). Installed via npm, configured in mcporter.
 
 ### Key Capabilities (beyond built-in browser tool)
@@ -668,9 +668,9 @@ PYTHONPATH=/home/pete/.openclaw/workspace python3 orchestrator/examples/basic_us
 - **Config:** `/home/pete/.openclaw/openclaw.json`
 
 ### Model Configuration (Current)
-**Primary:** openrouter/openrouter/hunter-alpha
-**Fallbacks:** nvidia/moonshotai/kimi-k2.5, openrouter/openrouter/hunter-alpha
-**NVIDIA provider:** moonshotai/kimi-k2.5 (256K context, reasoning enabled)
+**Primary:** nvidia/minimaxai/minimax-m2.7
+**Fallbacks:** nvidia/minimaxai/minimax-m2.7, nvidia/z-ai/glm5, kilocode/nvidia/nemotron-3-super-120b-a12b:free, kilocode/qwen/qwen3.6-plus:free, openrouter/qwen/qwen3.6-plus-preview:free, openrouter/nvidia/nemotron-3-super-120b-a12b:free, kilocode/minimax/minimax-m2.5:free
+**Default model:** nvidia/moonshotai/kimi-k2.5
 
 ---
 
@@ -797,6 +797,7 @@ qmd get "path/to/file.md"     # Retrieve specific document
 - `qmd-daily-update.sh` — Runs at 3:30am via cron (incremental re-index + embeddings)
 - `qmd status` — Check index health, MCP server status
 - `qmd cleanup` — Remove orphaned embeddings
+- ⚠️ **NEVER run `qmd embed`** — This command hard crashes the entire OS/system immediately
 
 ### Key Files
 - **Config:** `~/.config/qmd/index.yml` — Collection definitions
@@ -1132,3 +1133,22 @@ tools-cli edit --file config.json --old '"debug": false' --new '"debug": true'
 
 ---
 *Updated: 2026-04-13 (tools-cli added)*
+
+
+
+### Safety Comparison: tools-cli Edit vs Built-in Edit
+
+**Context (2026-04-14):** Reviewed safety characteristics for multi-agent collaborative environments.
+
+| Tool | Multi-Agent Safety | Mechanism |
+|------|--------------------|-----------|
+| **Built-in Edit** | ✅ Safer | FileStateCache with stale-check: detects if file was modified since read, prevents silent overwrites of concurrent changes |
+| **tools-cli Edit** | ⚠️ Broken across calls | Each invocation is a fresh process with empty cache; `read → edit` fails across separate calls |
+| **tools-cli Write** | ❌ Risky | No stale-check; blindly overwrites entire file |
+
+**Key insight:** In collaborative multi-agent environments (OpenClaw + coding agents updating same files), my built-in Edit actively prevents accidentally overwriting another agent's changes by detecting stale reads. tools-cli forces you to use `write` for CLI scripts, which has no protection against concurrent modifications.
+
+**When to use tools-cli:** Single-agent scripts, CI/CD, automation needing glob/grep.
+**When to use built-in:** Agent sessions where file coordination/safety matters.
+
+*Updated: 2026-04-14 (safety comparison added)*
