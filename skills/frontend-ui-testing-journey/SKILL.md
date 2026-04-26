@@ -1,7 +1,7 @@
 ---
 name: frontend-ui-testing-journey
 description: >
-  Complete frontend UI testing, verification, troubleshooting, and resolution journey. Covers testing methodology, browser automation with all three tools (OpenClaw browser, agent-browser CLI, chrome-devtools-mcp), common patterns, troubleshooting guides, and lessons learned from real-world testing.
+  Complete frontend UI testing, verification, troubleshooting, and resolution journey. Covers testing methodology, browser automation with four tools (OpenClaw browser, agent-browser CLI, chrome-devtools-mcp, @playwright/mcp), common patterns, troubleshooting guides, and lessons learned from real-world testing.
 triggers:
   - "test frontend"
   - "UI testing"
@@ -48,6 +48,7 @@ This skill documents the complete frontend UI testing methodology. It covers rea
 | **Network HAR** | `agent-browser network har` | HTTP archive capture |
 | **Console/errors** | `agent-browser console/errors` | JS error tracking |
 | **Visual highlights** | `agent-browser highlight` | Element debugging |
+| AI agent integration | `@playwright/mcp` | MCP-native, custom code execution via `browser_run_code` |
 
 ---
 
@@ -178,7 +179,22 @@ echo "Tests Failed: $failed"
 
 ---
 
-## Quick Reference: All Three Tools
+## Quick Reference: All Four Tools
+
+### @playwright/mcp (Microsoft Official MCP Server)
+```bash
+# Navigation and interaction
+mcporter call playwright.browser_navigate --args '{"url": "https://example.com"}'
+mcporter call playwright.browser_click --args '{"ref": "e1"}'
+
+# Custom code execution
+mcporter call playwright.browser_run_code --args '{"code": "async (page) => { return await page.title(); }"}'
+
+# Screenshots, console
+mcporter call playwright.browser_take_screenshot
+mcporter call playwright.browser_console_messages
+```
+**21 tools** — including `browser_run_code` for arbitrary Playwright execution.
 
 ### OpenClaw Browser Tool (built-in)
 
@@ -911,7 +927,7 @@ agent-browser screenshot --annotate /tmp/mobile.png
 
 **Skill Version:** 2.0.0  
 **Last Updated:** April 1, 2026  
-**Source:** AI Academy Project + agent-browser v0.25.3 + chrome-devtools-mcp v0.21.0 + @playwright/mcp
+**Tools:** agent-browser v0.26.0 | chrome-devtools-mcp v0.23.0 | @playwright/mcp v0.0.70 | @playwright/cli v0.1.9
 
-**Last Validated:** April 12, 2026  
+**Last Validated:** April 26, 2026  
 **Status:** Production Ready ✅

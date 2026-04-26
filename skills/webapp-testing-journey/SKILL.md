@@ -10,9 +10,16 @@ description: |
 
 # Webapp Testing Journey
 
-Systematic methodology for testing web applications. Built from real-world QA testing of AI Academy (2026-03-24), enhanced with agent-browser v0.25.3, chrome-devtools-mcp v0.21.0, and @playwright/mcp.
+Systematic methodology for testing web applications. Built from real-world QA testing of AI Academy (2026-03-24).
 
-**Last Validated:** April 11, 2026
+| Tools | Versions |
+|-------|----------|
+| agent-browser | v0.26.0 |
+| chrome-devtools-mcp | v0.23.0 |
+| @playwright/mcp | v0.0.70 |
+| @playwright/cli | v0.1.9 |
+
+**Last Validated:** April 26, 2026
 
 ## Core Philosophy
 
@@ -38,6 +45,7 @@ Systematic methodology for testing web applications. Built from real-world QA te
 | **Console/errors** | `agent-browser console/errors` | JS error tracking |
 | **Visual highlights** | `agent-browser highlight` | Element debugging |
 | **AI testing** | `agent-browser chat` | Natural language test commands |
+| AI agent integration | `@playwright/mcp` | MCP-native, custom code execution |
 
 ---
 
@@ -54,7 +62,25 @@ Systematic methodology for testing web applications. Built from real-world QA te
 
 ---
 
-## Quick Reference: All Three Tools
+## Quick Reference: All Four Tools
+
+### @playwright/mcp (Microsoft Official MCP Server)
+```bash
+# Navigation
+mcporter call playwright.browser_navigate --args '{"url": "https://example.com"}'
+
+# Interaction
+mcporter call playwright.browser_click --args '{"ref": "e1", "element": "Submit button"}'
+
+# Custom code execution
+mcporter call playwright.browser_run_code --args '{"code": "async (page) => { return await page.title(); }"}'
+
+# Screenshots, console, network
+mcporter call playwright.browser_take_screenshot
+mcporter call playwright.browser_console_messages
+mcporter call playwright.browser_network_requests
+```
+**21 tools** — including `browser_run_code` for custom Playwright execution.
 
 ### OpenClaw Browser Tool (built-in)
 

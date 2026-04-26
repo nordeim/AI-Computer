@@ -4,6 +4,11 @@ description: Automate browser interactions, test web pages and work with Playwri
 allowed-tools: Bash(playwright-cli:*) Bash(npx:*) Bash(npm:*)
 ---
 
+> ✅ **Pre-installed:** `playwright-cli` is available system-wide — call directly without any prior installation: `playwright-cli open <url>`
+
+**Status:** ✅ @playwright/cli v0.1.9 | @playwright/mcp v0.0.70 | Pre-installed
+**Updated:** 2026-04-26
+
 # Browser Automation with playwright-cli
 
 ## Quick start
@@ -275,6 +280,7 @@ playwright-cli kill-all
 
 ## Installation
 
+### CLI Tool
 If global `playwright-cli` command is not available, try a local version via `npx playwright-cli`:
 
 ```bash
@@ -284,8 +290,29 @@ npx --no-install playwright-cli --version
 When local version is available, use `npx playwright-cli` in all commands. Otherwise, install `playwright-cli` as a global command:
 
 ```bash
+# Install CLI (v0.1.9)
 npm install -g @playwright/cli@latest
+
+# Install MCP server (v0.0.70) - alternative via mcporter
+npm install -g @playwright/mcp
 ```
+
+### MCP Server
+`@playwright/mcp` provides a Playwright MCP server with 21 tools including `browser_run_code` for custom Playwright snippets. Configure in `~/.mcporter/mcporter.json`:
+```json
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp"]
+    }
+  }
+}
+```
+
+### Choose Your Tool
+- **playwright-cli** — CLI for terminal/scripts, session management
+- **@playwright/mcp** — MCP server for AI agent integration via mcporter
 
 ## Example: Form submission
 
