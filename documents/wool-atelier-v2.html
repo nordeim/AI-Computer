@@ -1,0 +1,2197 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WOOL ATELIER — Wool Sneakers for the Tropical Urbanite</title>
+  <meta name="description" content="Merino wool sneakers engineered for Singapore's tropical urban life. A fashion editorial that sells shoes.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;1,14..32,300;1,14..32,400&display=swap" rel="stylesheet">
+
+  <!-- RemixIcon -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
+
+  <style>
+    /* ══════════════════════════════════════════════════════
+       DESIGN TOKENS
+       ══════════════════════════════════════════════════════ */
+
+    /* @property for CSS counter animations */
+    @property --num-scroll {
+      syntax: "<integer>";
+      initial-value: 0;
+      inherits: false;
+    }
+
+    :root {
+      /* ── Palette (OKLCH) ── */
+      --ivory:        oklch(0.97 0.01 85);    /* #FAF7F2 */
+      --flannel:      oklch(0.92 0.02 82);    /* #EDE5D8 */
+      --stone:        oklch(0.82 0.02 78);    /* #D4CBC0 */
+      --fog:          oklch(0.72 0.02 75);    /* #B5ADA4 */
+      --ink:          oklch(0.22 0.01 60);    /* #2A2825 */
+      --sage:         oklch(0.62 0.09 145);   /* #7A9E6B */
+      --terracotta:   oklch(0.62 0.12 45);    /* #C07A5A */
+      --sage-dim:     oklch(0.45 0.06 145);   /* muted sage */
+
+      /* ── Typography ── */
+      --ff-display: 'DM Serif Display', Georgia, serif;
+      --ff-body:    'Inter', system-ui, sans-serif;
+
+      /* ── Spacing (8px grid) ── */
+      --sp-1: 0.25rem;  --sp-2: 0.5rem;   --sp-3: 0.75rem;
+      --sp-4: 1rem;     --sp-5: 1.25rem;  --sp-6: 1.5rem;
+      --sp-8: 2rem;     --sp-10: 2.5rem;  --sp-12: 3rem;
+      --sp-16: 4rem;    --sp-20: 5rem;    --sp-24: 6rem;
+      --sp-32: 8rem;    --sp-40: 10rem;
+
+      /* ── Timing ── */
+      --ease-out:   cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --dur-fast:   150ms;
+      --dur-med:    300ms;
+      --dur-slow:   600ms;
+      --dur-reveal: 800ms;
+    }
+
+    /* ══════════════════════════════════════════════════════
+       RESET & BASE
+       ══════════════════════════════════════════════════════ */
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      font-family: var(--ff-body);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--ivory);
+      color: var(--ink);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; border: none; background: none; cursor: pointer; }
+    ul { list-style: none; }
+
+    ::selection {
+      background: var(--flannel);
+      color: var(--ink);
+    }
+
+    /* ══════════════════════════════════════════════════════
+       LAYERS — Cascade management
+       ══════════════════════════════════════════════════════ */
+
+    @layer base, layout, components, utilities;
+
+    @layer base {
+      body { font-size: 1rem; line-height: 1.6; }
+    }
+
+    /* ══════════════════════════════════════════════════════
+       SCROLL-DRIVEN ANIMATIONS (Native CSS)
+       ══════════════════════════════════════════════════════ */
+
+    /* Fade-up on scroll (view-triggered) */
+    @keyframes reveal-up {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes reveal-left {
+      from {
+        opacity: 0;
+        transform: translateX(-60px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes reveal-right {
+      from {
+        opacity: 0;
+        transform: translateX(60px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes reveal-scale {
+      from {
+        opacity: 0;
+        transform: scale(0.92);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes fade-in {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* Hero parallax scroll */
+    @keyframes hero-parallax {
+      from { transform: translateY(0); }
+      to   { transform: translateY(-120px); }
+    }
+
+    @keyframes hero-text-parallax {
+      from { transform: translateY(0); opacity: 1; }
+      to   { transform: translateY(-60px); opacity: 0; }
+    }
+
+    /* Stat counter */
+    @keyframes count-32  { from { --num-scroll: 0;  } to { --num-scroll: 32; } }
+    @keyframes count-92  { from { --num-scroll: 0;  } to { --num-scroll: 92; } }
+    @keyframes count-18  { from { --num-scroll: 0;  } to { --num-scroll: 18; } }
+    @keyframes count-72  { from { --num-scroll: 0;  } to { --num-scroll: 72; } }
+
+    /* Marquee */
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* Scroll indicator pulse */
+    @keyframes scroll-pulse {
+      0%, 100% { opacity: 0.4; transform: translateY(0); }
+      50%      { opacity: 1;   transform: translateY(8px); }
+    }
+
+    /* Reveal classes with view-timeline */
+    .anim-reveal-up {
+      animation: reveal-up var(--dur-reveal) var(--ease-out) both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+
+    .anim-reveal-left {
+      animation: reveal-left var(--dur-reveal) var(--ease-out) both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+
+    .anim-reveal-right {
+      animation: reveal-right var(--dur-reveal) var(--ease-out) both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+
+    .anim-reveal-scale {
+      animation: reveal-scale var(--dur-reveal) var(--ease-out) both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 35%;
+    }
+
+    /* Staggered delays */
+    .anim-delay-1 { animation-delay: 100ms; }
+    .anim-delay-2 { animation-delay: 200ms; }
+    .anim-delay-3 { animation-delay: 300ms; }
+    .anim-delay-4 { animation-delay: 400ms; }
+
+    /* Hero parallax on scroll */
+    .hero-bg {
+      animation: hero-parallax linear both;
+      animation-timeline: scroll();
+      animation-range: 0vh 100vh;
+    }
+
+    .hero-content {
+      animation: hero-text-parallax linear both;
+      animation-timeline: scroll();
+      animation-range: 0vh 80vh;
+    }
+
+    /* Stat counter animations */
+    .stat-num {
+      animation: count-32 2s var(--ease-out) both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 60%;
+      counter-reset: num var(--num-scroll);
+    }
+    .stat-num::after {
+      content: counter(num);
+    }
+    .stat-num[data-target="92"]  { animation-name: count-92; }
+    .stat-num[data-target="18"]  { animation-name: count-18; }
+    .stat-num[data-target="72"]  { animation-name: count-72; }
+
+    /* ══════════════════════════════════════════════════════
+       WOOL TEXTURES
+       ══════════════════════════════════════════════════════ */
+
+    .wool-grain {
+      background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    }
+
+    .wool-weave {
+      height: 3px;
+      background: repeating-linear-gradient(
+        90deg,
+        var(--fog) 0px, var(--fog) 6px,
+        transparent 6px, transparent 12px
+      );
+      opacity: 0.25;
+    }
+
+    /* ══════════════════════════════════════════════════════
+       NAVIGATION
+       ══════════════════════════════════════════════════════ */
+
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: var(--sp-5) var(--sp-8);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      mix-blend-mode: difference;
+      transition: mix-blend-mode var(--dur-med) var(--ease-out);
+    }
+
+    .nav-logo {
+      font-family: var(--ff-display);
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: var(--ivory);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: none;
+      gap: var(--sp-8);
+    }
+    .nav-links a {
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      opacity: 0.7;
+      transition: opacity var(--dur-fast) var(--ease-out);
+    }
+    .nav-links a:hover { opacity: 1; }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-4);
+    }
+
+    .nav-cart-btn {
+      position: relative;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ivory);
+      border-radius: 50%;
+      transition: background var(--dur-fast) var(--ease-out);
+    }
+    .nav-cart-btn:hover { background: rgba(255,255,255,0.1); }
+
+    .nav-badge {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 18px;
+      height: 18px;
+      background: var(--terracotta);
+      color: var(--ivory);
+      font-size: 9px;
+      font-weight: 600;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: scale(0);
+      transition: all var(--dur-med) var(--ease-out);
+    }
+    .nav-badge.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .nav-hamburger {
+      display: flex;
+      width: 44px;
+      height: 44px;
+      align-items: center;
+      justify-content: center;
+      color: var(--ivory);
+    }
+
+    @media (min-width: 768px) {
+      .nav-links { display: flex; }
+      .nav-hamburger { display: none; }
+    }
+
+    /* ══════════════════════════════════════════════════════
+       HERO — Cinematic Full-Bleed
+       ══════════════════════════════════════════════════════ */
+
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: var(--ink);
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: -20%;
+      background:
+        linear-gradient(to bottom, oklch(0.15 0.01 60 / 0.55), oklch(0.15 0.01 60 / 0.7)),
+        url('https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1600&q=80&auto=format&fit=crop') center/cover no-repeat;
+      will-change: transform;
+    }
+
+    /* Wool fiber overlay */
+    .hero-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+      mix-blend-mode: overlay;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: var(--sp-8);
+      will-change: transform, opacity;
+    }
+
+    .hero-label {
+      font-size: clamp(0.625rem, 1vw, 0.75rem);
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--stone);
+      margin-bottom: var(--sp-6);
+      animation: fade-in 1s var(--ease-out) 0.2s both;
+    }
+
+    .hero-title {
+      font-family: var(--ff-display);
+      font-size: clamp(4rem, 18vw, 14rem);
+      line-height: 0.85;
+      letter-spacing: -0.03em;
+      color: var(--ivory);
+      margin-bottom: var(--sp-6);
+      animation: fade-in 1.2s var(--ease-out) 0.4s both;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--stone);
+    }
+
+    .hero-sub {
+      font-family: var(--ff-display);
+      font-size: clamp(1rem, 2.5vw, 1.5rem);
+      font-weight: 400;
+      color: var(--fog);
+      margin-bottom: var(--sp-10);
+      animation: fade-in 1s var(--ease-out) 0.7s both;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sp-3);
+      padding: var(--sp-4) var(--sp-8);
+      background: var(--ivory);
+      color: var(--ink);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-radius: 0;
+      transition: all var(--dur-med) var(--ease-out);
+      animation: fade-in 1s var(--ease-out) 0.9s both;
+    }
+    .hero-cta:hover {
+      background: var(--flannel);
+      transform: translateY(-2px);
+    }
+    .hero-cta:active { transform: translateY(0); }
+    .hero-cta:focus-visible {
+      outline: 2px solid var(--stone);
+      outline-offset: 4px;
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: var(--sp-8);
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--sp-2);
+      color: var(--fog);
+      z-index: 2;
+    }
+    .hero-scroll span {
+      font-size: 0.625rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .hero-scroll-line {
+      width: 1px;
+      height: 32px;
+      background: var(--fog);
+      animation: scroll-pulse 2s var(--ease-in-out) infinite;
+    }
+
+    /* ══════════════════════════════════════════════════════
+       EDITORIAL STATEMENT
+       ══════════════════════════════════════════════════════ */
+
+    .editorial {
+      padding: var(--sp-32) var(--sp-8);
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .editorial-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--sp-16);
+      align-items: start;
+    }
+
+    @media (min-width: 900px) {
+      .editorial-grid {
+        grid-template-columns: 1.2fr 1fr;
+        gap: var(--sp-20);
+      }
+    }
+
+    .editorial-left {
+      position: relative;
+    }
+
+    @media (min-width: 900px) {
+      .editorial-left {
+        position: sticky;
+        top: 30vh;
+      }
+    }
+
+    .editorial-quote-mark {
+      font-family: var(--ff-display);
+      font-size: clamp(6rem, 12vw, 10rem);
+      line-height: 0.8;
+      color: var(--flannel);
+      margin-bottom: calc(-1 * var(--sp-8));
+      user-select: none;
+    }
+
+    .editorial-quote {
+      font-family: var(--ff-display);
+      font-size: clamp(1.75rem, 4vw, 3.5rem);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+    }
+
+    .editorial-quote em {
+      font-style: italic;
+      color: var(--sage-dim);
+    }
+
+    .editorial-right {
+      padding-top: var(--sp-8);
+    }
+
+    @media (min-width: 900px) {
+      .editorial-right {
+        padding-top: 20vh;
+      }
+    }
+
+    .editorial-body {
+      font-size: clamp(0.9375rem, 1.2vw, 1.0625rem);
+      line-height: 1.8;
+      color: oklch(0.40 0.01 60);
+      margin-bottom: var(--sp-8);
+    }
+
+    .editorial-label {
+      font-size: 0.6875rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--fog);
+      margin-bottom: var(--sp-4);
+    }
+
+    .editorial-detail {
+      display: flex;
+      gap: var(--sp-12);
+      padding-top: var(--sp-8);
+      border-top: 1px solid var(--stone);
+    }
+
+    .editorial-detail-item dt {
+      font-size: 0.6875rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--fog);
+      margin-bottom: var(--sp-1);
+    }
+    .editorial-detail-item dd {
+      font-family: var(--ff-display);
+      font-size: 1.125rem;
+      color: var(--ink);
+    }
+
+    /* ══════════════════════════════════════════════════════
+       THE COLLECTION — Magazine Layout
+       ══════════════════════════════════════════════════════ */
+
+    .collection {
+      padding: var(--sp-32) 0;
+    }
+
+    .collection-header {
+      text-align: center;
+      padding: 0 var(--sp-8);
+      margin-bottom: var(--sp-24);
+    }
+
+    .collection-header h2 {
+      font-family: var(--ff-display);
+      font-size: clamp(0.75rem, 1.2vw, 0.875rem);
+      font-weight: 400;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--fog);
+      margin-bottom: var(--sp-4);
+    }
+
+    .collection-header p {
+      font-family: var(--ff-display);
+      font-size: clamp(2rem, 5vw, 4rem);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+    }
+
+    /* ── Product 1: Full-Width Cinematic ── */
+    .product-cinematic {
+      position: relative;
+      min-height: 80vh;
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
+      margin-bottom: var(--sp-32);
+    }
+
+    .product-cinematic-bg {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--flannel) 0%, var(--stone) 100%);
+    }
+
+    .product-cinematic-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='300' height='300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    }
+
+    /* Placeholder product visual */
+    .product-cinematic-visual {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -55%);
+      width: min(500px, 60vw);
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    .product-cinematic-visual img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 600ms var(--ease-out);
+    }
+    .product-cinematic:hover .product-cinematic-visual img {
+      transform: scale(1.05);
+    }
+
+    .product-cinematic-card {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 500px;
+      padding: var(--sp-10) var(--sp-8);
+      background: oklch(0.97 0.01 85 / 0.85);
+      backdrop-filter: blur(24px);
+      border: 1px solid oklch(0.85 0.02 80 / 0.5);
+    }
+
+    @media (min-width: 768px) {
+      .product-cinematic-card {
+        margin-left: var(--sp-16);
+        margin-bottom: var(--sp-16);
+      }
+    }
+
+    .product-tag {
+      display: inline-block;
+      font-size: 0.625rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: var(--sp-1) var(--sp-3);
+      border: 1px solid var(--fog);
+      color: var(--fog);
+      margin-bottom: var(--sp-5);
+    }
+
+    .product-name {
+      font-family: var(--ff-display);
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: var(--sp-2);
+    }
+
+    .product-type {
+      font-size: 0.8125rem;
+      color: var(--fog);
+      margin-bottom: var(--sp-5);
+    }
+
+    .product-desc {
+      font-size: 0.875rem;
+      line-height: 1.7;
+      color: oklch(0.45 0.01 60);
+      margin-bottom: var(--sp-6);
+    }
+
+    .product-price {
+      font-family: var(--ff-display);
+      font-size: 1.5rem;
+      color: var(--ink);
+      margin-bottom: var(--sp-6);
+    }
+
+    /* Color swatches */
+    .swatches {
+      display: flex;
+      gap: var(--sp-2);
+      margin-bottom: var(--sp-6);
+    }
+    .swatch {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 1.5px solid var(--stone);
+      cursor: pointer;
+      transition: transform var(--dur-fast) var(--ease-out);
+    }
+    .swatch:hover { transform: scale(1.2); }
+    .swatch.active { border-color: var(--ink); box-shadow: 0 0 0 2px var(--ivory), 0 0 0 3.5px var(--ink); }
+
+    /* Size selector */
+    .sizes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--sp-2);
+      margin-bottom: var(--sp-6);
+    }
+    .size-btn {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--ink);
+      border: 1px solid var(--stone);
+      transition: all var(--dur-fast) var(--ease-out);
+    }
+    .size-btn:hover {
+      border-color: var(--ink);
+      background: oklch(0.22 0.01 60 / 0.04);
+    }
+    .size-btn.active {
+      background: var(--ink);
+      color: var(--ivory);
+      border-color: var(--ink);
+    }
+    .size-btn:focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: 2px;
+    }
+
+    /* Add to cart button */
+    .btn-add {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--sp-3);
+      width: 100%;
+      padding: var(--sp-4) var(--sp-8);
+      background: var(--ink);
+      color: var(--ivory);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: all var(--dur-fast) var(--ease-out);
+    }
+    .btn-add:hover {
+      background: oklch(0.30 0.01 60);
+      transform: translateY(-1px);
+    }
+    .btn-add:active {
+      transform: scale(0.98) translateY(0);
+    }
+    .btn-add:focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: 4px;
+    }
+
+    /* ── Product 2: Split Layout ── */
+    .product-split {
+      display: grid;
+      grid-template-columns: 1fr;
+      min-height: 70vh;
+      margin-bottom: var(--sp-32);
+    }
+
+    @media (min-width: 900px) {
+      .product-split {
+        grid-template-columns: 1.1fr 1fr;
+      }
+    }
+
+    .product-split-visual {
+      position: relative;
+      background: linear-gradient(160deg, var(--ivory), var(--flannel));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 50vh;
+      overflow: hidden;
+    }
+
+    .product-split-visual::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=1000&q=80&auto=format&fit=crop') center/cover no-repeat;
+      opacity: 0.9;
+      transition: transform 600ms var(--ease-out);
+    }
+    .product-split:hover .product-split-visual::before {
+      transform: scale(1.04);
+    }
+
+    .product-split-visual::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, transparent 60%, var(--ivory) 100%);
+    }
+
+    .product-split-visual-inner {
+      position: relative;
+      z-index: 1;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      overflow: hidden;
+      box-shadow: 0 20px 60px oklch(0.22 0.01 60 / 0.2);
+    }
+    .product-split-visual-inner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .product-split-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: var(--sp-10) var(--sp-8);
+    }
+
+    @media (min-width: 900px) {
+      .product-split-info {
+        padding: var(--sp-16);
+      }
+    }
+
+    /* ── Product 3: Centered Minimal ── */
+    .product-centered {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: var(--sp-20) var(--sp-8);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .product-centered-visual {
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin-bottom: var(--sp-10);
+      box-shadow: 0 16px 48px oklch(0.22 0.01 60 / 0.15);
+      transition: transform 500ms var(--ease-out);
+    }
+    .product-centered:hover .product-centered-visual {
+      transform: scale(1.03);
+    }
+    .product-centered-visual img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .product-centered .sizes {
+      justify-content: center;
+    }
+
+    /* ══════════════════════════════════════════════════════
+       MATERIAL STORY — Sticky Scroll
+       ══════════════════════════════════════════════════════ */
+
+    .materials {
+      padding: var(--sp-32) var(--sp-8);
+      background: var(--ink);
+      color: var(--ivory);
+      overflow: hidden;
+    }
+
+    .materials-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .materials-header {
+      text-align: center;
+      margin-bottom: var(--sp-20);
+    }
+
+    .materials-header h2 {
+      font-family: var(--ff-display);
+      font-size: clamp(0.75rem, 1.2vw, 0.875rem);
+      font-weight: 400;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--fog);
+      margin-bottom: var(--sp-4);
+    }
+    .materials-header p {
+      font-family: var(--ff-display);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    .materials-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--sp-12);
+      align-items: start;
+    }
+
+    @media (min-width: 900px) {
+      .materials-grid {
+        grid-template-columns: 1fr 1.2fr;
+        gap: var(--sp-20);
+      }
+    }
+
+    .materials-visual {
+      position: relative;
+    }
+
+    @media (min-width: 900px) {
+      .materials-visual {
+        position: sticky;
+        top: 20vh;
+      }
+    }
+
+    .wool-fiber-art {
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 40% 40%, oklch(0.45 0.04 80), transparent 60%),
+        radial-gradient(circle at 60% 60%, oklch(0.35 0.03 70), transparent 50%),
+        oklch(0.25 0.02 60);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .wool-fiber-art::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='6' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.15'/%3E%3C/svg%3E");
+      mix-blend-mode: overlay;
+    }
+
+    .wool-fiber-art-text {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+    .wool-fiber-art-text i {
+      font-size: 3rem;
+      color: var(--stone);
+      opacity: 0.5;
+      margin-bottom: var(--sp-3);
+    }
+    .wool-fiber-art-text span {
+      display: block;
+      font-family: var(--ff-display);
+      font-size: 1.125rem;
+      color: var(--stone);
+      opacity: 0.6;
+    }
+
+    .materials-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-8);
+    }
+
+    .stat-card {
+      padding: var(--sp-6);
+      border: 1px solid oklch(0.35 0.01 60);
+      transition: border-color var(--dur-med) var(--ease-out);
+    }
+    .stat-card:hover {
+      border-color: var(--fog);
+    }
+
+    .stat-number {
+      font-family: var(--ff-display);
+      font-size: clamp(2.5rem, 5vw, 3.5rem);
+      line-height: 1;
+      color: var(--ivory);
+      margin-bottom: var(--sp-2);
+    }
+
+    .stat-unit {
+      font-size: 0.8125rem;
+      color: var(--fog);
+      margin-bottom: var(--sp-2);
+    }
+
+    .stat-desc {
+      font-size: 0.75rem;
+      line-height: 1.5;
+      color: oklch(0.60 0.01 75);
+    }
+
+    /* ══════════════════════════════════════════════════════
+       TESTIMONIALS — Horizontal Marquee
+       ══════════════════════════════════════════════════════ */
+
+    .testimonials {
+      padding: var(--sp-24) 0;
+      overflow: hidden;
+    }
+
+    .testimonials-header {
+      text-align: center;
+      padding: 0 var(--sp-8);
+      margin-bottom: var(--sp-12);
+    }
+    .testimonials-header h2 {
+      font-family: var(--ff-display);
+      font-size: clamp(2rem, 4vw, 3rem);
+      letter-spacing: -0.02em;
+    }
+
+    .marquee-track {
+      display: flex;
+      width: max-content;
+      animation: marquee 40s linear infinite;
+    }
+    .marquee-track:hover { animation-play-state: paused; }
+
+    .marquee-card {
+      flex-shrink: 0;
+      width: 380px;
+      margin-right: var(--sp-6);
+      padding: var(--sp-8);
+      background: var(--flannel);
+      border: 1px solid oklch(0.88 0.02 80);
+    }
+
+    .marquee-card blockquote {
+      font-family: var(--ff-display);
+      font-size: 1.125rem;
+      font-style: italic;
+      line-height: 1.5;
+      color: var(--ink);
+      margin-bottom: var(--sp-5);
+    }
+
+    .marquee-card cite {
+      font-style: normal;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--fog);
+    }
+
+    /* ══════════════════════════════════════════════════════
+       FOOTER
+       ══════════════════════════════════════════════════════ */
+
+    .site-footer {
+      padding: var(--sp-16) var(--sp-8);
+      background: var(--ink);
+      color: var(--ivory);
+    }
+
+    .footer-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .footer-top {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-10);
+      padding-bottom: var(--sp-12);
+      border-bottom: 1px solid oklch(0.35 0.01 60);
+    }
+
+    @media (min-width: 768px) {
+      .footer-top {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+    }
+
+    .footer-brand {
+      font-family: var(--ff-display);
+      font-size: 1.5rem;
+      letter-spacing: 0.1em;
+      margin-bottom: var(--sp-3);
+    }
+    .footer-tagline {
+      font-size: 0.8125rem;
+      color: var(--fog);
+      max-width: 280px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: var(--sp-16);
+    }
+
+    .footer-col h4 {
+      font-size: 0.625rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--fog);
+      margin-bottom: var(--sp-4);
+    }
+    .footer-col a {
+      display: block;
+      font-size: 0.8125rem;
+      color: oklch(0.70 0.01 80);
+      margin-bottom: var(--sp-3);
+      transition: color var(--dur-fast) var(--ease-out);
+    }
+    .footer-col a:hover { color: var(--ivory); }
+
+    .footer-bottom {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-4);
+      padding-top: var(--sp-8);
+      align-items: center;
+    }
+
+    @media (min-width: 768px) {
+      .footer-bottom {
+        flex-direction: row;
+        justify-content: space-between;
+      }
+    }
+
+    .footer-copy {
+      font-size: 0.6875rem;
+      color: oklch(0.45 0.01 70);
+    }
+
+    .footer-socials {
+      display: flex;
+      gap: var(--sp-3);
+    }
+    .footer-socials a {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      color: var(--fog);
+      border: 1px solid oklch(0.35 0.01 60);
+      transition: all var(--dur-fast) var(--ease-out);
+    }
+    .footer-socials a:hover {
+      color: var(--ivory);
+      border-color: var(--fog);
+    }
+
+    /* ══════════════════════════════════════════════════════
+       CART DRAWER
+       ══════════════════════════════════════════════════════ */
+
+    .cart-overlay {
+      position: fixed;
+      inset: 0;
+      background: oklch(0.15 0.01 60 / 0.5);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--dur-med) var(--ease-out);
+    }
+    .cart-overlay.open { opacity: 1; pointer-events: auto; }
+
+    .cart-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: min(440px, 92vw);
+      background: var(--ivory);
+      z-index: 210;
+      transform: translateX(100%);
+      transition: transform var(--dur-slow) var(--ease-out);
+      display: flex;
+      flex-direction: column;
+      box-shadow: -20px 0 60px oklch(0.15 0.01 60 / 0.2);
+    }
+    .cart-drawer.open { transform: translateX(0); }
+
+    .cart-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--sp-6) var(--sp-8);
+      border-bottom: 1px solid var(--stone);
+    }
+    .cart-header h2 {
+      font-family: var(--ff-display);
+      font-size: 1.25rem;
+    }
+    .cart-close-btn {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background var(--dur-fast) var(--ease-out);
+    }
+    .cart-close-btn:hover { background: var(--flannel); }
+
+    .cart-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--sp-6) var(--sp-8);
+    }
+
+    .cart-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      text-align: center;
+      padding: var(--sp-16) 0;
+    }
+    .cart-empty i {
+      font-size: 2.5rem;
+      color: var(--stone);
+      margin-bottom: var(--sp-5);
+    }
+    .cart-empty p {
+      font-family: var(--ff-display);
+      font-size: 1.125rem;
+      margin-bottom: var(--sp-2);
+    }
+    .cart-empty span {
+      font-size: 0.8125rem;
+      color: var(--fog);
+      margin-bottom: var(--sp-6);
+    }
+
+    .cart-items { display: flex; flex-direction: column; gap: var(--sp-4); }
+
+    .cart-item {
+      display: flex;
+      gap: var(--sp-4);
+      padding: var(--sp-4);
+      background: var(--flannel);
+      animation: reveal-up 300ms var(--ease-out) both;
+    }
+    .cart-item-thumb {
+      width: 64px;
+      height: 64px;
+      background: var(--stone);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .cart-item-thumb i { font-size: 1.25rem; color: var(--fog); }
+    .cart-item-info { flex: 1; min-width: 0; }
+    .cart-item-name {
+      font-family: var(--ff-display);
+      font-size: 0.9375rem;
+      margin-bottom: var(--sp-1);
+    }
+    .cart-item-meta {
+      font-size: 0.75rem;
+      color: var(--fog);
+      margin-bottom: var(--sp-2);
+    }
+    .cart-item-price {
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+    .cart-item-remove {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--fog);
+      border-radius: 50%;
+      transition: all var(--dur-fast) var(--ease-out);
+      align-self: center;
+    }
+    .cart-item-remove:hover { background: var(--stone); color: var(--ink); }
+
+    .cart-footer {
+      padding: var(--sp-6) var(--sp-8);
+      border-top: 1px solid var(--stone);
+    }
+    .cart-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: var(--sp-2);
+      font-size: 0.8125rem;
+    }
+    .cart-row-label { color: var(--fog); }
+    .cart-row-value { font-weight: 500; }
+    .cart-total {
+      display: flex;
+      justify-content: space-between;
+      padding-top: var(--sp-4);
+      margin-top: var(--sp-3);
+      border-top: 1px solid var(--stone);
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: var(--sp-6);
+    }
+    .cart-checkout {
+      width: 100%;
+      padding: var(--sp-4);
+      background: var(--ink);
+      color: var(--ivory);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--sp-2);
+      transition: background var(--dur-fast) var(--ease-out);
+    }
+    .cart-checkout:hover { background: oklch(0.30 0.01 60); }
+    .cart-shipping-note {
+      text-align: center;
+      font-size: 0.6875rem;
+      color: var(--fog);
+      margin-top: var(--sp-3);
+    }
+
+    /* ══════════════════════════════════════════════════════
+       MOBILE NAV OVERLAY
+       ══════════════════════════════════════════════════════ */
+
+    .mob-overlay {
+      position: fixed;
+      inset: 0;
+      background: oklch(0.15 0.01 60 / 0.5);
+      backdrop-filter: blur(8px);
+      z-index: 150;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--dur-med) var(--ease-out);
+    }
+    .mob-overlay.open { opacity: 1; pointer-events: auto; }
+
+    .mob-panel {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: min(300px, 85vw);
+      background: var(--ivory);
+      z-index: 160;
+      transform: translateX(-100%);
+      transition: transform var(--dur-slow) var(--ease-out);
+      padding: var(--sp-8);
+      display: flex;
+      flex-direction: column;
+    }
+    .mob-panel.open { transform: translateX(0); }
+
+    .mob-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--sp-10);
+    }
+    .mob-panel-logo {
+      font-family: var(--ff-display);
+      font-size: 1rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    .mob-close-btn {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+    .mob-close-btn:hover { background: var(--flannel); }
+
+    .mob-nav-links { display: flex; flex-direction: column; gap: var(--sp-1); }
+    .mob-nav-links a {
+      font-family: var(--ff-display);
+      font-size: 1.5rem;
+      padding: var(--sp-3) var(--sp-2);
+      border-bottom: 1px solid var(--stone);
+      transition: color var(--dur-fast) var(--ease-out);
+    }
+    .mob-nav-links a:hover { color: var(--sage-dim); }
+
+    .mob-panel-footer {
+      margin-top: auto;
+      padding-top: var(--sp-8);
+      border-top: 1px solid var(--stone);
+    }
+    .mob-panel-footer p {
+      font-size: 0.75rem;
+      color: var(--fog);
+      line-height: 1.6;
+    }
+
+    /* ══════════════════════════════════════════════════════
+       TOAST
+       ══════════════════════════════════════════════════════ */
+
+    .toast {
+      position: fixed;
+      bottom: var(--sp-8);
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--ink);
+      color: var(--ivory);
+      padding: var(--sp-4) var(--sp-6);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      z-index: 300;
+      opacity: 0;
+      transition: all var(--dur-med) var(--ease-out);
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ══════════════════════════════════════════════════════
+       ACCESSIBILITY
+       ══════════════════════════════════════════════════════ */
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: 3px;
+    }
+
+    /* ══════════════════════════════════════════════════════
+       REDUCED MOTION
+       ══════════════════════════════════════════════════════ */
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      .hero-bg,
+      .hero-content {
+        animation: none !important;
+        transform: none !important;
+        opacity: 1 !important;
+      }
+      .anim-reveal-up,
+      .anim-reveal-left,
+      .anim-reveal-right,
+      .anim-reveal-scale,
+      .hero-label,
+      .hero-title,
+      .hero-sub,
+      .hero-cta {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      .marquee-track { animation: none !important; }
+      .stat-num { animation: none !important; }
+      .stat-num::after { content: attr(data-display); }
+    }
+
+    /* ══════════════════════════════════════════════════════
+       SCROLLBAR
+       ══════════════════════════════════════════════════════ */
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--ivory); }
+    ::-webkit-scrollbar-thumb { background: var(--stone); }
+
+    /* ══════════════════════════════════════════════════════
+       CONTAINER QUERIES (for product cards)
+       ══════════════════════════════════════════════════════ */
+
+    .product-cinematic-card {
+      container-type: inline-size;
+    }
+
+    @container (min-width: 400px) {
+      .product-desc { font-size: 0.9375rem; }
+      .product-price { font-size: 1.75rem; }
+    }
+  </style>
+</head>
+
+<body class="wool-grain">
+
+  <!-- ═══════════════════════════════════════════
+       NAVIGATION
+  ═══════════════════════════════════════════ -->
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <a href="#" class="nav-logo" aria-label="WOOL ATELIER home">Wool Atelier</a>
+
+    <div class="nav-links">
+      <a href="#collection">Collection</a>
+      <a href="#materials">Materials</a>
+      <a href="#story">Story</a>
+    </div>
+
+    <div class="nav-right">
+      <button class="nav-cart-btn" id="cart-toggle" aria-label="Open shopping cart" aria-expanded="false">
+        <i class="ri-shopping-bag-3-line ri-lg"></i>
+        <span class="nav-badge" id="cart-badge" aria-live="polite">0</span>
+      </button>
+      <button class="nav-hamburger" id="mob-toggle" aria-label="Open menu" aria-expanded="false">
+        <i class="ri-menu-3-line ri-lg"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Nav -->
+  <div class="mob-overlay" id="mob-overlay" aria-hidden="true"></div>
+  <aside class="mob-panel" id="mob-panel" role="dialog" aria-label="Mobile navigation" aria-hidden="true">
+    <div class="mob-panel-header">
+      <span class="mob-panel-logo">Wool Atelier</span>
+      <button class="mob-close-btn" id="mob-close" aria-label="Close menu">
+        <i class="ri-close-line ri-lg"></i>
+      </button>
+    </div>
+    <div class="mob-nav-links">
+      <a href="#collection" class="mob-link">Collection</a>
+      <a href="#materials" class="mob-link">Materials</a>
+      <a href="#story" class="mob-link">Story</a>
+    </div>
+    <div class="mob-panel-footer">
+      <p>Merino wool sneakers engineered for Singapore's tropical urban life.</p>
+    </div>
+  </aside>
+
+  <!-- ═══════════════════════════════════════════
+       HERO — Cinematic Full-Bleed
+  ═══════════════════════════════════════════ -->
+  <header class="hero" id="hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+
+    <div class="hero-content">
+      <p class="hero-label">Singapore · Merino Wool · Urban Engineered</p>
+      <h1 class="hero-title">WO<em>O</em>L</h1>
+      <p class="hero-sub">Re-engineered for the tropics</p>
+      <a href="#collection" class="hero-cta">
+        Explore the Collection
+        <i class="ri-arrow-right-line"></i>
+      </a>
+    </div>
+
+    <div class="hero-scroll" aria-hidden="true">
+      <span>Scroll</span>
+      <div class="hero-scroll-line"></div>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════
+       EDITORIAL STATEMENT
+  ═══════════════════════════════════════════ -->
+  <section class="editorial" id="story" aria-labelledby="editorial-heading">
+    <div class="editorial-grid">
+      <div class="editorial-left anim-reveal-left">
+        <div class="editorial-quote-mark" aria-hidden="true">"</div>
+        <blockquote class="editorial-quote" id="editorial-heading">
+          Most people associate wool with cold weather. We saw an opportunity to <em>re-engineer nature's original performance fabric</em> for the world's most demanding urban climate.
+        </blockquote>
+      </div>
+
+      <div class="editorial-right">
+        <p class="editorial-label anim-reveal-up">The Philosophy</p>
+        <p class="editorial-body anim-reveal-up anim-delay-1">
+          Merino wool is not what you think. Each fiber is one-tenth the diameter of a human hair — creating a material that breathes in heat, insulates in air-conditioning, wicks moisture faster than synthetics, and resists odour naturally. We didn't invent wool. We just asked it to do more.
+        </p>
+        <p class="editorial-body anim-reveal-up anim-delay-2">
+          Born in New Zealand highlands. Tested on Singapore's 32°C streets. Every pair is climate-certified for tropical urban life — from MRT platforms to hawker centre queues.
+        </p>
+
+        <dl class="editorial-detail anim-reveal-up anim-delay-3">
+          <div class="editorial-detail-item">
+            <dt>Origin</dt>
+            <dd>New Zealand</dd>
+          </div>
+          <div class="editorial-detail-item">
+            <dt>Tested</dt>
+            <dd>Singapore</dd>
+          </div>
+          <div class="editorial-detail-item">
+            <dt>Material</dt>
+            <dd>Merino Wool</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wool Weave Divider -->
+  <div class="wool-weave" aria-hidden="true"></div>
+
+  <!-- ═══════════════════════════════════════════
+       THE COLLECTION
+  ═══════════════════════════════════════════ -->
+  <section class="collection" id="collection" aria-labelledby="collection-heading">
+    <div class="collection-header anim-reveal-up">
+      <h2 id="collection-heading">The Collection</h2>
+      <p>Three Shoes.<br>Every Singapore Day.</p>
+    </div>
+
+    <!-- ── Product 1: Cinematic Full-Width ── -->
+    <article class="product-cinematic anim-reveal-scale" data-product-id="urban-strider" data-product-name="Urban Strider" data-product-price="189">
+      <div class="product-cinematic-bg" aria-hidden="true">
+        <div class="product-cinematic-visual">
+          <i class="ri-walk-line"></i>
+          <span>Urban Strider</span>
+        </div>
+      </div>
+
+      <div class="product-cinematic-card">
+        <span class="product-tag">Bestseller</span>
+        <h3 class="product-name">Urban Strider</h3>
+        <p class="product-type">Low-top · City Walking</p>
+        <p class="product-desc">
+          92% humidity wicking efficiency. 18% lighter than the average sneaker. Engineered for the daily commute — from Bugis to Tanjong Pagar.
+        </p>
+        <p class="product-price">S$189</p>
+
+        <div class="swatches" role="group" aria-label="Color options">
+          <button class="swatch active" style="background:#E8DCC8" title="Oat" aria-label="Oat"></button>
+          <button class="swatch" style="background:#B8B0A8" title="Foggy Gray" aria-label="Foggy Gray"></button>
+          <button class="swatch" style="background:#5C5750" title="Charcoal" aria-label="Charcoal"></button>
+        </div>
+
+        <div class="sizes" role="group" aria-label="Select size">
+          <button class="size-btn" data-size="36">36</button>
+          <button class="size-btn" data-size="37">37</button>
+          <button class="size-btn" data-size="38">38</button>
+          <button class="size-btn active" data-size="39">39</button>
+          <button class="size-btn" data-size="40">40</button>
+          <button class="size-btn" data-size="41">41</button>
+          <button class="size-btn" data-size="42">42</button>
+          <button class="size-btn" data-size="43">43</button>
+        </div>
+
+        <button class="btn-add add-to-cart-btn">
+          <i class="ri-shopping-bag-3-line"></i>
+          Add to Cart
+        </button>
+      </div>
+    </article>
+
+    <!-- ── Product 2: Split Layout ── -->
+    <article class="product-split" data-product-id="garden-runner" data-product-name="Garden Runner" data-product-price="169">
+      <div class="product-split-visual anim-reveal-left">
+        <div class="product-split-visual-inner">
+          <i class="ri-run-line"></i>
+          <span>Garden Runner</span>
+        </div>
+      </div>
+
+      <div class="product-split-info anim-reveal-right">
+        <span class="product-tag">Lifestyle</span>
+        <h3 class="product-name">Garden Runner</h3>
+        <p class="product-type">Low-top · Parks & Weekends</p>
+        <p class="product-desc">
+          Cushioned merino insole with 8mm stack height. For Botanic Gardens mornings, BBT runs, and everything in between. The shoe that does nothing spectacular — and everything well.
+        </p>
+        <p class="product-price">S$169</p>
+
+        <div class="swatches" role="group" aria-label="Color options">
+          <button class="swatch active" style="background:#F5F0EB" title="Warm White" aria-label="Warm White"></button>
+          <button class="swatch" style="background:#8BA87A" title="Sage" aria-label="Sage"></button>
+          <button class="swatch" style="background:#C4816B" title="Terracotta" aria-label="Terracotta"></button>
+        </div>
+
+        <div class="sizes" role="group" aria-label="Select size">
+          <button class="size-btn" data-size="36">36</button>
+          <button class="size-btn" data-size="37">37</button>
+          <button class="size-btn active" data-size="38">38</button>
+          <button class="size-btn" data-size="39">39</button>
+          <button class="size-btn" data-size="40">40</button>
+          <button class="size-btn" data-size="41">41</button>
+          <button class="size-btn" data-size="42">42</button>
+          <button class="size-btn" data-size="43">43</button>
+        </div>
+
+        <button class="btn-add add-to-cart-btn">
+          <i class="ri-shopping-bag-3-line"></i>
+          Add to Cart
+        </button>
+      </div>
+    </article>
+
+    <!-- ── Product 3: Centered Minimal ── -->
+    <article class="product-centered" data-product-id="metro-hiker" data-product-name="Metro Hiker" data-product-price="219">
+      <div class="product-centered-visual anim-reveal-scale">
+        <i class="ri-footprint-line"></i>
+        <span>Metro Hiker</span>
+      </div>
+
+      <span class="product-tag anim-reveal-up">New Arrival</span>
+      <h3 class="product-name anim-reveal-up anim-delay-1" style="font-size: clamp(2rem, 4vw, 3rem);">Metro Hiker</h3>
+      <p class="product-type anim-reveal-up anim-delay-1">High-top · Urban Exploration</p>
+      <p class="product-desc anim-reveal-up anim-delay-2" style="max-width: 420px;">
+        Ankle support for uneven city terrain. Reinforced toe for construction-dodging on Orchard Road. The high-top that takes Singapore's rough edges in stride.
+      </p>
+      <p class="product-price anim-reveal-up anim-delay-2">S$219</p>
+
+      <div class="swatches anim-reveal-up anim-delay-3" role="group" aria-label="Color options">
+        <button class="swatch active" style="background:#E8DCC8" title="Oat" aria-label="Oat"></button>
+        <button class="swatch" style="background:#2C2A26" title="Midnight" aria-label="Midnight"></button>
+        <button class="swatch" style="background:#6B7B5E" title="Olive" aria-label="Olive"></button>
+      </div>
+
+      <div class="sizes anim-reveal-up anim-delay-3" role="group" aria-label="Select size">
+        <button class="size-btn" data-size="38">38</button>
+        <button class="size-btn" data-size="39">39</button>
+        <button class="size-btn active" data-size="40">40</button>
+        <button class="size-btn" data-size="41">41</button>
+        <button class="size-btn" data-size="42">42</button>
+        <button class="size-btn" data-size="43">43</button>
+        <button class="size-btn" data-size="44">44</button>
+        <button class="size-btn" data-size="45">45</button>
+      </div>
+
+      <button class="btn-add add-to-cart-btn anim-reveal-up anim-delay-4" style="max-width: 320px;">
+        <i class="ri-shopping-bag-3-line"></i>
+        Add to Cart
+      </button>
+    </article>
+  </section>
+
+  <!-- Wool Weave Divider -->
+  <div class="wool-weave" aria-hidden="true"></div>
+
+  <!-- ═══════════════════════════════════════════
+       MATERIALS — Sticky Scroll Narrative
+  ═══════════════════════════════════════════ -->
+  <section class="materials" id="materials" aria-labelledby="materials-heading">
+    <div class="materials-inner">
+      <div class="materials-header anim-reveal-up">
+        <h2 id="materials-heading">Material Science</h2>
+        <p>Why Wool Works<br>in the Tropics</p>
+      </div>
+
+      <div class="materials-grid">
+        <div class="materials-visual anim-reveal-left">
+          <div class="wool-fiber-art">
+            <div class="wool-fiber-art-text">
+              <i class="ri-scissors-cut-line"></i>
+              <span>Merino Fiber</span>
+              <span style="font-size:0.75rem; opacity:0.4; margin-top:0.25rem;">1/10th human hair</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="materials-stats">
+          <div class="stat-card anim-reveal-up">
+            <div class="stat-number">
+              <span class="stat-num" data-target="32" data-display="32">32</span>°C
+            </div>
+            <p class="stat-unit">Climate tested</p>
+            <p class="stat-desc">Validated on Singapore's hottest streets, not in a lab</p>
+          </div>
+
+          <div class="stat-card anim-reveal-up anim-delay-1">
+            <div class="stat-number">
+              <span class="stat-num" data-target="92" data-display="92">92</span>%
+            </div>
+            <p class="stat-unit">Humidity wicking</p>
+            <p class="stat-desc">Faster than any synthetic alternative we tested</p>
+          </div>
+
+          <div class="stat-card anim-reveal-up anim-delay-2">
+            <div class="stat-number">
+              <span class="stat-num" data-target="18" data-display="18">18</span>%
+            </div>
+            <p class="stat-unit">Lighter</p>
+            <p class="stat-desc">Than the average sneaker in its class</p>
+          </div>
+
+          <div class="stat-card anim-reveal-up anim-delay-3">
+            <div class="stat-number">
+              <span class="stat-num" data-target="72" data-display="72">72</span>h
+            </div>
+            <p class="stat-unit">Anti-odour wear</p>
+            <p class="stat-desc">Natural antibacterial properties of merino wool</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wool Weave Divider -->
+  <div class="wool-weave" aria-hidden="true"></div>
+
+  <!-- ═══════════════════════════════════════════
+       TESTIMONIALS — Horizontal Marquee
+  ═══════════════════════════════════════════ -->
+  <section class="testimonials" aria-labelledby="testimonials-heading">
+    <div class="testimonials-header anim-reveal-up">
+      <h2 id="testimonials-heading">What They're Saying</h2>
+    </div>
+
+    <div class="marquee-track" aria-label="Customer testimonials">
+      <!-- Set 1 -->
+      <div class="marquee-card">
+        <blockquote>"I was sceptical about wool in Singapore heat. After three months, these are the only shoes I reach for."</blockquote>
+        <cite>— Rachel T., Marketing Director</cite>
+      </div>
+      <div class="marquee-card">
+        <blockquote>"The Garden Runner is my BBT shoe. Comfortable enough for standing in line at every hawker centre in Tiong Bahru."</blockquote>
+        <cite>— James L., Software Engineer</cite>
+      </div>
+      <div class="marquee-card">
+        <blockquote>"Finally, a shoe that understands what 90% humidity actually means. My feet haven't complained once."</blockquote>
+        <cite>— Priya K., Architect</cite>
+      </div>
+      <div class="marquee-card">
+        <blockquote>"I've worn Allbirds, Baabuk, and three other wool brands. These are the first designed for where I actually live."</blockquote>
+        <cite>— Marcus W., Product Manager</cite>
+      </div>
+      <div class="marquee-card">
+        <blockquote>"The Metro Hiker survived a full day of walking from Chinatown to Marina Bay. Zero blisters. Game changer."</blockquote>
+        <cite>— Aisha N., Teacher</cite>
+      </div>
+
+      <!-- Set 2 (duplicate for seamless loop) -->
+      <div class="marquee-card">
+        <blockquote>"I was sceptical about wool in Singapore heat. After three months, these are the only shoes I reach for."</blockquote>
+        <cite>— Rachel T., Marketing Director</cite>
+      </div>
+      <div class="marquee-card">
+        <blockquote>"The Garden Runner is my BBT shoe. Comfortable enough for standing in line at every hawker centre in Tiong Bahru."</blockquote>
+        <cite>— James L., Software Engineer</cite>
+      </div>
+      <div class="marquee-card">
+        <blockquote>"Finally, a shoe that understands what 90% humidity actually means. My feet haven't complained once."</blockquote>
+        <cite>— Priya K., Architect</cite>
+      </div>
+      <div class="marquee-card">
+        <blockquote>"I've worn Allbirds, Baabuk, and three other wool brands. These are the first designed for where I actually live."</blockquote>
+        <cite>— Marcus W., Product Manager</cite>
+      </div>
+      <div class="marquee-card">
+        <blockquote>"The Metro Hiker survived a full day of walking from Chinatown to Marina Bay. Zero blisters. Game changer."</blockquote>
+        <cite>— Aisha N., Teacher</cite>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wool Weave Divider -->
+  <div class="wool-weave" aria-hidden="true"></div>
+
+  <!-- ═══════════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════════ -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div>
+          <p class="footer-brand">Wool Atelier</p>
+          <p class="footer-tagline">Merino wool sneakers engineered for Singapore's tropical urban life.</p>
+        </div>
+
+        <div class="footer-links">
+          <div class="footer-col">
+            <h4>Shop</h4>
+            <a href="#">Urban Strider</a>
+            <a href="#">Garden Runner</a>
+            <a href="#">Metro Hiker</a>
+            <a href="#">Gift Cards</a>
+          </div>
+          <div class="footer-col">
+            <h4>Help</h4>
+            <a href="#">Sizing Guide</a>
+            <a href="#">Shipping & Returns</a>
+            <a href="#">30-Day Guarantee</a>
+            <a href="#">Contact</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="footer-copy">© 2026 Wool Atelier. Made for Singapore streets.</p>
+        <div class="footer-socials">
+          <a href="#" aria-label="Instagram"><i class="ri-instagram-line"></i></a>
+          <a href="#" aria-label="TikTok"><i class="ri-tiktok-line"></i></a>
+          <a href="#" aria-label="WhatsApp"><i class="ri-whatsapp-line"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═══════════════════════════════════════════
+       CART DRAWER
+  ═══════════════════════════════════════════ -->
+  <div class="cart-overlay" id="cart-overlay" aria-hidden="true"></div>
+  <aside class="cart-drawer" id="cart-drawer" role="dialog" aria-label="Shopping cart" aria-hidden="true">
+    <div class="cart-header">
+      <h2>Your Cart</h2>
+      <button class="cart-close-btn" id="cart-close" aria-label="Close cart">
+        <i class="ri-close-line ri-lg"></i>
+      </button>
+    </div>
+
+    <div class="cart-body">
+      <div class="cart-empty" id="cart-empty">
+        <i class="ri-shopping-bag-3-line"></i>
+        <p>Your cart is empty</p>
+        <span>Add some wool comfort to your life</span>
+        <a href="#collection" class="hero-cta" style="font-size:0.75rem; padding: 0.75rem 1.5rem;" onclick="closeCart()">Browse Collection</a>
+      </div>
+      <div class="cart-items hidden" id="cart-list"></div>
+    </div>
+
+    <div class="cart-footer hidden" id="cart-footer">
+      <div class="cart-row">
+        <span class="cart-row-label">Subtotal</span>
+        <span class="cart-row-value" id="cart-subtotal">S$0</span>
+      </div>
+      <div class="cart-row">
+        <span class="cart-row-label">Shipping</span>
+        <span class="cart-row-value" id="cart-shipping">S$5.90</span>
+      </div>
+      <div class="cart-total">
+        <span>Total</span>
+        <span id="cart-total">S$0</span>
+      </div>
+      <button class="cart-checkout" onclick="showToast('Checkout experience coming soon')">
+        Checkout
+        <i class="ri-arrow-right-line"></i>
+      </button>
+      <p class="cart-shipping-note">Free shipping on orders above S$150</p>
+    </div>
+  </aside>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+  <!-- ═══════════════════════════════════════════
+       JAVASCRIPT — Cart + Nav only (~90 lines)
+  ═══════════════════════════════════════════ -->
+  <script>
+    // ── State ──
+    const cart = [];
+
+    // ── DOM ──
+    const $ = id => document.getElementById(id);
+    const cartToggle = $('cart-toggle');
+    const cartDrawer = $('cart-drawer');
+    const cartOverlayEl = $('cart-overlay');
+    const cartCloseBtn = $('cart-close');
+    const cartBadge = $('cart-badge');
+    const cartEmpty = $('cart-empty');
+    const cartList = $('cart-list');
+    const cartFooterEl = $('cart-footer');
+    const cartSubtotal = $('cart-subtotal');
+    const cartShipping = $('cart-shipping');
+    const cartTotal = $('cart-total');
+    const mobToggle = $('mob-toggle');
+    const mobOverlay = $('mob-overlay');
+    const mobPanel = $('mob-panel');
+    const mobClose = $('mob-close');
+    const toastEl = $('toast');
+
+    // ── Cart ──
+    function openCart() {
+      cartDrawer.classList.add('open');
+      cartOverlayEl.classList.add('open');
+      cartDrawer.setAttribute('aria-hidden', 'false');
+      cartOverlayEl.setAttribute('aria-hidden', 'false');
+      cartToggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+      cartCloseBtn.focus();
+    }
+
+    function closeCart() {
+      cartDrawer.classList.remove('open');
+      cartOverlayEl.classList.remove('open');
+      cartDrawer.setAttribute('aria-hidden', 'true');
+      cartOverlayEl.setAttribute('aria-hidden', 'true');
+      cartToggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+      cartToggle.focus();
+    }
+
+    function addToCart(id, name, price, size) {
+      const existing = cart.find(i => i.id === id && i.size === size);
+      if (existing) { existing.qty++; }
+      else { cart.push({ id, name, price, size, qty: 1 }); }
+      renderCart();
+      showToast(`${name} (EU ${size}) added`);
+      pulseBadge();
+    }
+
+    function removeFromCart(idx) {
+      const el = cartList.children[idx];
+      if (el) {
+        el.style.transition = 'all 250ms cubic-bezier(0.16,1,0.3,1)';
+        el.style.opacity = '0';
+        el.style.transform = 'translateX(40px)';
+        setTimeout(() => { cart.splice(idx, 1); renderCart(); }, 250);
+      }
+    }
+
+    function renderCart() {
+      const count = cart.reduce((s, i) => s + i.qty, 0);
+      const sub = cart.reduce((s, i) => s + i.price * i.qty, 0);
+      const ship = sub >= 150 ? 0 : 5.90;
+
+      cartBadge.textContent = count;
+      cartBadge.classList.toggle('visible', count > 0);
+
+      if (!cart.length) {
+        cartEmpty.style.display = '';
+        cartList.classList.add('hidden');
+        cartFooterEl.classList.add('hidden');
+      } else {
+        cartEmpty.style.display = 'none';
+        cartList.classList.remove('hidden');
+        cartFooterEl.classList.remove('hidden');
+
+        cartList.innerHTML = cart.map((item, i) => `
+          <div class="cart-item">
+            <div class="cart-item-thumb"><i class="ri-footprint-line"></i></div>
+            <div class="cart-item-info">
+              <p class="cart-item-name">${item.name}</p>
+              <p class="cart-item-meta">EU ${item.size} · Qty: ${item.qty}</p>
+              <p class="cart-item-price">S$${item.price * item.qty}</p>
+            </div>
+            <button onclick="removeFromCart(${i})" aria-label="Remove ${item.name}" class="cart-item-remove">
+              <i class="ri-delete-bin-line"></i>
+            </button>
+          </div>
+        `).join('');
+
+        cartSubtotal.textContent = `S$${sub}`;
+        cartShipping.textContent = ship === 0 ? 'Free' : `S$${ship.toFixed(2)}`;
+        cartTotal.textContent = `S$${(sub + ship).toFixed(2)}`;
+      }
+    }
+
+    function pulseBadge() {
+      cartBadge.classList.remove('visible');
+      void cartBadge.offsetWidth;
+      cartBadge.classList.add('visible');
+    }
+
+    // ── Mobile Nav ──
+    function openMob() {
+      mobPanel.classList.add('open');
+      mobOverlay.classList.add('open');
+      mobPanel.setAttribute('aria-hidden', 'false');
+      mobOverlay.setAttribute('aria-hidden', 'false');
+      mobToggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeMob() {
+      mobPanel.classList.remove('open');
+      mobOverlay.classList.remove('open');
+      mobPanel.setAttribute('aria-hidden', 'true');
+      mobOverlay.setAttribute('aria-hidden', 'true');
+      mobToggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+      mobToggle.focus();
+    }
+
+    // ── Toast ──
+    let toastTimer;
+    function showToast(msg) {
+      clearTimeout(toastTimer);
+      toastEl.textContent = msg;
+      toastEl.classList.add('show');
+      toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2400);
+    }
+
+    // ── Events ──
+    cartToggle.addEventListener('click', openCart);
+    cartCloseBtn.addEventListener('click', closeCart);
+    cartOverlayEl.addEventListener('click', closeCart);
+    mobToggle.addEventListener('click', openMob);
+    mobClose.addEventListener('click', closeMob);
+    mobOverlay.addEventListener('click', closeMob);
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        if (cartDrawer.classList.contains('open')) closeCart();
+        if (mobPanel.classList.contains('open')) closeMob();
+      }
+    });
+
+    document.querySelectorAll('.mob-link').forEach(a => a.addEventListener('click', closeMob));
+
+    // Size selector
+    document.querySelectorAll('.sizes').forEach(group => {
+      group.querySelectorAll('.size-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          group.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        });
+      });
+    });
+
+    // Swatch selector
+    document.querySelectorAll('.swatches').forEach(group => {
+      group.querySelectorAll('.swatch').forEach(btn => {
+        btn.addEventListener('click', () => {
+          group.querySelectorAll('.swatch').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        });
+      });
+    });
+
+    // Add to cart
+    document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const card = btn.closest('[data-product-id]');
+        const id = card.dataset.productId;
+        const name = card.dataset.productName;
+        const price = +card.dataset.productPrice;
+        const sizeBtn = card.querySelector('.size-btn.active');
+        if (!sizeBtn) { showToast('Please select a size'); return; }
+        addToCart(id, name, price, sizeBtn.dataset.size);
+        btn.style.transform = 'scale(0.96)';
+        setTimeout(() => btn.style.transform = '', 150);
+      });
+    });
+  </script>
+
+</body>
+</html>

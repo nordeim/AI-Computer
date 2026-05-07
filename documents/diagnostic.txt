@@ -1,6 +1,6 @@
 $ openclaw doctor --repair
 
-🦞 OpenClaw 2026.4.12 (1c0672b) — Runs on a Raspberry Pi. Dreams of a rack in Iceland.
+🦞 OpenClaw 2026.4.21 (f788c88) — I've read more man pages than any human should—so you don't have to.
 
 ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 ██░▄▄▄░██░▄▄░██░▄▄▄██░▀██░██░▄▄▀██░████░▄▄▀██░███░██
@@ -24,6 +24,64 @@ $ openclaw doctor --repair
 │    channels.telegram.groupPolicy to "open" if you want broad group access.                 │
 │                                                                                            │
 ├────────────────────────────────────────────────────────────────────────────────────────────╯
+22:08:49 [plugins] amazon-bedrock installed bundled runtime deps: @aws-sdk/client-bedrock-runtime@3.1032.0, @aws-sdk/client-bedrock@3.1032.0, @aws-sdk/credential-provider-node@3.972.32
+22:08:53 [plugins] amazon-bedrock-mantle installed bundled runtime deps: @aws/bedrock-token-generator@^1.1.0
+22:09:07 [plugins] anthropic installed bundled runtime deps: @mariozechner/pi-ai@0.67.68
+22:09:24 [plugins] codex installed bundled runtime deps: @mariozechner/pi-coding-agent@0.67.68, ws@^8.20.0, zod@^4.3.6
+22:09:35 [plugins] fireworks installed bundled runtime deps: @mariozechner/pi-ai@0.67.68
+22:09:44 [plugins] github-copilot installed bundled runtime deps: @clack/prompts@^1.2.0, @mariozechner/pi-ai@0.67.68
+22:09:52 [plugins] google installed bundled runtime deps: @google/genai@^1.50.1, @mariozechner/pi-ai@0.67.68
+22:10:10 [plugins] kimi installed bundled runtime deps: @mariozechner/pi-ai@0.67.68
+22:10:18 [plugins] lmstudio installed bundled runtime deps: @mariozechner/pi-ai@0.67.68
+22:10:25 [plugins] ollama installed bundled runtime deps: @mariozechner/pi-ai@0.67.68, @sinclair/typebox@0.34.49
+22:10:33 [plugins] openai installed bundled runtime deps: @mariozechner/pi-ai@0.67.68, ws@^8.20.0
+22:10:40 [plugins] xai installed bundled runtime deps: @mariozechner/pi-ai@0.67.68, @sinclair/typebox@0.34.49
+│
+◇  Bundled plugins ─────────────────────────────────────────────╮
+│                                                               │
+│  Bundled plugin runtime deps are missing.                     │
+│  - @grammyjs/runner@^2.0.3 (used by telegram)                 │
+│  - @grammyjs/transformer-throttler@^1.2.1 (used by telegram)  │
+│  - @modelcontextprotocol/sdk@1.29.0 (used by browser)         │
+│  - acpx@0.5.3 (used by acpx)                                  │
+│  - commander@^14.0.3 (used by browser)                        │
+│  - express@^5.2.1 (used by browser)                           │
+│  - grammy@^1.42.0 (used by telegram)                          │
+│  - node-edge-tts@^1.2.10 (used by microsoft)                  │
+│  - playwright-core@1.59.1 (used by browser)                   │
+│  Fix: run openclaw doctor --fix to install them.              │
+│                                                               │
+├───────────────────────────────────────────────────────────────╯
+│
+◇  Bundled plugins ───────────────────────────────────────────────────────────────────────╮
+│                                                                                         │
+│  Installed bundled plugin deps: @grammyjs/runner@^2.0.3,                                │
+│  @grammyjs/transformer-throttler@^1.2.1, @modelcontextprotocol/sdk@1.29.0, acpx@0.5.3,  │
+│  commander@^14.0.3, express@^5.2.1, grammy@^1.42.0, node-edge-tts@^1.2.10,              │
+│  playwright-core@1.59.1                                                                 │
+│                                                                                         │
+├─────────────────────────────────────────────────────────────────────────────────────────╯
+│
+◇  State integrity ──────────────────────────────────────────────────────────────────────────╮
+│                                                                                            │
+│  - Found 2 orphan transcript files in ~/.openclaw/agents/main/sessions.                    │
+│    These .jsonl files are no longer referenced by sessions.json, so they are not part of   │
+│    any active session history.                                                             │
+│    Doctor can archive them safely by renaming each file to *.deleted.<timestamp>.          │
+│    Examples:                                                                               │
+│    00ae3abc-933a-4513-86ce-3c0431467b70.checkpoint.b62297bf-35f2-4957-9dd7-23495c55b25e.j  │
+│    sonl,                                                                                   │
+│    3bf9b6b1-7691-482e-9167-c461e356c683.checkpoint.bcdb91f2-f528-41bd-aa33-72084434cf6b.j  │
+│    sonl                                                                                    │
+│                                                                                            │
+├────────────────────────────────────────────────────────────────────────────────────────────╯
+│
+◇  Doctor changes ───────────────────────────────────────────────────────────────────────╮
+│                                                                                        │
+│  - Archived 2 orphan transcript files in ~/.openclaw/agents/main/sessions as .deleted  │
+│    timestamped backups.                                                                │
+│                                                                                        │
+├────────────────────────────────────────────────────────────────────────────────────────╯
 │
 ◇  Security ─────────────────────────────────╮
 │                                            │
@@ -31,11 +89,11 @@ $ openclaw doctor --repair
 │  - Run: openclaw security audit --deep     │
 │                                            │
 ├────────────────────────────────────────────╯
-08:48:48 [skills] Skipping escaped skill path outside its configured root: source=openclaw-workspace root=~/.openclaw/workspace/skills reason=symlink-escape requested=~/.openclaw/workspace/skills/aesthetic resolved=~/.claude/skills/aesthetic
-08:48:48 [skills] Skipping escaped skill path outside its configured root: source=openclaw-workspace root=~/.openclaw/workspace/skills reason=symlink-escape requested=~/.openclaw/workspace/skills/avant-garde-design-v4 resolved=~/.claude/skills/avant-garde-design-v4
-08:48:48 [skills] Skipping escaped skill path outside its configured root: source=openclaw-workspace root=~/.openclaw/workspace/skills reason=symlink-escape requested=~/.openclaw/workspace/skills/code-review resolved=~/.claude/skills/code-review
-08:48:48 [skills] Skipping escaped skill path outside its configured root: source=openclaw-workspace root=~/.openclaw/workspace/skills reason=symlink-escape requested=~/.openclaw/workspace/skills/nextjs-tailwind-v4-luxe resolved=~/.claude/skills/nextjs-tailwind-v4-luxe
-08:48:48 [skills] Skipping escaped skill path outside its configured root: source=openclaw-workspace root=~/.openclaw/workspace/skills reason=symlink-escape requested=~/.openclaw/workspace/skills/ui-styling resolved=~/.claude/skills/ui-styling
+22:12:01 [skills] Skipping escaped skill path outside its configured root: source=openclaw-workspace root=~/.openclaw/workspace/skills reason=symlink-escape requested=~/.openclaw/workspace/skills/aesthetic resolved=~/.claude/skills/aesthetic
+22:12:01 [skills] Skipping escaped skill path outside its configured root: source=openclaw-workspace root=~/.openclaw/workspace/skills reason=symlink-escape requested=~/.openclaw/workspace/skills/avant-garde-design-v4 resolved=~/.claude/skills/avant-garde-design-v4
+22:12:01 [skills] Skipping escaped skill path outside its configured root: source=openclaw-workspace root=~/.openclaw/workspace/skills reason=symlink-escape requested=~/.openclaw/workspace/skills/code-review resolved=~/.claude/skills/code-review
+22:12:01 [skills] Skipping escaped skill path outside its configured root: source=openclaw-workspace root=~/.openclaw/workspace/skills reason=symlink-escape requested=~/.openclaw/workspace/skills/nextjs-tailwind-v4-luxe resolved=~/.claude/skills/nextjs-tailwind-v4-luxe
+22:12:01 [skills] Skipping escaped skill path outside its configured root: source=openclaw-workspace root=~/.openclaw/workspace/skills reason=symlink-escape requested=~/.openclaw/workspace/skills/ui-styling resolved=~/.claude/skills/ui-styling
 │
 ◇  Skills status ────────────╮
 │                            │
@@ -44,13 +102,13 @@ $ openclaw doctor --repair
 │  Blocked by allowlist: 0   │
 │                            │
 ├────────────────────────────╯
-08:48:51 [plugins] [lcm] Plugin loaded (enabled=true, db=/home/pete/.openclaw/lcm.db, threshold=0.75)
+22:12:59 [plugins] [lcm] Plugin loaded (enabled=true, db=/home/pete/.openclaw/lcm.db, threshold=0.75)
 │
 ◇  Plugins ──────╮
 │                │
 │  Loaded: 49    │
 │  Imported: 50  │
-│  Disabled: 50  │
+│  Disabled: 51  │
 │  Errors: 0     │
 │                │
 ├────────────────╯
@@ -58,32 +116,32 @@ $ openclaw doctor --repair
 ◇  Bootstrap file size ──────────────────────────────────────────────────╮
 │                                                                        │
 │  Workspace bootstrap files are near configured limits:                 │
-│  - MEMORY.md: 55,981 chars (93% of max/file 60,000)                    │
-│  Total bootstrap injected chars: 86,567 (43% of max/total 200,000).    │
-│  Total bootstrap raw chars (before truncation): 86,567.                │
+│  - MEMORY.md: 57,438 chars (96% of max/file 60,000)                    │
+│  Total bootstrap injected chars: 88,024 (44% of max/total 200,000).    │
+│  Total bootstrap raw chars (before truncation): 88,024.                │
 │                                                                        │
 │  - Tip: tune `agents.defaults.bootstrapMaxChars` for per-file limits.  │
 │                                                                        │
 ├────────────────────────────────────────────────────────────────────────╯
 │
 ◇  
-Telegram: ok (@Nordeim_bot) (332ms)
+Telegram: ok (@Nordeim_bot) (333ms)
 Agents: main (default)
 Heartbeat interval: 30m (main)
 Session store (main): /home/pete/.openclaw/agents/main/sessions/sessions.json (10 entries)
-- agent:main:main (27m ago)
-- agent:main:cron:96581978-d878-4527-8afb-e74fcefebdc4:run:239a6759-b904-4287-addc-de4388652b12 (34m ago)
-- agent:main:cron:96581978-d878-4527-8afb-e74fcefebdc4 (56m ago)
-- agent:main:tui-2c958ba6-c88e-416a-98df-7c5fe3e54204 (88m ago)
-- agent:main:cron:10a19bb7-7afb-4b24-8478-62555b540c2d (94m ago)
-08:48:54 [plugins] [lcm] Plugin loaded (enabled=true, db=/home/pete/.openclaw/lcm.db, threshold=0.75)
+- agent:main:main (19m ago)
+- agent:main:cron:96581978-d878-4527-8afb-e74fcefebdc4 (909m ago)
+- agent:main:cron:96581978-d878-4527-8afb-e74fcefebdc4:run:67b71af8-d0ec-4431-ab2f-7c7789faf1f9 (909m ago)
+- agent:main:cron:10a19bb7-7afb-4b24-8478-62555b540c2d (913m ago)
+- agent:main:cron:10a19bb7-7afb-4b24-8478-62555b540c2d:run:c02c399b-8eda-465a-b0b5-6fa1a59e13bb (913m ago)
+22:13:04 [plugins] [lcm] Plugin loaded (enabled=true, db=/home/pete/.openclaw/lcm.db, threshold=0.75)
 │
 └  Doctor complete.
 
 (venv) pete@pop-os:/Home1/node-v24/lib
-$ openclaw doctor --fix
+$ openclaw doctor --fix 
 
-🦞 OpenClaw 2026.4.12 (1c0672b) — WhatsApp automation without the "please accept our new privacy policy".
+🦞 OpenClaw 2026.4.21 (f788c88) — Your .env is showing; don't worry, I'll pretend I didn't see it.
 
 ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 ██░▄▄▄░██░▄▄░██░▄▄▄██░▀██░██░▄▄▀██░████░▄▄▀██░███░██
@@ -114,11 +172,11 @@ $ openclaw doctor --fix
 │  - Run: openclaw security audit --deep     │
 │                                            │
 ├────────────────────────────────────────────╯
-08:49:46 [skills] Skipping escaped skill path outside its configured root: source=openclaw-workspace root=~/.openclaw/workspace/skills reason=symlink-escape requested=~/.openclaw/workspace/skills/aesthetic resolved=~/.claude/skills/aesthetic
-08:49:46 [skills] Skipping escaped skill path outside its configured root: source=openclaw-workspace root=~/.openclaw/workspace/skills reason=symlink-escape requested=~/.openclaw/workspace/skills/avant-garde-design-v4 resolved=~/.claude/skills/avant-garde-design-v4
-08:49:46 [skills] Skipping escaped skill path outside its configured root: source=openclaw-workspace root=~/.openclaw/workspace/skills reason=symlink-escape requested=~/.openclaw/workspace/skills/code-review resolved=~/.claude/skills/code-review
-08:49:46 [skills] Skipping escaped skill path outside its configured root: source=openclaw-workspace root=~/.openclaw/workspace/skills reason=symlink-escape requested=~/.openclaw/workspace/skills/nextjs-tailwind-v4-luxe resolved=~/.claude/skills/nextjs-tailwind-v4-luxe
-08:49:46 [skills] Skipping escaped skill path outside its configured root: source=openclaw-workspace root=~/.openclaw/workspace/skills reason=symlink-escape requested=~/.openclaw/workspace/skills/ui-styling resolved=~/.claude/skills/ui-styling
+22:13:57 [skills] Skipping escaped skill path outside its configured root: source=openclaw-workspace root=~/.openclaw/workspace/skills reason=symlink-escape requested=~/.openclaw/workspace/skills/aesthetic resolved=~/.claude/skills/aesthetic
+22:13:57 [skills] Skipping escaped skill path outside its configured root: source=openclaw-workspace root=~/.openclaw/workspace/skills reason=symlink-escape requested=~/.openclaw/workspace/skills/avant-garde-design-v4 resolved=~/.claude/skills/avant-garde-design-v4
+22:13:57 [skills] Skipping escaped skill path outside its configured root: source=openclaw-workspace root=~/.openclaw/workspace/skills reason=symlink-escape requested=~/.openclaw/workspace/skills/code-review resolved=~/.claude/skills/code-review
+22:13:57 [skills] Skipping escaped skill path outside its configured root: source=openclaw-workspace root=~/.openclaw/workspace/skills reason=symlink-escape requested=~/.openclaw/workspace/skills/nextjs-tailwind-v4-luxe resolved=~/.claude/skills/nextjs-tailwind-v4-luxe
+22:13:57 [skills] Skipping escaped skill path outside its configured root: source=openclaw-workspace root=~/.openclaw/workspace/skills reason=symlink-escape requested=~/.openclaw/workspace/skills/ui-styling resolved=~/.claude/skills/ui-styling
 │
 ◇  Skills status ────────────╮
 │                            │
@@ -127,13 +185,13 @@ $ openclaw doctor --fix
 │  Blocked by allowlist: 0   │
 │                            │
 ├────────────────────────────╯
-08:49:49 [plugins] [lcm] Plugin loaded (enabled=true, db=/home/pete/.openclaw/lcm.db, threshold=0.75)
+22:14:23 [plugins] [lcm] Plugin loaded (enabled=true, db=/home/pete/.openclaw/lcm.db, threshold=0.75)
 │
 ◇  Plugins ──────╮
 │                │
 │  Loaded: 49    │
 │  Imported: 50  │
-│  Disabled: 50  │
+│  Disabled: 51  │
 │  Errors: 0     │
 │                │
 ├────────────────╯
@@ -141,49 +199,26 @@ $ openclaw doctor --fix
 ◇  Bootstrap file size ──────────────────────────────────────────────────╮
 │                                                                        │
 │  Workspace bootstrap files are near configured limits:                 │
-│  - MEMORY.md: 55,981 chars (93% of max/file 60,000)                    │
-│  Total bootstrap injected chars: 86,567 (43% of max/total 200,000).    │
-│  Total bootstrap raw chars (before truncation): 86,567.                │
+│  - MEMORY.md: 57,438 chars (96% of max/file 60,000)                    │
+│  Total bootstrap injected chars: 88,024 (44% of max/total 200,000).    │
+│  Total bootstrap raw chars (before truncation): 88,024.                │
 │                                                                        │
 │  - Tip: tune `agents.defaults.bootstrapMaxChars` for per-file limits.  │
 │                                                                        │
 ├────────────────────────────────────────────────────────────────────────╯
 │
 ◇  
-Telegram: ok (@Nordeim_bot) (336ms)
+Telegram: ok (@Nordeim_bot) (334ms)
 Agents: main (default)
 Heartbeat interval: 30m (main)
 Session store (main): /home/pete/.openclaw/agents/main/sessions/sessions.json (10 entries)
-- agent:main:main (28m ago)
-- agent:main:cron:96581978-d878-4527-8afb-e74fcefebdc4:run:239a6759-b904-4287-addc-de4388652b12 (35m ago)
-- agent:main:cron:96581978-d878-4527-8afb-e74fcefebdc4 (57m ago)
-- agent:main:tui-2c958ba6-c88e-416a-98df-7c5fe3e54204 (88m ago)
-- agent:main:cron:10a19bb7-7afb-4b24-8478-62555b540c2d (95m ago)
-08:49:52 [plugins] [lcm] Plugin loaded (enabled=true, db=/home/pete/.openclaw/lcm.db, threshold=0.75)
+- agent:main:main (20m ago)
+- agent:main:cron:96581978-d878-4527-8afb-e74fcefebdc4 (910m ago)
+- agent:main:cron:96581978-d878-4527-8afb-e74fcefebdc4:run:67b71af8-d0ec-4431-ab2f-7c7789faf1f9 (910m ago)
+- agent:main:cron:10a19bb7-7afb-4b24-8478-62555b540c2d (914m ago)
+- agent:main:cron:10a19bb7-7afb-4b24-8478-62555b540c2d:run:c02c399b-8eda-465a-b0b5-6fa1a59e13bb (914m ago)
+22:14:25 [plugins] [lcm] Plugin loaded (enabled=true, db=/home/pete/.openclaw/lcm.db, threshold=0.75)
 │
 └  Doctor complete.
 
-Telegram: failed (unknown) - This operation was aborted
-Agents: main (default)
-Heartbeat interval: 30m (main)
-Session store (main): /home/pete/.openclaw/agents/main/sessions/sessions.json (10 entries)
-- agent:main:main (29m ago)
-- agent:main:cron:96581978-d878-4527-8afb-e74fcefebdc4:run:239a6759-b904-4287-addc-de4388652b12 (36m ago)
-- agent:main:cron:96581978-d878-4527-8afb-e74fcefebdc4 (58m ago)
-- agent:main:tui-2c958ba6-c88e-416a-98df-7c5fe3e54204 (90m ago)
-- agent:main:cron:10a19bb7-7afb-4b24-8478-62555b540c2d (96m ago)
-│
-◇  Select sections to configure
-│  Continue
-│
-◇  Control UI ────────────────────────────────────╮
-│                                                 │
-│  Web UI: http://127.0.0.1:18789/                │
-│  Gateway WS: ws://127.0.0.1:18789               │
-│  Gateway: reachable                             │
-│  Docs: https://docs.openclaw.ai/web/control-ui  │
-│                                                 │
-├─────────────────────────────────────────────────╯
-│
-└  Configure complete.
 

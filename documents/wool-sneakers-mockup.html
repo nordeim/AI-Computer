@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WOOLWORK — Wool Sneakers for the Tropical Urbanite</title>
+  <meta name="description" content="Merino wool sneakers engineered for Singapore's tropical urban life. Naturally breathable. Unapologetically comfortable.">
+
+  <!-- Fonts: Instrument Serif (Display) + Inter (Body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <!-- RemixIcon for UI icons -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
+
+  <!-- Tailwind CSS v4 CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'warm-white': '#F5F0EB',
+            'oat': '#E8DCC8',
+            'oat-light': '#F0E8DA',
+            'foggy': '#B8B0A8',
+            'foggy-light': '#D1CBC4',
+            'charcoal': '#5C5750',
+            'sage': '#8BA87A',
+            'midnight': '#2C2A26',
+          },
+          fontFamily: {
+            'serif': ['"Instrument Serif"', 'Georgia', 'serif'],
+            'sans': ['"Inter"', 'system-ui', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* ──────────────────────────────────────────────
+       Design Tokens (OKLCH Reference)
+       warm-white:  oklch(0.96 0.02 85)  → #F5F0EB
+       oat:         oklch(0.88 0.04 82)  → #E8DCC8
+       foggy:       oklch(0.76 0.03 75)  → #B8B0A8
+       charcoal:    oklch(0.35 0.02 65)  → #5C5750
+       sage:        oklch(0.68 0.08 140) → #8BA87A
+       midnight:    oklch(0.20 0.01 60)  → #2C2A26
+    ────────────────────────────────────────────── */
+
+    :root {
+      --font-serif: 'Instrument Serif', Georgia, serif;
+      --font-sans: 'Inter', system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { font-family: var(--font-sans); }
+    body {
+      margin: 0;
+      background: #F5F0EB;
+      color: #5C5750;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ── Wool Texture SVG Pattern ── */
+    .wool-texture {
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23B8B0A8' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    /* ── Weave Stripe (decorative) ── */
+    .wool-weave-stripe {
+      height: 4px;
+      background: repeating-linear-gradient(
+        90deg,
+        #B8B0A8 0px, #B8B0A8 8px,
+        #E8DCC8 8px, #E8DCC8 16px
+      );
+      opacity: 0.3;
+    }
+
+    /* ── Tactile Buttons ── */
+    .btn-primary {
+      background: #5C5750;
+      color: #F5F0EB;
+      padding: 0.875rem 2rem;
+      border: none;
+      border-radius: 0.5rem;
+      font-family: var(--font-sans);
+      font-weight: 500;
+      font-size: 0.9375rem;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1),
+                  background-color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+                  box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1);
+      min-height: 44px;
+      min-width: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .btn-primary:hover {
+      transform: scale(1.05);
+      background: #4A4540;
+      box-shadow: 0 8px 24px rgba(92,87,80,0.2);
+    }
+    .btn-primary:active { transform: scale(0.97); }
+    .btn-primary:focus-visible {
+      outline: 2px solid #B8B0A8;
+      outline-offset: 3px;
+    }
+
+    .btn-secondary {
+      background: #E8DCC8;
+      color: #5C5750;
+      padding: 0.875rem 2rem;
+      border: none;
+      border-radius: 0.5rem;
+      font-family: var(--font-sans);
+      font-weight: 500;
+      font-size: 0.9375rem;
+      cursor: pointer;
+      transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1),
+                  background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .btn-secondary:hover {
+      transform: scale(1.05);
+      background: #DDD0BC;
+    }
+    .btn-secondary:active { transform: scale(0.97); }
+    .btn-secondary:focus-visible {
+      outline: 2px solid #5C5750;
+      outline-offset: 3px;
+    }
+
+    /* ── Product Card ── */
+    .product-card {
+      background: #E8DCC8;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1),
+                  box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
+    .product-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 40px rgba(92,87,80,0.12);
+      border-color: #D1CBC4;
+    }
+    .product-card:active { transform: translateY(-2px); }
+
+    /* ── Product Image Container ── */
+    .product-image-wrap {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 4/5;
+      background: #F0E8DA;
+    }
+    .product-image-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 400ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .product-card:hover .product-image-wrap img {
+      transform: scale(1.06);
+    }
+
+    /* ── Size Selector ── */
+    .size-btn {
+      width: 44px;
+      height: 44px;
+      border: 1.5px solid #B8B0A8;
+      border-radius: 0.375rem;
+      background: transparent;
+      color: #5C5750;
+      font-family: var(--font-sans);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .size-btn:hover {
+      border-color: #5C5750;
+      background: rgba(92,87,80,0.06);
+    }
+    .size-btn.selected {
+      background: #5C5750;
+      color: #F5F0EB;
+      border-color: #5C5750;
+    }
+    .size-btn:focus-visible {
+      outline: 2px solid #5C5750;
+      outline-offset: 2px;
+    }
+
+    /* ── Cart Drawer ── */
+    .cart-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(44,42,38,0.4);
+      z-index: 90;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(4px);
+    }
+    .cart-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .cart-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: min(420px, 90vw);
+      background: #F5F0EB;
+      z-index: 100;
+      transform: translateX(100%);
+      transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      box-shadow: -8px 0 40px rgba(44,42,38,0.15);
+    }
+    .cart-drawer.open {
+      transform: translateX(0);
+    }
+
+    .cart-item-enter {
+      animation: cartItemIn 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+    @keyframes cartItemIn {
+      from { opacity: 0; transform: translateX(30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .cart-item-exit {
+      animation: cartItemOut 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+    @keyframes cartItemOut {
+      from { opacity: 1; transform: translateX(0); }
+      to { opacity: 0; transform: translateX(50px); }
+    }
+
+    /* ── Mobile Nav ── */
+    .mobile-nav-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(44,42,38,0.5);
+      z-index: 80;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(4px);
+    }
+    .mobile-nav-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .mobile-nav-panel {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: min(320px, 85vw);
+      background: #F5F0EB;
+      z-index: 85;
+      transform: translateX(-100%);
+      transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .mobile-nav-panel.open {
+      transform: translateX(0);
+    }
+
+    /* ── Hero Animations ── */
+    .hero-fade-up {
+      animation: heroFadeUp 800ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      opacity: 0;
+    }
+    @keyframes heroFadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hero-delay-1 { animation-delay: 100ms; }
+    .hero-delay-2 { animation-delay: 250ms; }
+    .hero-delay-3 { animation-delay: 400ms; }
+
+    /* ── Staggered Product Card Entrance ── */
+    .card-stagger {
+      animation: cardFadeIn 500ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      opacity: 0;
+    }
+    @keyframes cardFadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Scroll Reveal ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 600ms cubic-bezier(0.4, 0, 0.2, 1),
+                  transform 600ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Badge Pulse ── */
+    .badge-pulse {
+      animation: badgePop 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes badgePop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.3); }
+      100% { transform: scale(1); }
+    }
+
+    /* ── Focus States (WCAG AAA) ── */
+    a:focus-visible, button:focus-visible {
+      outline: 2px solid #B8B0A8;
+      outline-offset: 3px;
+    }
+
+    /* ── Reduced Motion ── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .hero-fade-up,
+      .card-stagger,
+      .reveal,
+      .cart-item-enter,
+      .cart-item-exit {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    /* ── Selection ── */
+    ::selection {
+      background: #E8DCC8;
+      color: #5C5750;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #F5F0EB; }
+    ::-webkit-scrollbar-thumb { background: #B8B0A8; border-radius: 3px; }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #5C5750;
+      color: #F5F0EB;
+      padding: 0.875rem 1.5rem;
+      border-radius: 0.5rem;
+      font-family: var(--font-sans);
+      font-size: 0.875rem;
+      font-weight: 500;
+      z-index: 200;
+      opacity: 0;
+      transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 24px rgba(44,42,38,0.2);
+      pointer-events: none;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body class="wool-texture">
+
+  <!-- ═══════════════════════════════════════════
+       NAVIGATION
+  ═══════════════════════════════════════════ -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-warm-white/90 backdrop-blur-md border-b border-foggy-light/40" role="navigation" aria-label="Main navigation">
+    <div class="max-w-7xl mx-auto px-5 md:px-8 h-16 md:h-18 flex items-center justify-between">
+
+      <!-- Logo -->
+      <a href="#" class="font-serif text-2xl md:text-[1.75rem] text-charcoal tracking-tight no-underline hover:opacity-80 transition-opacity" aria-label="WOOLWORK home">
+        WOOLWORK
+      </a>
+
+      <!-- Desktop Nav -->
+      <div class="hidden md:flex items-center gap-8">
+        <a href="#products" class="text-sm font-medium text-charcoal/70 hover:text-charcoal transition-colors no-underline tracking-wide uppercase">Shop</a>
+        <a href="#story" class="text-sm font-medium text-charcoal/70 hover:text-charcoal transition-colors no-underline tracking-wide uppercase">Story</a>
+        <a href="#materials" class="text-sm font-medium text-charcoal/70 hover:text-charcoal transition-colors no-underline tracking-wide uppercase">Materials</a>
+      </div>
+
+      <!-- Right: Cart + Mobile Menu -->
+      <div class="flex items-center gap-3">
+        <!-- Cart Button -->
+        <button id="cart-toggle" class="relative w-11 h-11 flex items-center justify-center rounded-lg hover:bg-oat/60 transition-colors" aria-label="Open shopping cart" aria-expanded="false">
+          <i class="ri-shopping-bag-3-line text-xl text-charcoal"></i>
+          <span id="cart-badge" class="absolute -top-0.5 -right-0.5 w-5 h-5 bg-charcoal text-warm-white text-[10px] font-semibold rounded-full flex items-center justify-center opacity-0 transition-opacity" aria-live="polite">0</span>
+        </button>
+
+        <!-- Mobile Menu Toggle -->
+        <button id="mobile-menu-toggle" class="md:hidden w-11 h-11 flex items-center justify-center rounded-lg hover:bg-oat/60 transition-colors" aria-label="Open menu" aria-expanded="false">
+          <i class="ri-menu-3-line text-xl text-charcoal"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Nav Panel -->
+  <div id="mobile-nav-overlay" class="mobile-nav-overlay" aria-hidden="true"></div>
+  <aside id="mobile-nav-panel" class="mobile-nav-panel" role="dialog" aria-label="Mobile navigation" aria-hidden="true">
+    <div class="flex items-center justify-between">
+      <span class="font-serif text-xl text-charcoal">WOOLWORK</span>
+      <button id="mobile-menu-close" class="w-11 h-11 flex items-center justify-center rounded-lg hover:bg-oat/60" aria-label="Close menu">
+        <i class="ri-close-line text-xl text-charcoal"></i>
+      </button>
+    </div>
+    <div class="flex flex-col gap-1 mt-4">
+      <a href="#products" class="mobile-nav-link text-lg font-medium text-charcoal py-3 px-4 rounded-lg hover:bg-oat/60 transition-colors no-underline">Shop</a>
+      <a href="#story" class="mobile-nav-link text-lg font-medium text-charcoal py-3 px-4 rounded-lg hover:bg-oat/60 transition-colors no-underline">Story</a>
+      <a href="#materials" class="mobile-nav-link text-lg font-medium text-charcoal py-3 px-4 rounded-lg hover:bg-oat/60 transition-colors no-underline">Materials</a>
+    </div>
+    <div class="mt-auto pt-6 border-t border-foggy-light/40">
+      <p class="text-xs text-foggy leading-relaxed">Merino wool sneakers engineered for Singapore's tropical urban life.</p>
+    </div>
+  </aside>
+
+  <!-- ═══════════════════════════════════════════
+       HERO SECTION
+  ═══════════════════════════════════════════ -->
+  <header class="relative min-h-[92vh] flex items-center overflow-hidden">
+    <!-- Background Gradient -->
+    <div class="absolute inset-0" style="background: linear-gradient(145deg, #F5F0EB 0%, #E8DCC8 40%, #D1CBC4 70%, #B8B0A8 100%); opacity: 0.5;"></div>
+
+    <!-- Decorative Wool Pattern Circle -->
+    <div class="absolute -right-20 top-1/4 w-[500px] h-[500px] md:w-[700px] md:h-[700px] rounded-full opacity-[0.04]" style="background: repeating-conic-gradient(#5C5750 0% 25%, transparent 0% 50%) 50% / 40px 40px;"></div>
+
+    <div class="relative max-w-7xl mx-auto px-5 md:px-8 w-full pt-24 pb-16 md:pt-0 md:pb-0">
+      <div class="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
+
+        <!-- Left: Copy -->
+        <div class="max-w-xl">
+          <p class="hero-fade-up text-xs md:text-sm font-medium tracking-[0.2em] uppercase text-foggy mb-5">Singapore · Merino Wool · Urban Engineered</p>
+
+          <h1 class="hero-fade-up hero-delay-1 font-serif text-[clamp(2.5rem,6vw,5rem)] leading-[1.04] text-charcoal mb-6 tracking-tight">
+            Wool for the<br>
+            <em class="not-italic" style="background: linear-gradient(135deg, #5C5750, #8BA87A); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Tropical</em><br>
+            Urbanite
+          </h1>
+
+          <p class="hero-fade-up hero-delay-2 text-base md:text-lg text-charcoal/70 leading-relaxed mb-8 max-w-md">
+            Merino engineered for 32°C streets. Naturally breathable. Unapologetically comfortable.
+          </p>
+
+          <div class="hero-fade-up hero-delay-3 flex flex-wrap gap-4">
+            <a href="#products" class="btn-primary">
+              Shop the Drop
+              <i class="ri-arrow-right-line"></i>
+            </a>
+            <a href="#story" class="btn-secondary">
+              Our Story
+            </a>
+          </div>
+
+          <!-- Trust Strip -->
+          <div class="hero-fade-up hero-delay-3 mt-10 flex flex-wrap items-center gap-6 text-xs text-foggy">
+            <span class="flex items-center gap-1.5">
+              <i class="ri-verified-badge-fill text-sage text-base"></i>
+              Merino Certified
+            </span>
+            <span class="flex items-center gap-1.5">
+              <i class="ri-temp-hot-line text-sage text-base"></i>
+              32°C Tested
+            </span>
+            <span class="flex items-center gap-1.5">
+              <i class="ri-truck-line text-sage text-base"></i>
+              Free Shipping S$150+
+            </span>
+          </div>
+        </div>
+
+        <!-- Right: Hero Product Visual -->
+        <div class="relative flex justify-center md:justify-end">
+          <div class="relative w-full max-w-md">
+            <!-- Main Product Image Placeholder -->
+            <div class="aspect-[3/4] rounded-2xl overflow-hidden bg-oat/60 shadow-2xl shadow-charcoal/10">
+              <div class="w-full h-full flex flex-col items-center justify-center p-8 text-center">
+                <div class="w-20 h-20 rounded-full bg-foggy-light/50 flex items-center justify-center mb-6">
+                  <i class="ri-footprint-line text-3xl text-charcoal/40"></i>
+                </div>
+                <p class="font-serif text-2xl text-charcoal/60 mb-2">Urban Strider</p>
+                <p class="text-sm text-foggy">Merino Low-Top</p>
+                <div class="mt-6 flex gap-2">
+                  <span class="w-6 h-6 rounded-full bg-[#E8DCC8] border border-foggy-light"></span>
+                  <span class="w-6 h-6 rounded-full bg-[#B8B0A8] border border-foggy-light"></span>
+                  <span class="w-6 h-6 rounded-full bg-[#5C5750] border border-foggy-light"></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Floating Badge -->
+            <div class="absolute -bottom-4 -left-4 md:-left-8 bg-sage/10 border border-sage/20 rounded-xl px-4 py-3 backdrop-blur-sm">
+              <p class="text-xs font-medium text-sage tracking-wide uppercase">Climate Certified</p>
+              <p class="text-[10px] text-charcoal/60 mt-0.5">32°C · 80% Humidity</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-foggy">
+      <span class="text-[10px] tracking-[0.15em] uppercase">Scroll</span>
+      <div class="w-px h-8 bg-foggy/50 origin-top animate-pulse"></div>
+    </div>
+  </header>
+
+  <!-- Wool Weave Divider -->
+  <div class="wool-weave-stripe"></div>
+
+  <!-- ═══════════════════════════════════════════
+       BRAND STORY
+  ═══════════════════════════════════════════ -->
+  <section id="story" class="py-20 md:py-28" aria-labelledby="story-heading">
+    <div class="max-w-7xl mx-auto px-5 md:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-16 reveal">
+        <p class="text-xs font-medium tracking-[0.2em] uppercase text-foggy mb-4">Our Philosophy</p>
+        <h2 id="story-heading" class="font-serif text-[clamp(1.8rem,4vw,3rem)] leading-tight text-charcoal mb-5">
+          From Alpine Meadows<br>to Singapore Streets
+        </h2>
+        <p class="text-charcoal/60 leading-relaxed">
+          We believed merino wool could do more than keep you warm. So we re-engineered it for the world's most demanding urban climate.
+        </p>
+      </div>
+
+      <!-- 3-Column Story -->
+      <div class="grid md:grid-cols-3 gap-8 md:gap-12">
+        <!-- Card 1: Material -->
+        <article class="reveal text-center p-8 rounded-2xl bg-oat/40 border border-oat" style="transition-delay: 0ms;">
+          <div class="w-14 h-14 rounded-xl bg-warm-white flex items-center justify-center mx-auto mb-5 shadow-sm">
+            <i class="ri-plant-line text-2xl text-sage"></i>
+          </div>
+          <h3 class="font-serif text-xl text-charcoal mb-3">Natural Merino</h3>
+          <p class="text-sm text-charcoal/60 leading-relaxed">
+            Sourced from New Zealand highland farms. Each fiber is 1/10th the diameter of human hair — creating a naturally breathable, temperature-regulating material.
+          </p>
+        </article>
+
+        <!-- Card 2: Urban -->
+        <article class="reveal text-center p-8 rounded-2xl bg-oat/40 border border-oat" style="transition-delay: 150ms;">
+          <div class="w-14 h-14 rounded-xl bg-warm-white flex items-center justify-center mx-auto mb-5 shadow-sm">
+            <i class="ri-building-2-line text-2xl text-charcoal/60"></i>
+          </div>
+          <h3 class="font-serif text-xl text-charcoal mb-3">Urban Engineered</h3>
+          <p class="text-sm text-charcoal/60 leading-relaxed">
+            Designed for concrete, not countryside. Reinforced outsoles for MRT grilles, cushioned insoles for hawker centre queues, and ventilation for 90% humidity days.
+          </p>
+        </article>
+
+        <!-- Card 3: Sustainable -->
+        <article class="reveal text-center p-8 rounded-2xl bg-oat/40 border border-oat" style="transition-delay: 300ms;">
+          <div class="w-14 h-14 rounded-xl bg-warm-white flex items-center justify-center mx-auto mb-5 shadow-sm">
+            <i class="ri-recycle-line text-2xl text-sage"></i>
+          </div>
+          <h3 class="font-serif text-xl text-charcoal mb-3">Circular by Design</h3>
+          <p class="text-sm text-charcoal/60 leading-relaxed">
+            Merino is biodegradable and renewable. Our packaging uses zero plastic. Every pair comes with a return programme — when you're done, we compost them.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wool Weave Divider -->
+  <div class="wool-weave-stripe"></div>
+
+  <!-- ═══════════════════════════════════════════
+       PRODUCT GRID
+  ═══════════════════════════════════════════ -->
+  <section id="products" class="py-20 md:py-28" aria-labelledby="products-heading">
+    <div class="max-w-7xl mx-auto px-5 md:px-8">
+      <div class="text-center max-w-xl mx-auto mb-14 reveal">
+        <p class="text-xs font-medium tracking-[0.2em] uppercase text-foggy mb-4">The Collection</p>
+        <h2 id="products-heading" class="font-serif text-[clamp(1.8rem,4vw,3rem)] leading-tight text-charcoal">
+          Three Shoes.<br>Every Singapore Day.
+        </h2>
+      </div>
+
+      <!-- Product Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+
+        <!-- Product 1: Urban Strider -->
+        <article class="product-card card-stagger" style="animation-delay: 100ms;" data-product-id="urban-strider" data-product-name="Urban Strider" data-product-price="189">
+          <div class="product-image-wrap">
+            <div class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-oat-light to-oat">
+              <div class="w-16 h-16 rounded-full bg-warm-white/80 flex items-center justify-center mb-4">
+                <i class="ri-walk-line text-2xl text-charcoal/50"></i>
+              </div>
+              <p class="text-sm text-charcoal/40 font-medium">Product Image</p>
+            </div>
+            <!-- Hover Badge -->
+            <div class="absolute top-4 left-4 bg-sage/90 text-warm-white text-[10px] font-semibold tracking-wider uppercase px-3 py-1 rounded-full">
+              Bestseller
+            </div>
+          </div>
+
+          <div class="p-5 md:p-6">
+            <div class="flex items-start justify-between mb-2">
+              <h3 class="font-serif text-lg md:text-xl text-charcoal">Urban Strider</h3>
+              <span class="text-sm font-semibold text-charcoal">S$189</span>
+            </div>
+            <p class="text-xs text-foggy mb-4">Low-top · City Walking</p>
+            <p class="text-xs text-charcoal/50 leading-relaxed mb-4">92% humidity wicking · 18% lighter than average</p>
+
+            <!-- Color Swatches -->
+            <div class="flex items-center gap-2 mb-4">
+              <span class="w-5 h-5 rounded-full bg-[#E8DCC8] border border-foggy-light" title="Oat"></span>
+              <span class="w-5 h-5 rounded-full bg-[#B8B0A8] border border-foggy-light" title="Foggy Gray"></span>
+              <span class="w-5 h-5 rounded-full bg-[#5C5750] border border-foggy-light" title="Charcoal"></span>
+            </div>
+
+            <!-- Size Selector -->
+            <div class="flex flex-wrap gap-2 mb-5" role="group" aria-label="Select size">
+              <button class="size-btn" data-size="36">36</button>
+              <button class="size-btn" data-size="37">37</button>
+              <button class="size-btn" data-size="38">38</button>
+              <button class="size-btn selected" data-size="39">39</button>
+              <button class="size-btn" data-size="40">40</button>
+              <button class="size-btn" data-size="41">41</button>
+              <button class="size-btn" data-size="42">42</button>
+              <button class="size-btn" data-size="43">43</button>
+            </div>
+
+            <!-- Add to Cart -->
+            <button class="btn-primary w-full add-to-cart-btn">
+              <i class="ri-shopping-bag-3-line"></i>
+              Add to Cart
+            </button>
+          </div>
+        </article>
+
+        <!-- Product 2: Garden Runner -->
+        <article class="product-card card-stagger" style="animation-delay: 250ms;" data-product-id="garden-runner" data-product-name="Garden Runner" data-product-price="169">
+          <div class="product-image-wrap">
+            <div class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-warm-white to-oat-light">
+              <div class="w-16 h-16 rounded-full bg-oat/60 flex items-center justify-center mb-4">
+                <i class="ri-run-line text-2xl text-charcoal/50"></i>
+              </div>
+              <p class="text-sm text-charcoal/40 font-medium">Product Image</p>
+            </div>
+          </div>
+
+          <div class="p-5 md:p-6">
+            <div class="flex items-start justify-between mb-2">
+              <h3 class="font-serif text-lg md:text-xl text-charcoal">Garden Runner</h3>
+              <span class="text-sm font-semibold text-charcoal">S$169</span>
+            </div>
+            <p class="text-xs text-foggy mb-4">Low-top · Lifestyle</p>
+            <p class="text-xs text-charcoal/50 leading-relaxed mb-4">Cushioned merino insole · 8mm stack height</p>
+
+            <!-- Color Swatches -->
+            <div class="flex items-center gap-2 mb-4">
+              <span class="w-5 h-5 rounded-full bg-[#F5F0EB] border border-foggy-light" title="Warm White"></span>
+              <span class="w-5 h-5 rounded-full bg-[#8BA87A] border border-foggy-light" title="Sage"></span>
+              <span class="w-5 h-5 rounded-full bg-[#C4816B] border border-foggy-light" title="Terracotta"></span>
+            </div>
+
+            <!-- Size Selector -->
+            <div class="flex flex-wrap gap-2 mb-5" role="group" aria-label="Select size">
+              <button class="size-btn" data-size="36">36</button>
+              <button class="size-btn" data-size="37">37</button>
+              <button class="size-btn selected" data-size="38">38</button>
+              <button class="size-btn" data-size="39">39</button>
+              <button class="size-btn" data-size="40">40</button>
+              <button class="size-btn" data-size="41">41</button>
+              <button class="size-btn" data-size="42">42</button>
+              <button class="size-btn" data-size="43">43</button>
+            </div>
+
+            <!-- Add to Cart -->
+            <button class="btn-primary w-full add-to-cart-btn">
+              <i class="ri-shopping-bag-3-line"></i>
+              Add to Cart
+            </button>
+          </div>
+        </article>
+
+        <!-- Product 3: Metro Hiker -->
+        <article class="product-card card-stagger" style="animation-delay: 400ms;" data-product-id="metro-hiker" data-product-name="Metro Hiker" data-product-price="219">
+          <div class="product-image-wrap">
+            <div class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-foggy-light/40 to-oat">
+              <div class="w-16 h-16 rounded-full bg-warm-white/60 flex items-center justify-center mb-4">
+                <i class="ri-footprint-line text-2xl text-charcoal/50"></i>
+              </div>
+              <p class="text-sm text-charcoal/40 font-medium">Product Image</p>
+            </div>
+            <div class="absolute top-4 left-4 bg-charcoal/80 text-warm-white text-[10px] font-semibold tracking-wider uppercase px-3 py-1 rounded-full">
+              New
+            </div>
+          </div>
+
+          <div class="p-5 md:p-6">
+            <div class="flex items-start justify-between mb-2">
+              <h3 class="font-serif text-lg md:text-xl text-charcoal">Metro Hiker</h3>
+              <span class="text-sm font-semibold text-charcoal">S$219</span>
+            </div>
+            <p class="text-xs text-foggy mb-4">High-top · Urban Exploration</p>
+            <p class="text-xs text-charcoal/50 leading-relaxed mb-4">Ankle support for uneven terrain · Reinforced toe</p>
+
+            <!-- Color Swatches -->
+            <div class="flex items-center gap-2 mb-4">
+              <span class="w-5 h-5 rounded-full bg-[#E8DCC8] border border-foggy-light" title="Oat"></span>
+              <span class="w-5 h-5 rounded-full bg-[#2C2A26] border border-foggy-light" title="Midnight"></span>
+              <span class="w-5 h-5 rounded-full bg-[#6B7B5E] border border-foggy-light" title="Olive"></span>
+            </div>
+
+            <!-- Size Selector -->
+            <div class="flex flex-wrap gap-2 mb-5" role="group" aria-label="Select size">
+              <button class="size-btn" data-size="38">38</button>
+              <button class="size-btn" data-size="39">39</button>
+              <button class="size-btn selected" data-size="40">40</button>
+              <button class="size-btn" data-size="41">41</button>
+              <button class="size-btn" data-size="42">42</button>
+              <button class="size-btn" data-size="43">43</button>
+              <button class="size-btn" data-size="44">44</button>
+              <button class="size-btn" data-size="45">45</button>
+            </div>
+
+            <!-- Add to Cart -->
+            <button class="btn-primary w-full add-to-cart-btn">
+              <i class="ri-shopping-bag-3-line"></i>
+              Add to Cart
+            </button>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Wool Weave Divider -->
+  <div class="wool-weave-stripe"></div>
+
+  <!-- ═══════════════════════════════════════════
+       MATERIALS SECTION
+  ═══════════════════════════════════════════ -->
+  <section id="materials" class="py-20 md:py-28 bg-oat/30" aria-labelledby="materials-heading">
+    <div class="max-w-7xl mx-auto px-5 md:px-8">
+      <div class="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
+        <div class="reveal">
+          <p class="text-xs font-medium tracking-[0.2em] uppercase text-foggy mb-4">Material Science</p>
+          <h2 id="materials-heading" class="font-serif text-[clamp(1.8rem,4vw,3rem)] leading-tight text-charcoal mb-6">
+            Why Wool Works<br>in the Tropics
+          </h2>
+          <p class="text-charcoal/60 leading-relaxed mb-8">
+            Most people associate wool with cold weather. But merino wool is nature's original performance fabric — it regulates temperature in both directions, wicks moisture faster than synthetic alternatives, and resists odour naturally.
+          </p>
+
+          <!-- Stats -->
+          <div class="grid grid-cols-2 gap-6">
+            <div>
+              <p class="font-serif text-3xl text-charcoal mb-1">32°C</p>
+              <p class="text-xs text-foggy">Climate tested in Singapore</p>
+            </div>
+            <div>
+              <p class="font-serif text-3xl text-charcoal mb-1">92%</p>
+              <p class="text-xs text-foggy">Humidity wicking efficiency</p>
+            </div>
+            <div>
+              <p class="font-serif text-3xl text-charcoal mb-1">18%</p>
+              <p class="text-xs text-foggy">Lighter than average sneaker</p>
+            </div>
+            <div>
+              <p class="font-serif text-3xl text-charcoal mb-1">72h</p>
+              <p class="text-xs text-foggy">Anti-odour wear time</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Material Visual -->
+        <div class="reveal relative">
+          <div class="aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-oat to-foggy-light/40">
+            <div class="w-full h-full flex flex-col items-center justify-center p-8">
+              <div class="w-24 h-24 rounded-full bg-warm-white/80 flex items-center justify-center mb-6">
+                <i class="ri-scissors-cut-line text-4xl text-charcoal/40"></i>
+              </div>
+              <p class="font-serif text-xl text-charcoal/60 mb-2">Merino Wool Fiber</p>
+              <p class="text-sm text-foggy text-center">1/10th the diameter of human hair</p>
+              <div class="mt-6 w-full max-w-xs space-y-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-2 h-2 rounded-full bg-sage"></div>
+                  <span class="text-xs text-charcoal/60">Temperature regulating</span>
+                </div>
+                <div class="flex items-center gap-3">
+                  <div class="w-2 h-2 rounded-full bg-sage"></div>
+                  <span class="text-xs text-charcoal/60">Moisture wicking</span>
+                </div>
+                <div class="flex items-center gap-3">
+                  <div class="w-2 h-2 rounded-full bg-sage"></div>
+                  <span class="text-xs text-charcoal/60">Naturally anti-bacterial</span>
+                </div>
+                <div class="flex items-center gap-3">
+                  <div class="w-2 h-2 rounded-full bg-sage"></div>
+                  <span class="text-xs text-charcoal/60">Biodegradable & renewable</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wool Weave Divider -->
+  <div class="wool-weave-stripe"></div>
+
+  <!-- ═══════════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════════ -->
+  <footer class="py-16 md:py-20 bg-charcoal text-warm-white" role="contentinfo">
+    <div class="max-w-7xl mx-auto px-5 md:px-8">
+      <div class="grid md:grid-cols-4 gap-10 md:gap-12 mb-14">
+        <!-- Brand -->
+        <div class="md:col-span-1">
+          <p class="font-serif text-2xl mb-4">WOOLWORK</p>
+          <p class="text-sm text-warm-white/50 leading-relaxed mb-6">
+            Merino wool sneakers engineered for Singapore's tropical urban life.
+          </p>
+          <div class="flex gap-4">
+            <a href="#" class="w-9 h-9 rounded-full bg-warm-white/10 flex items-center justify-center hover:bg-warm-white/20 transition-colors" aria-label="Instagram">
+              <i class="ri-instagram-line text-sm"></i>
+            </a>
+            <a href="#" class="w-9 h-9 rounded-full bg-warm-white/10 flex items-center justify-center hover:bg-warm-white/20 transition-colors" aria-label="TikTok">
+              <i class="ri-tiktok-line text-sm"></i>
+            </a>
+            <a href="#" class="w-9 h-9 rounded-full bg-warm-white/10 flex items-center justify-center hover:bg-warm-white/20 transition-colors" aria-label="WhatsApp">
+              <i class="ri-whatsapp-line text-sm"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Shop -->
+        <div>
+          <h4 class="text-xs font-semibold tracking-[0.15em] uppercase text-warm-white/40 mb-5">Shop</h4>
+          <ul class="space-y-3">
+            <li><a href="#" class="text-sm text-warm-white/70 hover:text-warm-white transition-colors no-underline">Urban Strider</a></li>
+            <li><a href="#" class="text-sm text-warm-white/70 hover:text-warm-white transition-colors no-underline">Garden Runner</a></li>
+            <li><a href="#" class="text-sm text-warm-white/70 hover:text-warm-white transition-colors no-underline">Metro Hiker</a></li>
+            <li><a href="#" class="text-sm text-warm-white/70 hover:text-warm-white transition-colors no-underline">Gift Cards</a></li>
+          </ul>
+        </div>
+
+        <!-- Help -->
+        <div>
+          <h4 class="text-xs font-semibold tracking-[0.15em] uppercase text-warm-white/40 mb-5">Help</h4>
+          <ul class="space-y-3">
+            <li><a href="#" class="text-sm text-warm-white/70 hover:text-warm-white transition-colors no-underline">Sizing Guide</a></li>
+            <li><a href="#" class="text-sm text-warm-white/70 hover:text-warm-white transition-colors no-underline">Shipping & Returns</a></li>
+            <li><a href="#" class="text-sm text-warm-white/70 hover:text-warm-white transition-colors no-underline">30-Day Comfort Guarantee</a></li>
+            <li><a href="#" class="text-sm text-warm-white/70 hover:text-warm-white transition-colors no-underline">Contact Us</a></li>
+          </ul>
+        </div>
+
+        <!-- Newsletter -->
+        <div>
+          <h4 class="text-xs font-semibold tracking-[0.15em] uppercase text-warm-white/40 mb-5">Stay in the Loop</h4>
+          <p class="text-sm text-warm-white/50 mb-4">New drops, material science stories, and Singapore-specific care tips.</p>
+          <form class="flex" onsubmit="event.preventDefault(); showToast('Thanks for subscribing!');">
+            <label for="email-input" class="sr-only">Email address</label>
+            <input id="email-input" type="email" placeholder="your@email.com" required class="flex-1 bg-warm-white/10 text-warm-white placeholder-warm-white/30 px-4 py-3 rounded-l-lg text-sm border border-warm-white/10 focus:outline-none focus:border-warm-white/30 transition-colors">
+            <button type="submit" class="bg-oat text-charcoal px-5 py-3 rounded-r-lg text-sm font-medium hover:bg-oat-light transition-colors">
+              <i class="ri-arrow-right-line"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="pt-8 border-t border-warm-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
+        <p class="text-xs text-warm-white/30">© 2026 WOOLWORK. Made for Singapore streets.</p>
+        <div class="flex gap-6">
+          <a href="#" class="text-xs text-warm-white/30 hover:text-warm-white/60 transition-colors no-underline">Privacy</a>
+          <a href="#" class="text-xs text-warm-white/30 hover:text-warm-white/60 transition-colors no-underline">Terms</a>
+          <a href="#" class="text-xs text-warm-white/30 hover:text-warm-white/60 transition-colors no-underline">Accessibility</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═══════════════════════════════════════════
+       SHOPPING CART DRAWER
+  ═══════════════════════════════════════════ -->
+  <div id="cart-overlay" class="cart-overlay" aria-hidden="true"></div>
+  <aside id="cart-drawer" class="cart-drawer" role="dialog" aria-label="Shopping cart" aria-hidden="true">
+    <!-- Cart Header -->
+    <div class="flex items-center justify-between p-6 border-b border-foggy-light/40">
+      <h2 class="font-serif text-xl text-charcoal">Your Cart</h2>
+      <button id="cart-close" class="w-11 h-11 flex items-center justify-center rounded-lg hover:bg-oat/60 transition-colors" aria-label="Close cart">
+        <i class="ri-close-line text-xl text-charcoal"></i>
+      </button>
+    </div>
+
+    <!-- Cart Items -->
+    <div id="cart-items" class="flex-1 overflow-y-auto p-6">
+      <!-- Empty State -->
+      <div id="cart-empty" class="flex flex-col items-center justify-center h-full text-center py-16">
+        <div class="w-16 h-16 rounded-full bg-oat/60 flex items-center justify-center mb-4">
+          <i class="ri-shopping-bag-3-line text-2xl text-foggy"></i>
+        </div>
+        <p class="font-serif text-lg text-charcoal mb-2">Your cart is empty</p>
+        <p class="text-sm text-foggy mb-6">Add some wool comfort to your life.</p>
+        <a href="#products" class="btn-secondary text-sm" onclick="closeCart()">Browse Collection</a>
+      </div>
+
+      <!-- Cart Items List (populated by JS) -->
+      <div id="cart-list" class="space-y-4 hidden"></div>
+    </div>
+
+    <!-- Cart Footer -->
+    <div id="cart-footer" class="hidden border-t border-foggy-light/40 p-6">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-sm text-foggy">Subtotal</span>
+        <span id="cart-subtotal" class="text-sm font-semibold text-charcoal">S$0</span>
+      </div>
+      <div class="flex items-center justify-between mb-4">
+        <span class="text-sm text-foggy">Shipping</span>
+        <span class="text-sm text-charcoal" id="cart-shipping">S$5.90</span>
+      </div>
+      <div class="flex items-center justify-between mb-6 pt-3 border-t border-foggy-light/40">
+        <span class="text-base font-semibold text-charcoal">Total</span>
+        <span id="cart-total" class="text-base font-semibold text-charcoal">S$0</span>
+      </div>
+      <button class="btn-primary w-full" onclick="showToast('Checkout coming soon!')">
+        Checkout
+        <i class="ri-arrow-right-line"></i>
+      </button>
+      <p class="text-[10px] text-foggy text-center mt-3">Free shipping on orders above S$150</p>
+    </div>
+  </aside>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast" role="alert" aria-live="polite"></div>
+
+  <!-- ═══════════════════════════════════════════
+       JAVASCRIPT
+  ═══════════════════════════════════════════ -->
+  <script>
+    // ── Cart State ──
+    const cart = [];
+
+    // ── DOM References ──
+    const cartToggle = document.getElementById('cart-toggle');
+    const cartDrawer = document.getElementById('cart-drawer');
+    const cartOverlay = document.getElementById('cart-overlay');
+    const cartClose = document.getElementById('cart-close');
+    const cartBadge = document.getElementById('cart-badge');
+    const cartEmpty = document.getElementById('cart-empty');
+    const cartList = document.getElementById('cart-list');
+    const cartFooter = document.getElementById('cart-footer');
+    const cartSubtotal = document.getElementById('cart-subtotal');
+    const cartShipping = document.getElementById('cart-shipping');
+    const cartTotal = document.getElementById('cart-total');
+    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+    const mobileMenuClose = document.getElementById('mobile-menu-close');
+    const mobileNavOverlay = document.getElementById('mobile-nav-overlay');
+    const mobileNavPanel = document.getElementById('mobile-nav-panel');
+    const toast = document.getElementById('toast');
+
+    // ── Cart Functions ──
+    function openCart() {
+      cartDrawer.classList.add('open');
+      cartOverlay.classList.add('open');
+      cartDrawer.setAttribute('aria-hidden', 'false');
+      cartOverlay.setAttribute('aria-hidden', 'false');
+      cartToggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+      cartClose.focus();
+    }
+
+    function closeCart() {
+      cartDrawer.classList.remove('open');
+      cartOverlay.classList.remove('open');
+      cartDrawer.setAttribute('aria-hidden', 'true');
+      cartOverlay.setAttribute('aria-hidden', 'true');
+      cartToggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+      cartToggle.focus();
+    }
+
+    function addToCart(productId, name, price, size) {
+      const existing = cart.find(item => item.id === productId && item.size === size);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ id: productId, name, price, size, qty: 1 });
+      }
+      updateCartUI();
+      showToast(`${name} (EU ${size}) added to cart`);
+      animateBadge();
+    }
+
+    function removeFromCart(index) {
+      const itemEl = cartList.children[index];
+      if (itemEl) {
+        itemEl.classList.add('cart-item-exit');
+        setTimeout(() => {
+          cart.splice(index, 1);
+          updateCartUI();
+        }, 280);
+      }
+    }
+
+    function updateCartUI() {
+      const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+      const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+      const shipping = subtotal >= 150 ? 0 : 5.90;
+
+      // Badge
+      cartBadge.textContent = totalItems;
+      cartBadge.style.opacity = totalItems > 0 ? '1' : '0';
+
+      // Empty / List
+      if (cart.length === 0) {
+        cartEmpty.classList.remove('hidden');
+        cartList.classList.add('hidden');
+        cartFooter.classList.add('hidden');
+      } else {
+        cartEmpty.classList.add('hidden');
+        cartList.classList.remove('hidden');
+        cartFooter.classList.remove('hidden');
+
+        // Render items
+        cartList.innerHTML = cart.map((item, i) => `
+          <div class="flex gap-4 p-4 rounded-xl bg-oat/40 cart-item-enter">
+            <div class="w-16 h-16 rounded-lg bg-oat flex items-center justify-center flex-shrink-0">
+              <i class="ri-footprint-line text-lg text-charcoal/40"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="font-serif text-sm text-charcoal truncate">${item.name}</p>
+              <p class="text-xs text-foggy">EU ${item.size} · Qty: ${item.qty}</p>
+              <p class="text-sm font-semibold text-charcoal mt-1">S$${item.price * item.qty}</p>
+            </div>
+            <button onclick="removeFromCart(${i})" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-warm-white/60 transition-colors flex-shrink-0" aria-label="Remove ${item.name}">
+              <i class="ri-delete-bin-line text-sm text-foggy"></i>
+            </button>
+          </div>
+        `).join('');
+
+        // Totals
+        cartSubtotal.textContent = `S$${subtotal}`;
+        cartShipping.textContent = shipping === 0 ? 'Free' : `S$${shipping.toFixed(2)}`;
+        cartTotal.textContent = `S$${(subtotal + shipping).toFixed(2)}`;
+      }
+    }
+
+    function animateBadge() {
+      cartBadge.classList.remove('badge-pulse');
+      void cartBadge.offsetWidth; // trigger reflow
+      cartBadge.classList.add('badge-pulse');
+    }
+
+    // ── Mobile Nav ──
+    function openMobileNav() {
+      mobileNavPanel.classList.add('open');
+      mobileNavOverlay.classList.add('open');
+      mobileNavPanel.setAttribute('aria-hidden', 'false');
+      mobileNavOverlay.setAttribute('aria-hidden', 'false');
+      mobileMenuToggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileNav() {
+      mobileNavPanel.classList.remove('open');
+      mobileNavOverlay.classList.remove('open');
+      mobileNavPanel.setAttribute('aria-hidden', 'true');
+      mobileNavOverlay.setAttribute('aria-hidden', 'true');
+      mobileMenuToggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+      mobileMenuToggle.focus();
+    }
+
+    // ── Toast ──
+    let toastTimeout;
+    function showToast(message) {
+      clearTimeout(toastTimeout);
+      toast.textContent = message;
+      toast.classList.add('show');
+      toastTimeout = setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    // ── Event Listeners ──
+
+    // Cart
+    cartToggle.addEventListener('click', openCart);
+    cartClose.addEventListener('click', closeCart);
+    cartOverlay.addEventListener('click', closeCart);
+
+    // Mobile Nav
+    mobileMenuToggle.addEventListener('click', openMobileNav);
+    mobileMenuClose.addEventListener('click', closeMobileNav);
+    mobileNavOverlay.addEventListener('click', closeMobileNav);
+
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (cartDrawer.classList.contains('open')) closeCart();
+        if (mobileNavPanel.classList.contains('open')) closeMobileNav();
+      }
+    });
+
+    // Mobile nav links close nav
+    document.querySelectorAll('.mobile-nav-link').forEach(link => {
+      link.addEventListener('click', closeMobileNav);
+    });
+
+    // Size Selector
+    document.querySelectorAll('.size-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const group = btn.closest('[role="group"]');
+        group.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+      });
+    });
+
+    // Add to Cart
+    document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const card = btn.closest('.product-card');
+        const productId = card.dataset.productId;
+        const name = card.dataset.productName;
+        const price = parseInt(card.dataset.productPrice);
+        const selectedSize = card.querySelector('.size-btn.selected');
+
+        if (!selectedSize) {
+          showToast('Please select a size');
+          return;
+        }
+
+        const size = selectedSize.dataset.size;
+        addToCart(productId, name, price, size);
+
+        // Squish animation on button
+        btn.style.transform = 'scale(0.95)';
+        setTimeout(() => btn.style.transform = '', 150);
+      });
+    });
+
+    // ── Scroll Reveal ──
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+  </script>
+
+</body>
+</html>
