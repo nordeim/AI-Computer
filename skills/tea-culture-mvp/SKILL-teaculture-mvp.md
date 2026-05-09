@@ -1,11 +1,11 @@
 ---
-name: react19-typescript6-vite8-mvp
+name: tea-culture-mvp
 description: >
   Use when building a new MVP or production web application using modern React, TypeScript strict mode, Vite 8 (Rolldown), Tailwind CSS v4, and file-based routing. Covers the complete lifecycle from `npm init` to shipping tested, type-safe, production-grade code.
   React 19 + TypeScript 6 + Vite 8 MVP — Production-Ready Web App Skill
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, SearchWeb, FetchURL
 license: MIT
-version: 1.1.0
+version: 1.0.0
 ---
 
 # React 19 + TypeScript 6 + Vite 8 MVP — Production-Ready Web App Skill
