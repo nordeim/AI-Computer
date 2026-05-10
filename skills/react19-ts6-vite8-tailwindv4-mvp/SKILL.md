@@ -1,10 +1,11 @@
-```markdown
+---
 name: react19-ts6-vite8-tailwindv4-mvp
 description: >
   Use when building a new MVP or production web application using modern React, TypeScript strict mode, Vite 8 (Rolldown), Tailwind CSS v4, and file-based routing. Covers the complete lifecycle from `npm init` to shipping tested, type-safe, production-grade code.
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, SearchWeb, FetchURL
 license: MIT
 version: 3.0.0
+---
 
 # React 19 + TypeScript 6 + Vite 8 MVP — Production-Ready Web App Skill
 
@@ -1096,4 +1097,3 @@ export class ErrorBoundary extends React.Component<Props, State> {
 ---
 
 Built from production-grade React 19 / TypeScript 6 / Vite 8 / Tailwind v4 MVPs. Shipped with zero TypeScript errors, behavioral test coverage, and WCAG 2.1 AA verification.
-```
