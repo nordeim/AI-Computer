@@ -11,7 +11,7 @@ version: 3.0.0
 
 Use when building a new MVP or production web application using modern React, TypeScript strict mode, Vite 8 (Rolldown), Tailwind CSS v4, and file-based routing. Covers the complete lifecycle from `npm init` to shipping tested, type-safe, production-grade code.
 
-> 🎯 **One-Shot Prevention:** Every section in this skill was extracted from real-world remediation cycles (see §23). Skipping any section that seems "obvious" or "optional" creates rework. Follow the full checklist in §22 before claiming completion — it prevents the 15 most common "works but isn't production-ready" gaps.
+> 🎯 **One-Shot Prevention:** Every section in this skill was extracted from real-world remediation cycles (see §26). Skipping any section that seems "obvious" or "optional" creates rework. Follow the full checklist in §25 before claiming completion — it prevents the 15 most common "works but isn't production-ready" gaps.
 
 ## Skill Stack
 
@@ -23,6 +23,7 @@ Use when building a new MVP or production web application using modern React, Ty
 | Styling | Tailwind CSS | ^4.2 | CSS-first `@theme inline`, no config file |
 | Router | TanStack Router | ^1.169 | File-based, type-safe routing |
 | State | Zustand | ^5.0 | Lightweight, `persist` middleware |
+| Validation | Zod | ^4.4+ | Runtime schema validation at boundaries |
 | UI Primitives | shadcn/ui | Latest | Accessible component base |
 | Icons | Lucide React | ^0.563 | SVG icon set |
 | Testing | Vitest | ^4.1 | Unit + behavioral testing (jsdom) |
@@ -411,18 +412,23 @@ submitForm: async (data) => {
 **`useActionState` for Forms**
 ```tsx
 import { useActionState } from 'react'
+import { newsletterSchema } from '@lib/schemas'
 
 const [state, formAction, isPending] = useActionState(
   async (_prev, formData: FormData) => {
-    const email = formData.get('email') as string
-    if (!email?.includes('@')) {
-      return { message: 'Invalid email', type: 'error' as const }
+    const data = Object.fromEntries(formData) as Record<string, string>
+    const result = newsletterSchema.safeParse({ email: data.email })
+    if (!result.success) {
+      return { message: result.error.issues[0].message, type: 'error' as const }
     }
     await new Promise(r => setTimeout(r, 1000))  // Simulate API call
     return { message: 'Subscribed!', type: 'success' as const }
   },
   { message: '', type: 'idle' as const }
 )
+```
+
+> **🔐 Validation at Boundaries:** Always validate at form submission, API input, or any system boundary. Internal code should trust typed contracts. Never do inline manual checks like `if (!email?.includes('@'))` — use a schema library.
 
 // Use action prop (React 19 feature, not onSubmit for API calls)
 <form action={formAction}>
@@ -460,7 +466,118 @@ const handleClick = () => {
 
 ---
 
-## 9. `inert` and Boolean Props (TS2322 Trap)
+## 9. Form Validation with Zod at System Boundaries
+
+Validation belongs at the edges — form submission, API calls, URL params. Internal code trusts typed contracts. Install `zod` and define schemas in a central file.
+
+### Installation
+```bash
+npm install zod@^4.4  # Zod v4 — note the API change from v3
+```
+
+### Schema Definitions
+```ts
+// src/lib/schemas.ts
+import { z } from 'zod'
+
+export const newsletterSchema = z.object({
+  email: z.string().min(1, 'Email is required').email('Invalid email.'),
+})
+
+export const checkoutSchema = z.object({
+  fullName: z.string().min(2).max(100),
+  email: z.string().email(),
+  address: z.string().min(5),
+  city: z.string().min(1),
+  postalCode: z.string().regex(/^\d{3,6}$/, 'Valid postal code required.'),
+})
+
+export type NewsletterInput = z.infer<typeof newsletterSchema>
+export type CheckoutInput = z.infer<typeof checkoutSchema>
+```
+
+### Usage in `useActionState`
+```tsx
+import { checkoutSchema } from '@lib/schemas'
+
+const [state, formAction] = useActionState<CheckoutState, FormData>(
+  async (_prev, formData) => {
+    const data = Object.fromEntries(formData) as Record<string, string>
+    const result = checkoutSchema.safeParse(data)  // ✅ Schema-driven, not manual
+    if (!result.success) {
+      return { step: 'shipping', error: result.error.issues[0].message }
+    }
+    await submitOrder(data)
+    return { step: 'confirmation', error: '' }
+  },
+  { step: 'shipping', error: '' }
+)
+```
+
+**⚠️ Zod v4 Breaking Change:**
+```ts
+// ❌ WRONG (v3 API)
+result.error.errors[0].message
+// ✅ CORRECT (v4 API)
+result.error.issues[0].message   // v4 uses `issues[]`, not `errors[]`
+```
+
+---
+
+## 10. Typed Service Layer (Repository Pattern)
+
+Decouple data access from consumers. Define a typed interface, then swap implementations (in-memory → API) without touching consumer code.
+
+```ts
+// src/services/products.ts
+import { products as catalog } from '@lib/products'
+import type { Product } from '@/types/product'
+
+export interface ProductService {
+  getAll(): readonly Product[]
+  getBySlug(slug: string): Product | undefined
+  sort(list: readonly Product[], by: SortOption): readonly Product[]
+}
+
+const productService: ProductService = {
+  getAll: () => catalog,
+  getBySlug: (slug) => catalog.find(p => p.slug === slug),
+  sort: (list, by) => [...list].sort((a, b) => /* ... */),
+}
+
+export { productService }
+```
+
+**Why this matters:** When you switch from `catalog` (in-memory) to `fetch('/api/products')`, only `products.ts` changes. Every route, component, and test stays intact.
+
+---
+
+## 11. Barrel Exports for Clean Boundaries
+
+Use `index.ts` barrel files at directory roots to prevent deep-path coupling and keep imports stable during refactors.
+
+```ts
+// src/components/index.ts
+export { Button } from './ui/button'
+export { CartSlidePanel } from './cart/CartSlidePanel'
+export { NewsletterSection } from './sections/NewsletterSection'
+export { ErrorBoundary } from './shared/ErrorBoundary'
+
+// src/lib/index.ts
+export { cn } from './utils'
+export { formatPrice } from './format'
+export { newsletterSchema, checkoutSchema } from './schemas'
+
+// Consumer (clean, refactor-proof)
+import { Button, CartSlidePanel } from '@/components'
+import { newsletterSchema } from '@/lib'
+```
+
+**Note:** Barrel files are for *public* module boundaries. Keep internal ad-hoc imports within the same directory.
+
+---
+
+## 12. `inert` and Boolean Props (TS2322 Trap)
 
 ```tsx
 // ❌ WRONG: `inert` is a BOOLEAN React prop, not a string
@@ -475,7 +592,7 @@ const handleClick = () => {
 
 ---
 
-## 10. Testing — TDD with Vitest + jsdom
+## 13. Testing — TDD with Vitest + jsdom
 
 **Test Setup**
 If using the unified config in §5, the `test` block is already defined. If you prefer a separate config, create `vitest.config.ts`:
@@ -575,7 +692,7 @@ describe('ErrorBoundary', () => {
 
 ---
 
-## 11. Component Design Patterns
+## 14. Component Design Patterns
 
 **`cn()` Utility Implementation**
 Create `src/lib/utils.ts`:
@@ -631,7 +748,7 @@ className={cn(
 
 ---
 
-## 12. Build & QA Pipeline
+## 15. Build & QA Pipeline
 
 **Commands**
 ```bash
@@ -659,7 +776,7 @@ npm test               # Vitest watch mode
 
 ---
 
-## 13. Common Gotchas Summary
+## 16. Common Gotchas Summary
 
 | Gotcha | Fix |
 |---|---|
@@ -671,10 +788,14 @@ npm test               # Vitest watch mode
 | TanStack `Link` in tests | Mock with `vi.mock('@tanstack/react-router')` |
 | State updates in tests | Wrap in `act()` |
 | Toast auto-remove | Use `vi.useFakeTimers()` / `vi.advanceTimersByTime()`. Example: `vi.advanceTimersByTime(3000); expect(toast).not.toBeInTheDocument()` |
+| **Zod v4 `error.issues`** | Use `result.error.issues[0].message` (not `errors[]`) |
+| **`useActionState` generics** | Must pass `<State, FormData>` when using 2-arg form |
+| **Font-family inline in className** | Use `@layer utilities` (`.font-display`) — never `font-["..."]` |
+| **`routeTree.gen.ts` missing** | Run `npx tsr generate` after every route change |
 
 ---
 
-## 14. Project File Structure (Reference)
+## 17. Project File Structure (Reference)
 
 ```
 src/
@@ -684,8 +805,12 @@ src/
 │   ├── ui/               # shadcn primitives (Button, Card, Input, Badge)
 │   ├── layout/           # Navbar, Footer
 │   ├── sections/         # Hero, TrustBar, FeatureGrid, Newsletter
-│   └── shared/           # ModalOverlay, SlidePanel, SkipLink, ErrorBoundary
+│   ├── shared/           # ModalOverlay, SlidePanel, SkipLink, ErrorBoundary
+│   └── index.ts          # Barrel exports
 ├── hooks/                # Custom hooks (useThrottledScroll, useFocusTrap)
+│   └── index.ts          # Barrel exports
+├── services/             # Typed service layer contracts
+│   └── products.ts       # ProductService interface + impl
 ├── stores/               # Zustand (.ts), persist middleware
 ├── routes/               # TanStack file-based routing
 │   ├── __root.tsx        # Root layout + overlays
@@ -694,14 +819,18 @@ src/
 │   ├── features.index.tsx
 │   └── $.tsx             # Catch-all 404
 ├── types/                # Recommended — delete when empty (auto-audit will flag)
-├── lib/                  # Utilities (cn helper, formatters)
+├── lib/                  # Utilities (cn helper, formatters, schemas)
+│   ├── utils.ts
+│   ├── format.ts
+│   ├── schemas.ts        # Zod validation schemas
+│   └── index.ts          # Barrel exports
 ├── vitest.config.ts      # (Optional if using unified vite.config.ts)
 └── test/                 # Vitest (jsdom, setup.ts, *.test.ts)
 ```
 
 ---
 
-## 15. Anti-Pattern Reference Card
+## 18. Anti-Pattern Reference Card
 
 | # | Anti-Pattern | Fix |
 |---|---|---|
@@ -715,10 +844,15 @@ src/
 | 8 | Persisting `isOpen` / UI state | `partialize` to data only |
 | 9 | `return null` on overlay close | Keep in DOM, toggle `opacity` |
 | 10 | Building custom components instead of using shadcn | Use shadcn primitives |
+| 11 | `interface Props` / `interface State` | Prefix with component name: `ErrorBoundaryProps` |
+| 12 | Raw data + functions without contract | Define typed `ProductService` interface |
+| 13 | Manual form validation in action | Use Zod `safeParse()` + `Object.fromEntries(formData)` |
+| 14 | `font-["..."]` in className | Use CSS `@layer utilities` (`.font-display`) |
+| 15 | Deep relative path imports | Add barrel `index.ts` at directory root |
 
 ---
 
-## 16. Custom Hooks (Advanced)
+## 19. Custom Hooks (Advanced)
 
 **`useThrottledScroll` — Performance-First Scroll**
 Throttle `window.addEventListener('scroll')` to prevent 60fps re-renders. Uses the latest-ref pattern to avoid effect teardown on every render.
@@ -817,7 +951,7 @@ export function useFocusTrap(
 
 ---
 
-## 17. Testing Gotchas (Advanced)
+## 20. Testing Gotchas (Advanced)
 
 **`requestAnimationFrame` in jsdom**
 jsdom does not implement `requestAnimationFrame`. Mock it:
@@ -875,7 +1009,7 @@ describe('ErrorBoundary', () => {
 
 ---
 
-## 18. Accessibility (WCAG 2.1 AA)
+## 21. Accessibility (WCAG 2.1 AA)
 
 **Skip-to-Content Link (WCAG 2.4.1)**
 Every production app must have a skip link:
@@ -928,7 +1062,7 @@ const tabGroupId = useId()
 
 ---
 
-## 19. Security & SEO Essentials
+## 22. Security & SEO Essentials
 
 **Content Security Policy (CSP)**
 Add to `index.html` `<head>`:
@@ -955,7 +1089,7 @@ Add to `index.html` `<head>`:
 
 ---
 
-## 20. Dead Code Prevention
+## 23. Dead Code Prevention
 
 **CSS Token Audit (Tailwind v4)**
 ```bash
@@ -981,7 +1115,7 @@ When deleting a file (e.g., `src/types/index.ts`):
 
 ---
 
-## 21. Removable Dead Code Checklist (Auto-Audit)
+## 24. Removable Dead Code Checklist (Auto-Audit)
 
 Run this after any major refactoring.
 
@@ -1031,7 +1165,7 @@ echo "=== Audit Complete ==="
 
 ---
 
-## 22. Pre-Ship Hardening Checklist
+## 25. Pre-Ship Hardening Checklist
 
 Derived from real-world remediation cycles. Verify all items before production deployment.
 
@@ -1062,7 +1196,12 @@ Derived from real-world remediation cycles. Verify all items before production d
 - [ ] All store mutations wrapped in `act()` during tests
 - [ ] 100% test pass rate, zero skipped tests
 
-### 🧹 Maintenance
+### 🧹 Validation & Code Quality
+- [ ] All form inputs validated with Zod at system boundaries
+- [ ] Typed service interfaces (`ProductService`) for all data access
+- [ ] Barrel `index.ts` files exist at `components/`, `lib/`, `hooks/` roots
+- [ ] No generic `Props` / `State` — component-name-prefixed interfaces only
+- [ ] No inline font-family in className strings (use `@layer utilities`)
 - [ ] Dead CSS tokens & `@keyframes` purged
 - [ ] Orphaned files & unused path aliases removed
 - [ ] `tsconfig.json`, `vite.config.ts`, `vitest.config.ts` aliases synced
@@ -1071,27 +1210,34 @@ Derived from real-world remediation cycles. Verify all items before production d
 
 ---
 
-## 23. Remediation Round Reference (Real-World)
+## 26. Remediation Round Reference (Real-World)
 
 Derived from actual production remediation cycles. Every item below was a real bug or gap that slipped through code review.
 
 | # | Issue | Fix | Prevention |
 |---|---|---|---|
-| 1 | `src/types/index.ts` empty with comment | Delete + remove path alias | Auto-audit script (§21) |
-| 2 | `--color-ivory-500` defined but unused | Remove from `globals.css` | CSS token grep (§20) |
-| 3 | `@keyframes slide-in-left` unused | Remove from `globals.css` | CSS keyframe grep (§20) |
+| 1 | `src/types/index.ts` empty with comment | Delete + remove path alias | Auto-audit script (§24) |
+| 2 | `--color-ivory-500` defined but unused | Remove from `globals.css` | CSS token grep (§23) |
+| 3 | `@keyframes slide-in-left` unused | Remove from `globals.css` | CSS keyframe grep (§23) |
 | 4 | Custom hook duplicated by component's built-in logic | Delete (component handles logic internally) | Orphan/duplicate file detection |
 | 5 | Toast `timeoutId` not cleared on rapid calls | Module-level `timeoutId` + `clearTimeout` | State management audit |
-| 6 | `consoleSpy` at module scope in tests | Move to `beforeAll`/`afterAll` (§10) | Testing best practice |
-| 7 | Scroll events unthrottled causing jank | `useThrottledScroll` hook (§16) | Performance audit |
-| 8 | No focus trap in mobile menu | `useFocusTrap` hook (§16) | Accessibility audit |
-| 9 | No skip-to-content link | Add `SkipLink` component (§18) | WCAG 2.4.1 checklist |
+| 6 | `consoleSpy` at module scope in tests | Move to `beforeAll`/`afterAll` (§13) | Testing best practice |
+| 7 | Scroll events unthrottled causing jank | `useThrottledScroll` hook (§19) | Performance audit |
+| 8 | No focus trap in mobile menu | `useFocusTrap` hook (§19) | Accessibility audit |
+| 9 | No skip-to-content link | Add `SkipLink` component (§21) | WCAG 2.4.1 checklist |
 | 10 | No 404 / not-found route | Add `$.tsx` catch-all (§6) | Route coverage audit |
-| 11 | No CSP in `index.html` | Add `<meta http-equiv="Content-Security-Policy">` (§19) | Security checklist |
-| 12 | No OG/Twitter meta | Add Open Graph + Twitter Card (§19) | SEO checklist |
+| 11 | No CSP in `index.html` | Add `<meta http-equiv="Content-Security-Policy">` (§22) | Security checklist |
+| 12 | No OG/Twitter meta | Add Open Graph + Twitter Card (§22) | SEO checklist |
 | 13 | Decorative SVGs not screen-reader friendly | Add `aria-hidden="true"` / `role="presentation"` | Accessibility audit |
-| 14 | `requestAnimationFrame` fails in jsdom tests | `vi.stubGlobal('requestAnimationFrame', ...)` (§17) | jsdom awareness |
-| 15 | Throttled scroll tests hang | `vi.useFakeTimers({ shouldAdvanceTime: true })` (§17) | Testing best practice |
+| 14 | `requestAnimationFrame` fails in jsdom tests | `vi.stubGlobal('requestAnimationFrame', ...)` (§20) | jsdom awareness |
+| 15 | Throttled scroll tests hang | `vi.useFakeTimers({ shouldAdvanceTime: true })` (§20) | Testing best practice |
+| 16 | Generic `interface Props` / `interface State` | Rename to `ErrorBoundaryProps`, `ErrorBoundaryState` (§18) | Component naming |
+| 17 | Zod v3 `error.errors[]` used on v4 | Use `error.issues[0].message` (§9) | Schema library API |
+| 18 | Missing `useActionState<State, FormData>` generic | Pass both type params (§8) | React 19 types |
+| 19 | `font-["...",serif]` in className breaks parser | Use `@layer utilities` (§11) | Tailwind + JSX |
+| 20 | Raw data functions without typed contract | Define `ProductService` interface (§10) | Architecture |
+| 21 | Deep relative imports across modules | Add barrel `index.ts` exports (§11) | Module boundaries |
+| 22 | Manual `FormData` field checking in action | Use Zod `safeParse(Object.fromEntries(formData))` (§9) | Validation |
 
 **Test evolution from a real project:** 15 tests (4 files) → 49 tests (10 files) — **+240% coverage** after addressing the issues above.
 
@@ -1101,22 +1247,22 @@ Derived from actual production remediation cycles. Every item below was a real b
 ```tsx
 import React from 'react'
 
-interface Props {
+interface ErrorBoundaryProps {
   children: React.ReactNode
   fallback?: React.ReactNode
 }
 
-interface State {
+interface ErrorBoundaryState {
   hasError: boolean
 }
 
-export class ErrorBoundary extends React.Component<Props, State> {
-  constructor(props: Props) {
+export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
     super(props)
     this.state = { hasError: false }
   }
 
-  static getDerivedStateFromError(): State {
+  static getDerivedStateFromError(): ErrorBoundaryState {
     return { hasError: true }
   }
 
