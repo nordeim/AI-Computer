@@ -107,7 +107,7 @@ the original (v1.1.0), plus additional refinements I hadn't considered.
   
 ### Recommendation  
   
-Promote this unified skill (v3.0.0) as the primary reference. It is production-ready, real-world-tested, and superior to the v1.1 enhanced version. Consider absorbing the 3 high-priority gaps (auto-audit script, build order gate,      
+Promote this unified skill (v3.0.0) as the primary reference. It is production-ready, real-world-tested, and superior to the v1.1 enhanced version. Consider absorbing the 3 high-priority gaps (auto-audit script, build order gate,  
 console spy pattern) into a future v3.1 release.
 
 ---
@@ -265,4 +265,222 @@ console spy pattern) into a future v3.1 release.
 All pre-existing sections remain intact and correct. No broken code blocks, no orphaned tables, no unresolved placeholders.  
   
 Final verdict: The skill file is 100% intact, all 6 targeted edits are correctly applied, and the file is ready for use.
+
+---
+
+### ✅ Change 1: .container-custom CSS  
+  
+```  
+  - margin: 0 auto;  
+  - padding: 0 24px;  
+  + margin-inline: auto;  
+  + padding-inline: 24px;  
+```  
+  
+Line 195-196 of SKILL.md — Confirmed present. This is intentional: margin-inline is the modern CSS equivalent and avoids hardcoding inline directions, aligning with internationalization best practices.  
+  
+────────────────────────────────────────────────────────────────────────────────  
+  
+### ✅ Change 2: Tailwind v4 Rules Section (§3)  
+  
+All three new bullet points confirmed:  
+1. "ZERO raw hex in className" — Present on line 215  
+2. "Every --color-* token must have at least one UI consumer" — Present on line 217  
+3. "Font utilities in @layer utilities" — Present on line 222  
+  
+These are correct additions. The existing globals.css in the codebase already has the .font-display, .font-body, .font-accent utilities defined, and the project uses them (92 occurrences). The rule enforces this pattern.  
+  
+────────────────────────────────────────────────────────────────────────────────  
+  
+### ✅ Change 3: useOptimistic for Add-to-Cart (§8)  
+  
+The simple example (optimisticFavorited) was replaced with the add-to-cart pattern using useOptimistic(false) + startTransition(async () => { ... }).  
+  
+Confirmed lines 449-466 — This is intentional and more directly relevant to the actual codebase's products.$slug.tsx where this exact pattern is used.  
+  
+────────────────────────────────────────────────────────────────────────────────  
+  
+### ✅ Change 4: Common Gotchas §16  
+  
+New entries confirmed at lines 799-803:  
+  
+┌────────────────────────┬───────────────────────────┬───────┐  
+│ Row                    │ Entry                     │ Match │  
+├────────────────────────┼───────────────────────────┼───────┤  
+│ bg-gradient-to-* in v4 │ bg-linear-to-*            │ ✅    │  
+├────────────────────────┼───────────────────────────┼───────┤  
+│ outline-none in v4     │ outline-hidden            │ ✅    │  
+├────────────────────────┼───────────────────────────┼───────┤  
+│ flex-shrink-0 in v4    │ shrink-0                  │ ✅    │  
+├────────────────────────┼───────────────────────────┼───────┤  
+│ Raw hex in className   │ @theme utility            │ ✅    │  
+├────────────────────────┼───────────────────────────┼───────┤  
+│ Orphaned @theme color  │ Define but can't find (?) │ ⚠    │  
+└────────────────────────┴───────────────────────────┴───────┘  
+  
+The last entry wording in the gotcha is slightly ambiguous: "Defined in globals.css but never consumed in UI" — this should read "Define in @theme but not consumed" to be consistent with the anti-pattern card. However, this minor  
+wording difference doesn't affect correctness.  
+  
+────────────────────────────────────────────────────────────────────────────────  
+  
+### ✅ Change 5: Anti-Pattern Reference Card §18  
+  
+Three new entries confirmed (lines 861-863):  
+- #16 Tailwind v3 utilities in v4  
+- #17 Raw hex in className  
+- #18 Orphaned @theme tokens  
+  
+All three map 1:1 to the actual remediation work performed.  
+  
+────────────────────────────────────────────────────────────────────────────────  
+  
+### ✅ Change 6: Pre-Ship Checklist §25  
+  
+Line 1217: "No raw hex in className (enforced by validate-colors.sh)" — Confirmed present. This ties the manual checklist to the automated script.  
+  
+────────────────────────────────────────────────────────────────────────────────  
+  
+### ✅ Change 7: §27 CI Validation Scripts (NEW)  
+  
+Full new section confirmed. Lines 1227-1250:  
+- scripts/validate-colors.sh — Simple regex-based check ✅  
+- scripts/validate-deprecated-twind.sh — Regex for v3 utilities ✅  
+  
+Note: The script implementations in the skill are simplified compared to the actual project's scripts (which use Perl, find, and line counting for actionable output). However, the skill's simplified versions are sufficient for  
+documentation purposes. The actual project files are more robust and should be used directly.  
+  
+────────────────────────────────────────────────────────────────────────────────  
+  
+### ✅ Change 8: Remediation Round Reference §26  
+  
+Four new rows confirmed (lines 1289-1292):  
+- #23 Tailwind v3 → v4 utility rename silent fail  
+- #24 @theme tokens defined but never consumed  
+- #25 Raw hex in className  
+- #26 Add-to-cart without useOptimistic  
+  
+All map to real-world issues addressed in the remediation.  
+  
+────────────────────────────────────────────────────────────────────────────────  
+  
+Minor Observations  
+  
+### 1. Container Centralization Not in Skill  
+  
+The Task C change (replacing container mx-auto max-w-[1280px] px-6 with container-custom) is not explicitly documented in the skill. It's partially covered by "Custom classes in @layer utilities" (§3), but there's no anti-pattern  
+entry for "Inlined container pattern repeated across components."  
+  
+Recommendation: Add to anti-pattern card as #19:  
+  
+│ Inlined container boilerplate: container mx-auto max-w-[1280px] px-6 duplicated N times → Use .container-custom in @layer utilities  
+  
+### 2. .env.example Not in Skill  
+  
+The Task F change (adding .env.example) isn't documented in the skill. However, this is very project-specific and not a general rule. The skill's generic nature doesn't mandate this for every project. Acceptable omission.  
+  
+### 3. lucide-react Version Update Not in Skill  
+  
+The Task E change (updating lucide-react badge from ^0.563 to ^1.14.0) is project-specific (README.md), not a general rule. Acceptable omission.  
+  
+────────────────────────────────────────────────────────────────────────────────  
+  
+Overall Verdict  
+  
+┌─────────────┬────────┬────────────────────────────────────────────────────────────────┐  
+│ Category    │ Status │ Notes                                                          │  
+├─────────────┼────────┼────────────────────────────────────────────────────────────────┤  
+│ Intentional │ ✅     │ All changes were driven by the actual codebase remediation     │  
+├─────────────┼────────┼────────────────────────────────────────────────────────────────┤  
+│ Complete    │ ✅     │ All 8 change groups are present in the skill                   │  
+├─────────────┼────────┼────────────────────────────────────────────────────────────────┤  
+│ Accurate    │ ✅     │ The content matches what was implemented in the project        │  
+├─────────────┼────────┼────────────────────────────────────────────────────────────────┤  
+│ Minor gap   │ ⚠     │ Container centralization could be elevated to anti-pattern #19 │  
+└─────────────┴────────┴────────────────────────────────────────────────────────────────┘  
+  
+────────────────────────────────────────────────────────────────────────────────  
+  
+Recommendation  
+  
+To make the skill documentation even more actionable, I recommend adding one more anti-pattern to §18:  
+  
+```  
+  | 19 | Repeated container pattern (`mx-auto max-w-[1280px] px-6`) | Register `@layer utilities .container-custom` |  
+```  
+  
+And adding to §3 Tailwind v4 Rules:  
+  
+```markdown  
+  - Register reusable layout utilities (`.container-custom`) in `@layer utilities`  
+    and consume uniformly. Inline the same `max-w-[1280px] px-6` in 14 files  
+    is a DRY violation.  
+```  
+  
+---
+
+All quality gates pass. The anti-pattern has been added. Let me provide a final summary.  
+
+Skill Update Complete ✅  
+  
+Final Verification of SKILL.md  
+  
+### Anti-Pattern #19 Added  
+  
+```markdown  
+  | 19 | **Repeated container pattern** (`container mx-auto max-w-[1280px] px-6` ×14 files) | Register `.container-custom` in `@layer utilities` and consume in all layout sections |  
+```  
+  
+### Tailwind v4 Rule Added (§3)  
+  
+```markdown  
+  - **Reuse layout utilities via `@layer utilities`**. If 14 files repeat `container mx-auto max-w-[1280px] px-6`, register `.container-custom` once and use it everywhere.  
+```  
+  
+### Remediation Row #25 Sequential Order  
+  
+┌─────┬─────────────────────────────────────────────────────────────────┬───────────────────────────────────────────────────────────────────────┐  
+│ Row │ Issue                                                           │ Fix                                                                   │  
+├─────┼─────────────────────────────────────────────────────────────────┼───────────────────────────────────────────────────────────────────────┤  
+│ 25  │ Container layout (max-w-[1280px] px-6) inlined in 14 components │ Register .container-custom in @layer utilities; consume it everywhere │  
+├─────┼─────────────────────────────────────────────────────────────────┼───────────────────────────────────────────────────────────────────────┤  
+│ 26  │ Add-to-cart without useOptimistic                               │ Use useOptimistic + startTransition for optimistic mutations (§8)     │  
+├─────┼─────────────────────────────────────────────────────────────────┼───────────────────────────────────────────────────────────────────────┤  
+│ 27  │ Raw hex in className (e.g. text-[#3D3835])                      │ Replace with @theme utility; use scripts/validate-colors.sh           │  
+└─────┴─────────────────────────────────────────────────────────────────┴───────────────────────────────────────────────────────────────────────┘  
+  
+────────────────────────────────────────────────────────────────────────────────  
+  
+Total Changes to SKILL.md  
+  
+┌───────────────────────────┬───────────────────────────────────────────┐  
+│ Section                   │ Additions                                 │  
+├───────────────────────────┼───────────────────────────────────────────┤  
+│ §3 Tailwind v4 Rules      │ 1 new rule (container standardization)    │  
+├───────────────────────────┼───────────────────────────────────────────┤  
+│ §8 useOptimistic          │ Updated to real-world add-to-cart pattern │  
+├───────────────────────────┼───────────────────────────────────────────┤  
+│ §16 Common Gotchas        │ 5 new entries (v3→v4 renames)             │  
+├───────────────────────────┼───────────────────────────────────────────┤  
+│ §18 Anti-Pattern Card     │ 4 new entries (#16-#19)                   │  
+├───────────────────────────┼───────────────────────────────────────────┤  
+│ §25 Pre-Ship Checklist    │ 1 new item (no raw hex)                   │  
+├───────────────────────────┼───────────────────────────────────────────┤  
+│ §26 Remediation Table     │ 4 new rows (#23-#27)                      │  
+├───────────────────────────┼───────────────────────────────────────────┤  
+│ §27 CI Validation Scripts │ New section with 2 scripts                │  
+└───────────────────────────┴───────────────────────────────────────────┘  
+  
+────────────────────────────────────────────────────────────────────────────────  
+  
+Quality Gates (Project)  
+  
+┌──────────────────┬──────────────────────────────┐  
+│ Gate             │ Result                       │  
+├──────────────────┼──────────────────────────────┤  
+│ npx tsc --noEmit │ ✅ Zero errors               │  
+├──────────────────┼──────────────────────────────┤  
+│ npx vitest run   │ ✅ 17/17 tests pass          │  
+├──────────────────┼──────────────────────────────┤  
+│ npm run build    │ ✅ Production build succeeds │  
+└──────────────────┴──────────────────────────────┘ 
 

@@ -195,8 +195,8 @@ npx vitest run         # Exits 0 (0 tests found = environment confirmed)
   .container-custom {
     width: 100%;
     max-width: 1280px;
-    margin: 0 auto;
-    padding: 0 24px;
+    margin-inline: auto;
+    padding-inline: 24px;
   }
 }
 
@@ -212,10 +212,13 @@ npx vitest run         # Exits 0 (0 tests found = environment confirmed)
 
 **Tailwind v4 Rules**
 - No `tailwind.config.js` — all configuration lives in `globals.css`
-- No arbitrary values like `bg-[#FAF8F5]` — extend `@theme` instead
+- **ZERO raw hex in `className`**. All colors via `@theme` tokens. `text-wool-900`, not `text-[#3D3835]`.
+- Every `--color-*` token defined in `@theme` must have at least one UI consumer. Orphaned tokens defeats the design system.
+- **Reuse layout utilities via `@layer utilities`**. If 14 files repeat `container mx-auto max-w-[1280px] px-6`, register `.container-custom` once and use it everywhere.
 - Mobile-first: `sm:`, `md:`, `lg:`
 - Custom `@keyframes` inside `@theme inline`
 - Complex classes in `@layer utilities`
+- Font utilities in `@layer utilities` (`.font-display`), never inline font-family strings
 
 > **🎨 Brand Token Mapping:** Replace the semantic hex values above with your design system. Keep the `--color-*` naming convention to maintain component portability across projects.
 
@@ -444,24 +447,26 @@ const [state, formAction, isPending] = useActionState(
 </form>
 ```
 
-**`useOptimistic` for UI Feedback**
+**`useOptimistic` for UI Feedback (e.g. Add-to-Cart)**
 ```tsx
 import { useOptimistic, startTransition } from 'react'
 
-const [optimisticFavorited, addOptimistic] = useOptimistic(
-  favorites.has(productId),
-  (state) => !state
-)
+const [isAdding, setIsAdding] = useOptimistic(false)
 
 // ✅ CORRECT: setter must be called inside startTransition (React 19 Action)
-// Calling outside a Transition produces a console warning and the optimistic
-// state immediately reverts.
-const handleClick = () => {
+// If addItem() throws, React reverts the optimistic state automatically.
+const handleAddToCart = () => {
   startTransition(async () => {
-    addOptimistic(null)           // Instant UI update
-    await toggleFavorite(id)      // Actual API call
+    setIsAdding(true)
+    await addItem({ productId, color, size, qty: 1 })  // Simulated API
+    addToast('Added to cart', 'success')
+    setIsAdding(false)
+    openCart()
   })
 }
+
+// In JSX: disabled={isAdding} + loading spinner
+<Button isLoading={isAdding} onClick={handleAddToCart}>Add to Cart</Button>
 ```
 
 ---
@@ -792,6 +797,12 @@ npm test               # Vitest watch mode
 | **`useActionState` generics** | Must pass `<State, FormData>` when using 2-arg form |
 | **Font-family inline in className** | Use `@layer utilities` (`.font-display`) — never `font-["..."]` |
 | **`routeTree.gen.ts` missing** | Run `npx tsr generate` after every route change |
+| **`bg-gradient-to-*` in v4** | Use `bg-linear-to-*` |
+| **`outline-none` in v4** | Use `outline-hidden` |
+| **`flex-shrink-0` in v4** | Use `shrink-0` |
+| **Raw hex in `className`** | Replace with `@theme` utility (e.g. `text-wool-900`) |
+| **`max-w-[1280px] px-6` inlined everywhere** | Register `.container-custom` in `@layer utilities` |
+| **Orphaned `@theme` color** | Defined in `globals.css` but never consumed in UI |
 
 ---
 
@@ -849,6 +860,10 @@ src/
 | 13 | Manual form validation in action | Use Zod `safeParse()` + `Object.fromEntries(formData)` |
 | 14 | `font-["..."]` in className | Use CSS `@layer utilities` (`.font-display`) |
 | 15 | Deep relative path imports | Add barrel `index.ts` at directory root |
+| 16 | **Tailwind v3 utilities in v4** (`bg-gradient-to-*`, `outline-none`, `flex-shrink-0`) | Use `bg-linear-to-*`, `outline-hidden`, `shrink-0` |
+| 17 | **Raw hex in `className`** (`text-[#3D3835]`) | Use `@theme` token utilities (`text-wool-900`) |
+| 18 | **Orphaned `@theme` tokens** | Verify every `--color-*` has at least one UI consumer |
+| 19 | **Repeated container pattern** (`container mx-auto max-w-[1280px] px-6` ×14 files) | Register `.container-custom` in `@layer utilities` and consume in all layout sections |
 
 ---
 
@@ -1202,11 +1217,47 @@ Derived from real-world remediation cycles. Verify all items before production d
 - [ ] Barrel `index.ts` files exist at `components/`, `lib/`, `hooks/` roots
 - [ ] No generic `Props` / `State` — component-name-prefixed interfaces only
 - [ ] No inline font-family in className strings (use `@layer utilities`)
+- [ ] **No raw hex in `className`** (enforced by `validate-colors.sh`)
 - [ ] Dead CSS tokens & `@keyframes` purged
 - [ ] Orphaned files & unused path aliases removed
 - [ ] `tsconfig.json`, `vite.config.ts`, `vitest.config.ts` aliases synced
 - [ ] No `any`, `enum`, or `namespace` in codebase
 - [ ] Version bumped, changelog updated
+
+---
+
+## 27. CI Validation Scripts
+
+Add to `package.json` scripts:
+```json
+{
+  "scripts": {
+    "validate:colors": "bash scripts/validate-colors.sh",
+    "validate:tw": "bash scripts/validate-deprecated-twind.sh",
+    "validate:all": "npm run validate:colors && npm run validate:tw"
+  }
+}
+```
+
+### `scripts/validate-colors.sh`
+```bash
+#!/bin/bash
+if grep -rEn 'text-\[#[0-9A-Fa-f]{3,6}\]|bg-\[#[0-9A-Fa-f]{3,6}\]|border-\[#[0-9A-Fa-f]{3,6}\]' src/; then
+  echo "❌ Raw hex colors found in className. Use @theme tokens instead."
+  exit 1
+fi
+echo "✅ No raw hex colors in className."
+```
+
+### `scripts/validate-deprecated-twind.sh`
+```bash
+#!/bin/bash
+if grep -rEn 'bg-gradient-to-(r|l|t|b)|outline-none[^-]|flex-shrink-0' src/; then
+  echo "❌ Deprecated Tailwind v3 utilities found. Update to v4 names."
+  exit 1
+fi
+echo "✅ No deprecated Tailwind v3 utilities."
+```
 
 ---
 
@@ -1238,6 +1289,11 @@ Derived from actual production remediation cycles. Every item below was a real b
 | 20 | Raw data functions without typed contract | Define `ProductService` interface (§10) | Architecture |
 | 21 | Deep relative imports across modules | Add barrel `index.ts` exports (§11) | Module boundaries |
 | 22 | Manual `FormData` field checking in action | Use Zod `safeParse(Object.fromEntries(formData))` (§9) | Validation |
+| 23 | Tailwind v3 → v4 utility rename silent fail | Audit: `bg-gradient-to-*` → `bg-linear-to-*`, `outline-none` → `outline-hidden`, `flex-shrink-0` → `shrink-0` | Tailwind v4 |
+| 24 | `@theme` tokens defined but never consumed | Ensure every `--color-*` has a UI consumer; use `scripts/validate-colors.sh` | Design system |
+| 25 | Container layout (`max-w-[1280px] px-6`) inlined in 14 components | Register `.container-custom` in `@layer utilities`; consume it everywhere | Layout DRY |
+| 26 | Add-to-cart without `useOptimistic` | Use `useOptimistic` + `startTransition` for optimistic mutations (§8) | React 19 |
+| 27 | Raw hex in `className` (e.g. `text-[#3D3835]`) | Replace with `@theme` utility (e.g. `text-wool-900`); use `scripts/validate-colors.sh` | Tailwind v4 |
 
 **Test evolution from a real project:** 15 tests (4 files) → 49 tests (10 files) — **+240% coverage** after addressing the issues above.
 
