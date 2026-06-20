@@ -79,7 +79,7 @@ Technical excellence requires both rigorous implementation and distinctive desig
 | `fullstack-dev` | Full Next.js application development |
 | `frontend-styling-expert` | CSS, responsive design, animations |
 | `image-generation` | Custom illustrations and graphics |
-| `code-review` | Detailed review protocols |
+| `verification-and-review-protocol` | Detailed review protocols |
 | `vulnerability-scanner` | Deep security analysis |
 | `web-design-guidelines` | Vercel Web Interface Guidelines compliance |
 

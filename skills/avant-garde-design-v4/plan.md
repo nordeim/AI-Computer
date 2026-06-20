@@ -701,7 +701,7 @@ The web in 2026 is moving beyond the "AI-generated" aesthetic toward something m
     "fullstack-dev",
     "frontend-styling-expert",
     "image-generation",
-    "code-review",
+    "verification-and-review-protocol",
     "vulnerability-scanner",
     "web-design-guidelines"
   ],
@@ -795,7 +795,7 @@ Technical excellence requires both rigorous implementation and distinctive desig
 | `fullstack-dev` | Full Next.js application development |
 | `frontend-styling-expert` | CSS, responsive design, animations |
 | `image-generation` | Custom illustrations and graphics |
-| `code-review` | Detailed review protocols |
+| `verification-and-review-protocol` | Detailed review protocols |
 | `vulnerability-scanner` | Deep security analysis |
 | `web-design-guidelines` | Vercel Web Interface Guidelines compliance |
 
