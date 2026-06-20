@@ -1,9 +1,10 @@
 ---
 name: code-review-and-audit
 description: "Unified code review and security audit orchestration skill. Coordinates static analysis, security scanning, code quality checks, test coverage, performance profiling, and expert review into a single tiered pipeline. Use when reviewing code, preparing for release, conducting security audits, or running pre-merge gates. Triggers on: review, audit, code review, security scan, quality gate, pre-merge, checklist, lint, vulnerability."
-version: 1.0.0
+version: 2.0.0
 skills:
-  - code-review
+  - verification-and-review-protocol
+  - code-quality-standards
   - code-review-checklist
   - lint-and-validate
   - vulnerability-scanner
@@ -83,7 +84,7 @@ This skill is an **orchestration layer** that coordinates multiple specialist sk
 - A Python orchestration pipeline with exit codes for CI/CD
 
 **What it is NOT:**
-- A replacement for reading the constituent skills (code-review, vulnerability-scanner, etc.)
+- A replacement for reading the constituent skills (verification-and-review-protocol, vulnerability-scanner, etc.)
 - A single-pass scanner — it runs multiple phases in priority order
 - A substitute for human expert review in deep mode
 
@@ -92,6 +93,30 @@ This skill is an **orchestration layer** that coordinates multiple specialist sk
 ## Core Principle
 
 **Tiered rigor for tiered urgency.** The depth of review must match the stakes of the decision.
+
+## 🛡️ Native CLI Fallback Protocol (CRITICAL)
+
+The Python orchestration scripts (`audit_runner.py`, `checklist_runner.py`) exist in this skill's `scripts/` directory. However, if an agent runs this skill in an environment where these scripts are NOT available, the agent MUST NOT hallucinate their execution. Fall back to native ecosystem commands:
+
+| Phase | Python Script | Native CLI Fallback |
+|-------|---------------|---------------------|
+| Phase 1 (Lint/Types) | `lint_runner.py` | `npm run lint && npx tsc --noEmit` (Node.js) or `ruff check && mypy` (Python) |
+| Phase 2 (Security) | `security_scan.py` | `npm audit` + `grep -rE '(API_KEY|SECRET|PASSWORD)\s*=' .` |
+| Phase 3 (Quality) | `checklist_runner.py` | Agent performs manual review against the 12-category Tactical Matrix (see Phase 3 below) |
+| Phase 4 (Tests) | `test_runner.py` | `npx vitest run` / `npm test` / `pytest` |
+| Phase 5 (Performance) | `lighthouse_audit.py` | `npx lighthouse <url>` (requires URL) |
+| Phase 6 (Expert Review) | Subagent dispatch | Use `verification-and-review-protocol` skill directly |
+
+**Detection:** Before running any script, check if it exists:
+```bash
+if [ -f "scripts/audit_runner.py" ]; then
+  # Use Python orchestration
+else
+  # Fall back to native CLI commands
+fi
+```
+
+**Never:** Run a script that doesn't exist and claim it succeeded. This is a verification gate violation per `verification-and-review-protocol`.
 
 | Decision | Stakes | Mode | Time |
 |----------|--------|------|------|
@@ -255,13 +280,15 @@ python scripts/code-review-and-audit/scripts/audit_runner.py . --no-report
 
 ---
 
-### Phase 3 — Code Quality (`code-review-checklist` + `clean-code`)
+### Phase 3 — Code Quality (`code-quality-standards` + `code-review-checklist` + `clean-code`)
 
-**Subskills:** `code-review-checklist`, `clean-code`
+**Subskills:** `code-quality-standards`, `code-review-checklist`, `clean-code`
 
 **Script:** `checklist_runner.py`
 
-**What it evaluates (12 categories):**
+**Relationship:** `code-quality-standards` is the comprehensive Six-Axis quality constitution (Correctness, Readability, Architecture, Security, Performance, Aesthetic/UX Rigor). `code-review-checklist` is a lightweight quick-reference for the 12 tactical categories below. This Phase uses both: the checklist for automated scanning, the standards for holistic review.
+
+**What it evaluates (12 tactical categories):**
 
 | # | Category | What It Checks |
 |---|----------|---------------|
@@ -278,7 +305,7 @@ python scripts/code-review-and-audit/scripts/audit_runner.py . --no-report
 | 11 | **LLM/AI Patterns** | Untyped AI generate calls, missing schema validation |
 | 12 | **Anti-Patterns** | Magic numbers, deep nesting, God functions |
 
-**SKILL.md references:** `code-review-checklist`, `clean-code` skills
+**SKILL.md references:** `code-quality-standards` (constitution), `code-review-checklist` (quick-reference), `clean-code` (simplification patterns)
 
 ---
 
@@ -319,9 +346,11 @@ python scripts/code-review-and-audit/scripts/audit_runner.py . --no-report
 
 ### Phase 6 — Expert Review (deep mode only)
 
-**Subskill:** `code-review`
+**Subskill:** `verification-and-review-protocol`
 
 **Trigger:** Automatic in `deep` mode after automated phases complete.
+
+**Standards Reference:** Expert review applies the Six-Axis criteria from `code-quality-standards` (including Axis 6: Aesthetic & UX Rigor for frontend deliverables).
 
 **Process:**
 
@@ -337,7 +366,7 @@ python scripts/code-review-and-audit/scripts/audit_runner.py . --no-report
    - **Minor:** Note for later, document in PR comments
 4. Mark findings as `addressed` or `acknowledged_and_deferred`
 
-**SKILL.md reference:** `code-review` skill (section: Requesting Review Protocol)
+**SKILL.md reference:** `verification-and-review-protocol` skill (section: Requesting Review Protocol)
 
 ---
 
@@ -510,7 +539,11 @@ code-review-and-audit (this skill)
     │        └──► security_scan.py
     │        └──► dependency_analyzer.py
     │
-    ├──► code-review-checklist
+    ├──► code-quality-standards (the Constitution)
+    │        └──► Six-Axis Review criteria
+    │        └──► Anti-Generic Litmus Test (Axis 6)
+    │
+    ├──► code-review-checklist (quick-reference for Phase 3)
     │        └──► checklist_runner.py (this skill)
     │        └──► references/severity-matrix.md (this skill)
     │
@@ -528,8 +561,9 @@ code-review-and-audit (this skill)
     ├──► systematic-debugging (when bugs found)
     │        └──► 4-phase RCA methodology
     │
-    └──► code-review (Phase 6, deep mode only)
+    └──► verification-and-review-protocol (Phase 6, deep mode only)
              └──► code-reviewer subagent dispatch
+             └──► Iron Law: No completion claims without verification
 ```
 
 ### Skill Loading Order
@@ -537,13 +571,14 @@ code-review-and-audit (this skill)
 When activated, read skills in this order:
 
 1. **This SKILL.md** — understand mode selection and pipeline
-2. **`code-review` SKILL.md** — Phase 6 protocol for subagent dispatch
-3. **`vulnerability-scanner` SKILL.md** — Phase 2 OWASP details
-4. **`code-review-checklist` SKILL.md** — Phase 3 checklist reference
-5. **`clean-code` SKILL.md** — Script Output Handling protocol
-6. **`lint-and-validate` SKILL.md** — Phase 1 ecosystem details
-7. **`testing-patterns` SKILL.md** — Phase 4 test pyramid
-8. **`performance-profiling` SKILL.md** — Phase 5 Core Web Vitals
+2. **`verification-and-review-protocol` SKILL.md** — Phase 6 protocol for subagent dispatch
+3. **`code-quality-standards` SKILL.md** — Six-Axis review criteria (including Axis 6 for frontend)
+4. **`vulnerability-scanner` SKILL.md** — Phase 2 OWASP details
+5. **`code-review-checklist` SKILL.md** — Phase 3 tactical checklist reference
+6. **`clean-code` SKILL.md** — Script Output Handling protocol
+7. **`lint-and-validate` SKILL.md** — Phase 1 ecosystem details
+8. **`testing-patterns` SKILL.md** — Phase 4 test pyramid
+9. **`performance-profiling` SKILL.md** — Phase 5 Core Web Vitals
 
 ### Integration with GEMINI.md
 
@@ -588,6 +623,7 @@ Before completing any audit task, verify:
 | `scripts/templates/audit_report.md` | Markdown report template |
 | `references/review-modes.md` | Full mode comparison + decision tree |
 | `references/severity-matrix.md` | Finding classification + SLAs |
-| `vulnerability-scanner/SKILL.md` | Phase 2 OWASP detail reference |
-| `code-review/SKILL.md` | Phase 6 subagent dispatch protocol |
+| `code-quality-standards/SKILL.md` | Six-Axis quality constitution |
+| `verification-and-review-protocol/SKILL.md` | Phase 6 subagent dispatch + Iron Law |
 | `code-review-checklist/SKILL.md` | Phase 3 tactical checklist reference |
+| `vulnerability-scanner/SKILL.md` | Phase 2 OWASP detail reference |

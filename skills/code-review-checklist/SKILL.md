@@ -1,10 +1,13 @@
 ---
 name: code-review-checklist
-description: Code review guidelines covering code quality, security, and best practices.
+description: "Lightweight quick-reference checklist for code review. Tactical 12-category scan used by the Orchestrator's Phase 3. For the comprehensive quality constitution (Six-Axis review), see `code-quality-standards`. For verification gates and the Iron Law, see `verification-and-review-protocol`."
 allowed-tools: Read, Glob, Grep
+version: 2.0.0
 ---
 
 # Code Review Checklist
+
+> **Role:** This is a *quick-reference* tactical checklist, not the full quality constitution. It's used by the `code-review-and-audit` Orchestrator's Phase 3 for automated scanning. For comprehensive review criteria (including Aesthetic/UX Rigor), see `code-quality-standards`. For the verification protocol, see `verification-and-review-protocol`.
 
 ## Quick Review Checklist
 

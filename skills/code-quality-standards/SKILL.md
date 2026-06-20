@@ -1,15 +1,18 @@
 ---
-name: code-review-and-quality
-description: Conducts multi-axis code review. Use before merging any change. Use when reviewing code written by yourself, another agent, or a human. Use when you need to assess code quality across multiple dimensions before it enters the main branch.
+name: code-quality-standards
+description: "The absolute constitution for code quality and design rigor. Enforces a Six-Axis review (Correctness, Readability, Architecture, Security, Performance, and Aesthetic/UX Rigor). Use before merging any change, evaluating AI-generated code, or assessing technical debt. Rejects generic 'AI slop' aesthetics and enforces intentional, bespoke design."
+version: 2.0.0
 ---
 
-# Code Review and Quality
+# Code Quality & Design Standards
 
 ## Overview
 
-Multi-dimensional code review with quality gates. Every change gets reviewed before merge — no exceptions. Review covers five axes: correctness, readability, architecture, security, and performance.
+Multi-dimensional code review with quality gates. Every change gets reviewed before merge — no exceptions. Review covers six axes: correctness, readability, architecture, security, performance, and **aesthetic/UX rigor**.
 
 **The approval standard:** Approve a change when it definitely improves overall code health, even if it isn't perfect. Perfect code doesn't exist — the goal is continuous improvement. Don't block a change because it isn't exactly how you would have written it. If it improves the codebase and follows the project's conventions, approve it.
+
+**However:** Never compromise on the Aesthetic & UX Rigor axis for frontend deliverables. We reject "safe" defaults, template aesthetics, and homogenized AI-generated UI.
 
 ## When to Use
 
@@ -18,8 +21,9 @@ Multi-dimensional code review with quality gates. Every change gets reviewed bef
 - When another agent or model produced code you need to evaluate
 - When refactoring existing code
 - After any bug fix (review both the fix and the regression test)
+- When reviewing UI components for Anti-Generic compliance
 
-## The Five-Axis Review
+## The Six-Axis Review
 
 Every review evaluates code across these dimensions:
 
@@ -79,6 +83,40 @@ For detailed profiling and optimization, see `performance-optimization`. Does th
 - Any unnecessary re-renders in UI components?
 - Any missing pagination on list endpoints?
 - Any large objects created in hot paths?
+
+### 6. Aesthetic & UX Rigor (The Anti-Generic Mandate)
+
+*Frontend code must pass the Anti-Generic Litmus Test. If it looks like a predictable Bootstrap template or "AI slop", it is rejected.*
+
+**The Litmus Test:** For every major UI decision, answer:
+
+| Question | Purpose | Pass Criteria |
+|----------|---------|---------------|
+| **Why?** | Tie element to user need/psychology | Clear connection to audience motivation |
+| **Only?** | Challenge defaults — is this the only way? | Considered alternatives, justified choice |
+| **Without?** | Enforce minimalism — does removal diminish the core? | Removal would hurt user experience |
+
+**Rejection Matrix (Auto-Fail):**
+
+| Pattern | Why It Fails |
+|---------|--------------|
+| ❌ Predictable "Hero section with gradient text and two buttons" | Template aesthetics, no intentional direction |
+| ❌ Generic "Bento box" card grids without structural justification | Modern cliché, every AI design uses this |
+| ❌ "Inter/Roboto safety" without a distinct, bespoke typographical hierarchy | Safe = forgettable |
+| ❌ Purple-gradient-on-white clichés or Tailwind default `blue-600` without intentional branding | Overused, no distinct identity |
+| ❌ Glassmorphism/Neumorphism used as a crutch for poor visual hierarchy | AI's idea of "premium" — lazy |
+| ❌ Mesh/Aurora gradients as background decoration | Lazy "floating blobs" with no purpose |
+| ❌ Hero split (left/right) without structural reason | Predictable, boring default |
+
+**Enforcement Rules:**
+
+- **Whitespace is structural**, not just empty space. It communicates calm (Institutional) or drama (Dynamic).
+- **Typography must be intentional.** Reject default system fonts without justification. Pair fonts for hierarchy, not decoration.
+- **Micro-interactions must serve a purpose.** Animations that don't communicate state or guide attention are noise.
+- **Every pixel must serve a psychological or functional purpose.** If you can't articulate why it's there, remove it.
+- **Color must be deliberate.** Reject palette generators. Choose colors that align with brand psychology.
+
+**Integration with `avant-garde-design-v4`:** For comprehensive design guidance (Strategic Positioning Matrix, 40-Minute Pre-Design Ritual, Design Prompt Library), see the `avant-garde-design-v4` skill.
 
 ## Change Sizing
 
@@ -141,7 +179,7 @@ Tests reveal intent and coverage:
 
 ### Step 3: Review the Implementation
 
-Walk through the code with the five axes in mind:
+Walk through the code with the six axes in mind:
 
 ```
 For each file changed:
@@ -150,6 +188,7 @@ For each file changed:
 3. Architecture: Does this fit the system?
 4. Security: Any vulnerabilities?
 5. Performance: Any bottlenecks?
+6. Aesthetic/UX: Does this pass the Anti-Generic Litmus Test? (frontend only)
 ```
 
 ### Step 4: Categorize Findings
@@ -159,7 +198,7 @@ Label every comment with its severity so the author knows what's required vs opt
 | Prefix | Meaning | Author Action |
 |--------|---------|---------------|
 | *(no prefix)* | Required change | Must address before merge |
-| **Critical:** | Blocks merge | Security vulnerability, data loss, broken functionality |
+| **Critical:** | Blocks merge | Security vulnerability, data loss, broken functionality, Axis 6 violations on production UI |
 | **Nit:** | Minor, optional | Author may ignore — formatting, style preferences |
 | **Optional:** / **Consider:** | Suggestion | Worth considering but not required |
 | **FYI** | Informational only | No action needed — context for future reference |
@@ -301,6 +340,14 @@ Part of code review is dependency review:
 - [ ] No unbounded operations
 - [ ] Pagination on list endpoints
 
+### Aesthetic & UX Rigor (Frontend Only)
+- [ ] Anti-Generic Litmus Test passed (Why? Only? Without?)
+- [ ] No Rejection Matrix violations (Bento grids, Inter/Roboto safety, purple gradients, etc.)
+- [ ] Whitespace used as structural element
+- [ ] Typography is intentional (not default system fonts)
+- [ ] Micro-interactions serve a purpose
+- [ ] Color palette is deliberate (not palette generator output)
+
 ### Verification
 - [ ] Tests pass
 - [ ] Build succeeds
@@ -310,8 +357,10 @@ Part of code review is dependency review:
 - [ ] **Approve** — Ready to merge
 - [ ] **Request changes** — Issues must be addressed
 ```
+
 ## See Also
 
+- For Anti-Generic design philosophy and the full Rejection Matrix, see `avant-garde-design-v4`
 - For detailed security review guidance, see `references/security-checklist.md`
 - For performance review checks, see `references/performance-checklist.md`
 
@@ -324,6 +373,7 @@ Part of code review is dependency review:
 | "We'll clean it up later" | Later never comes. The review is the quality gate — use it. Require cleanup before merge, not after. |
 | "AI-generated code is probably fine" | AI code needs more scrutiny, not less. It's confident and plausible, even when wrong. |
 | "The tests pass, so it's good" | Tests are necessary but not sufficient. They don't catch architecture problems, security issues, or readability concerns. |
+| "It looks fine to me" | "Fine" is the enemy of intentional. Apply the Litmus Test: Why this component? Only this layout? Without this cliché? |
 
 ## Red Flags
 
@@ -335,6 +385,7 @@ Part of code review is dependency review:
 - No regression tests with bug fix PRs
 - Review comments without severity labels — makes it unclear what's required vs optional
 - Accepting "I'll fix it later" — it never happens
+- Frontend changes that pass technical review but violate the Anti-Generic mandate
 
 ## Verification
 
@@ -345,3 +396,4 @@ After review is complete:
 - [ ] Tests pass
 - [ ] Build succeeds
 - [ ] The verification story is documented (what changed, how it was verified)
+- [ ] Frontend changes pass Axis 6 (Aesthetic & UX Rigor) — if applicable
