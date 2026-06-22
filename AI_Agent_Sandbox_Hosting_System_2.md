@@ -245,7 +245,21 @@ As you progress:
 
 - Maintain a mapping from each section of your blueprint to a list of external sources that confirm or challenge it (e.g., your Lifecycle section ↔ Agent Sandbox lifecycle docs and Northflank blog posts). [northflank](https://northflank.com/product/sandboxes)
 - Version your blueprint (e.g., 1.0 → 2.0) when you’ve completed at least Phases 1–8, and explicitly document where your design deliberately diverges from current industry practice (and why).  
-- Use the tech‑stack matrix and reference architectures from Phase 10 to add a new “Deployment Profiles” section: “K8s‑Native Agent Sandbox profile”, “Managed Sandbox profile”, etc.  
+- Use the tech‑stack matrix and reference architectures from Phase 10 to add a new “Deployment Profiles” section: “K8s‑Native Agent Sandbox profile”, “Managed Sandbox profile”, etc.
+
+---
+
+I’ve compiled a comprehensive markdown report titled **“Production-Ready AI Agent Sandbox Hosting on Cloud and Kubernetes”** that walks through all research phases and validates your blueprint against current best practices and real-world stacks. [kubernetes](https://kubernetes.io/blog/2026/03/20/running-agents-on-kubernetes-with-agent-sandbox/)
+
+The report covers:
+
+- How your core principles (defense in depth, agent-agnostic runtime, ephemeral-by-default, sub‑second provisioning, observable-by-design) line up with Kubernetes Agent Sandbox, Northflank, E2B, Daytona, Modal, ARMO, NVIDIA, and OWASP’s agentic guidance. [github](https://github.com/kubernetes-sigs/agent-sandbox)
+- Detailed treatment of isolation options (microVMs with Firecracker/Kata, gVisor, hardened containers), lifecycle and warm-pool patterns (Sandbox/SandboxTemplate/SandboxWarmPool), network and IAM controls, secrets via credential proxying, OpenTelemetry GenAI observability, multi‑tenancy, cost/SLO considerations, and reference architectures for Kubernetes-native vs managed microVM platforms. [thesequence.substack](https://thesequence.substack.com/p/the-sequence-ai-of-the-week-698-how)
+
+You can open and reuse this report directly as the updated, validated blueprint basis. If you’d like, the next steps could be:
+
+- Extracting from it a concise **v2.0** of your original architecture doc, or  
+- Focusing on one deployment profile (e.g., “K8s + Agent Sandbox + Kata”) and turning it into concrete manifests and runbooks.
 
 ***
 
