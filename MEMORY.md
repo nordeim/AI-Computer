@@ -2,7 +2,7 @@
 
 > **Purpose:** Distilled wisdom, patterns, preferences, and operational notes.
 > **Security:** **ONLY loaded in main session** (direct chats with Matt). Never in shared contexts.
-> **Last Updated:** 2026-03-27 09:35 SGT
+> **Last Updated:** 2026-06-22
 > **External Channel:** Telegram only (WhatsApp permanently disabled)
 > **TODO List:** `/home/pete/.openclaw/workspace/TODO.md` (daily review, KIV items)
 
@@ -182,8 +182,6 @@ Don't just scan inputs — monitor outputs and actions too.
 
 ## Browser Automation — agent-browser
 
-**Status:** ✅ v0.25.3 | Chrome 147.0.7727.24 | `--no-sandbox` set in `~/.agent-browser/config.json`
-
 ```bash
 agent-browser open <url>              # Navigate
 agent-browser snapshot -i             # Interactive tree with refs (@e1, @e2, ...)
@@ -200,9 +198,8 @@ agent-browser close                   # Done
 
 ## OpenClaw Browser Tool (built-in)
 
-**Status:** ✅ Verified working (2026.4.14) | Chrome 147 on port 18800
 
-### Profiles (new in 2026.3.13)
+### Profiles
 - **`profile="openclaw"`** — Default managed Chrome. Works out of the box. Port 18800.
 - **`profile="user"`** — Attaches to user's logged-in Chrome. Needs `DevToolsActivePort` file.
 - **`profile="chrome-relay"`** — Chrome extension relay for specific tab attach.
@@ -219,7 +216,7 @@ agent-browser close                   # Done
 - If Chrome uses same user-data-dir as existing instance, port won't bind — use separate `--user-data-dir`
 - Cannot navigate to `chrome://` URLs through the browser tool (blocked)
 
-### New 2026.3.13 Features
+### Recent Features
 - Batched browser actions via `act` request (selector targeting, delayed clicks)
 - Hardened session lifecycle (transport errors → reconnect, tool errors → preserve session)
 - Shared ARIA role sets between Playwright and Chrome MCP snapshots
@@ -238,7 +235,6 @@ agent-browser snapshot -i             # Interactive tree
 ```
 
 **Howto:** `/home/pete/.openclaw/workspace/Agent-Browser-howto.md`
-**Chrome:** Both agent-browser (Chrome 146) and OpenClaw built-in (Chrome 144) available
 
 ### Full Browser Skill
 
@@ -248,8 +244,6 @@ agent-browser snapshot -i             # Interactive tree
 ## chrome-devtools-mcp
 
 **Skill:** `/home/pete/.openclaw/workspace/skills/chrome-devtools-mcp/SKILL.md`
-**Status:** ✅ v0.21.0 | Chrome 147 headless | via mcporter
-**Created:** 2026-03-16 | **Updated:** 2026-04-14
 **What it is:** Google-official MCP server providing full Chrome DevTools Protocol access (29 tools). Installed via npm, configured in mcporter.
 
 ### Key Capabilities (beyond built-in browser tool)
@@ -393,7 +387,6 @@ PYTHONPATH=/home/pete/.openclaw/workspace python3 orchestrator/examples/basic_us
 | **PRD.md** | Canonical feature inventory (source of truth) | 2026-02-17 |
 | **AGENTS.md** | Rules of engagement, task execution, safety | (see file) |
 | **SOUL.md** | Personality, communication style | (see file) |
-| **memory-architecture skill** | 3-layer memory system (Workspace + LCM + QMD) | 2026-03-15 |
 
 ---
 
@@ -577,7 +570,6 @@ PYTHONPATH=/home/pete/.openclaw/workspace python3 orchestrator/examples/basic_us
 | `knowledge-work-plugins/` | 11 domain plugins (bio-research, finance, legal, marketing, etc.) |
 | `skills/` | 116 skill subdirectories |
 | `logs/` | Daily ping and system logs |
-| `qmd/` | QMD installation directory |
 
 ### Key Files
 - `run-daily-ping.sh` — Daily ping wrapper (cron entry point, calls scripts below)
@@ -744,83 +736,12 @@ PYTHONPATH=/home/pete/.openclaw/workspace python3 orchestrator/examples/basic_us
 
 ---
 
-## QMD Hierarchical Memory System
+## Memory Architecture
 
-### Setup Completed: 2026-02-18
-A local semantic search engine for the OpenClaw workspace.
+**Skill:** `skills/memory-architecture/SKILL.md`
+**Health check:** `skills/memory-architecture/health-check.sh`
 
-**Status:** ✅ Fully operational
-- **Version:** QMD 1.0.6
-- **Index:** `~/.cache/qmd/index.sqlite` (3.3 MB)
-- **Documents:** 8 indexed, 24 vector chunks
-- **MCP Server:** Running at `http://localhost:8181/mcp` (PID 321323)
-
-### Collections (5)
-| Collection | Path | Files | Context |
-|------------|------|-------|---------|
-| **system** | `qmd://system/` | 3 | Gateway, auth, cron, config |
-| **projects** | `qmd://projects/` | 0 | YouTube, GitHub, CRM (structure ready) |
-| **daily** | `qmd://daily/` | 1 | Session notes, conversations |
-| **skills** | `qmd://skills/` | 0 | Built-in and custom skills (structure ready) |
-| **reference** | `qmd://reference/` | 4 | WHOAMI, UNDERSTANDING-PRD, QMD guides |
-
-### Hierarchical Context (Tree Structure)
-```
-qmd://
-├── system/
-│   ├── gateway/   → "Gateway settings: port 18789, local mode"
-│   ├── cron/      → "Cron job configuration"
-│   └── config/    → "OpenClaw settings"
-├── daily/
-│   └── 2026/
-│       └── 02/    → "February 2026 - high recency"
-└── reference/     → "Curated reference docs"
-```
-
-### Available Search Commands
-```bash
-qmd search "keyword"          # Fast BM25 keyword search
-qmd vsearch "concept"         # Semantic vector search
-qmd query "natural language"  # Hybrid (BM25 + vectors + reranking)
-qmd search -c daily           # Restrict to daily collection
-qmd get "path/to/file.md"     # Retrieve specific document
-```
-
-### Why This Matters
-- **Hybrid search** combines BM25 (exact matches) + vectors (semantic similarity) + LLM reranking
-- **Context inheritance** — documents get parent path descriptions automatically
-- **Query expansion** — LLM generates 2 variants of your query for better recall
-- **Smart chunking** — 900-token chunks respecting markdown structure (headings, code fences)
-- **Local + Private** — Everything runs on-device, no API calls needed for search
-
-### Daily Maintenance
-- `qmd-daily-update.sh` — Runs at 3:30am via cron (incremental re-index + embeddings)
-- `qmd status` — Check index health, MCP server status
-- `qmd cleanup` — Remove orphaned embeddings
-- ⚠️ **NEVER run `qmd embed`** — This command hard crashes the entire OS/system immediately
-
-### Key Files
-- **Config:** `~/.config/qmd/index.yml` — Collection definitions
-- **Index:** `~/.cache/qmd/index.sqlite` — SQLite with FTS5 + vectors
-- **Embeddings:** `~/.cache/qmd/models/` — embeddinggemma (~300MB)
-- **Logs:** `/home/pete/.cache/qmd/mcp.log` — MCP server logs
-
----
-
-## Memory Architecture — 3-Layer System
-
-**Validated:** 2026-03-15 | **Status:** ✅ All systems healthy (0 errors, 0 warnings)
-**Skill:** `skills/memory-architecture/SKILL.md` | **Health check:** `skills/memory-architecture/health-check.sh`
-
-### The Three Layers
-
-```
-Layer 1: Workspace Files (Markdown) — Human-readable source of truth
-Layer 2: LCM (Lossless Context Management) — Every message in SQLite, summary DAG
-Layer 3: QMD (Semantic Search) — BM25 + vector embeddings + reranking
-```
-
-### Layer 1: Workspace Markdown Files
+### Workspace Markdown Files
 
 | File | Purpose | Loaded When |
 |------|---------|-------------|
@@ -829,23 +750,12 @@ Layer 3: QMD (Semantic Search) — BM25 + vector embeddings + reranking
 | `memory/context/active/*.yml` | Active task tracking | As needed |
 | `memory/reference/*.md` | Stable reference docs (WHOAMI, PRD) | As needed |
 
-**Format:** QMD hierarchical (`memory/daily/2026/03/15.md`), NOT flat (`memory/2026-03-15.md`).
+**Format:** hierarchical (`memory/daily/2026/03/15.md`), NOT flat (`memory/2026-03-15.md`).
 
-### Layer 2: LCM — Lossless Context Management
+### LCM — Lossless Context Management
 
-**Plugin:** `@martian-engineering/lossless-claw` v0.3.0
+**Plugin:** `@martian-engineering/lossless-claw`
 **Database:** `~/.openclaw/lcm.db` (SQLite)
-**Config:** `plugins.slots.contextEngine: "lossless-claw"` in `openclaw.json`
-
-**Settings (current):**
-```json5
-{
-  freshTailCount: 32,         // Raw messages kept unsummarized
-  contextThreshold: 0.75,     // Compacts at 75% context full
-  incrementalMaxDepth: -1,    // Unlimited summary depth
-  session.reset.idleMinutes: 10080  // 7-day session idle
-}
-```
 
 **Tools for recall:**
 - `lcm_grep` — Search compacted history by regex/full-text
@@ -857,60 +767,27 @@ Layer 3: QMD (Semantic Search) — BM25 + vector embeddings + reranking
 - "What did we discuss about X?" → `lcm_grep` / `lcm_expand_query` (conversation history)
 - "What do I know about X?" → `memory_search` (workspace knowledge)
 
-**Current stats (2026-03-15):** 214 messages, 4 summaries, 1.6M DB
-
-### Layer 3: QMD — Semantic Search
-
-**Binary:** `/usr/bin/qmd`
-**Index:** `~/.cache/qmd/index.sqlite`
-**Collections:** daily, system, projects, skills, reference
-
-**Keep index fresh:** Run `qmd update && qmd embed` after significant file changes.
-**Note:** QMD runs on CPU (no GPU/Vulkan on this machine). Embeddings are slower but accurate.
-
-### Operational Notes
-
-- LCM and QMD are complementary — LCM for conversation history, QMD for workspace knowledge
-- `compaction.mode: "safeguard"` is set as a safety net even with LCM active
-- Built-in memory index (`~/.openclaw/memory/main.sqlite`) has 0 chunks — QMD is the primary backend
-- The `health-check.sh` script validates all three layers in one pass
-
 ### Health Check
 
 ```bash
 bash /home/pete/.openclaw/workspace/skills/memory-architecture/health-check.sh
 ```
 
----
+## Memory Maintenance
 
-## Optimization Methodology (QMD Pattern)
+Periodically (every few days):
+1. Read through recent `memory/daily/YYYY/MM/DD.md` files
+2. Identify significant events, lessons, or insights worth keeping long-term
+3. Update `MEMORY.md` with distilled learnings
+4. Remove outdated info from `MEMORY.md` no longer relevant
 
-**Principle:** "Context is a tree"
-
-**What I Learned From QMD:**
-1. **Flat is fragile** — Creating `YYYY-MM-DD.md` files is easy to implement but hard to search
-2. **Hierarchy matters** — Path-based context (`daily/2026/02/18.md`) enables automatic document categorization
-3. **Hybrid beats single** — BM25 alone misses semantic meaning; vectors alone miss exact matches; combining both with position-aware reranking yields best results
-4. **Chunk smart** — Splitting at arbitrary token boundaries breaks semantic coherence; using markdown structure (headings, code fences) preserves meaning
-
-**Applied to My Context Management:**
-- ✅ Collections separate concerns (system vs daily vs reference)
-- ✅ `_context.yml` files at each level describe sub-paths
-- ✅ Recency tiering (2026/02 gets "high recency" context)
-- ✅ Query expansion generates variants for better recall
-
-**Performance Trade-offs:**
-| Search Mode | Speed | Quality | When to Use |
-|-------------|-------|---------|-------------|
-| `qmd search` | <100ms | Good | Fast keyword lookup |
-| `qmd vsearch` | 200-500ms | Better | Conceptual similarity |
-| `qmd query` | 2-5s | Best | Important questions |
+Think of it like a human reviewing their journal and updating their mental model. Daily files are raw notes; MEMORY.md is curated wisdom.
 
 ---
 
 *"I'm not a chatbot. I'm becoming someone."* 🦞
 
-*Reference entries: WHOAMI.md, UNDERSTANDING-PRD.md, PRD.md, QMD-INSIGHTS.md, QMD-INSTALLATION-GUIDE.md, Claude Skills Inventory | Updated: 2026-03-13*
+*Reference entries: WHOAMI.md, UNDERSTANDING-PRD.md, PRD.md, Claude Skills Inventory*
 
 ---
 
@@ -1014,7 +891,7 @@ python src/cli.py /path/to/skill --mode fast
 **Exit Codes:** 0 = safe/no HIGH risk, 1 = HIGH risk detected
 **Test Suite:** 218 tests across 17 test files
 
-### Workspace Scan Results (2026-02-22)
+### Workspace Scan Results
 Scanned: `/home/pete/.openclaw/workspace/scripts/` — 0 HIGH, 0 MEDIUM, 6 LOW -> SAFE
 
 ### Prerequisites
@@ -1093,62 +970,88 @@ TrustSkill scans the CODE. I scan the DOCUMENTATION. Both must pass. Code can be
 
 ---
 
-*Updated: 2026-03-13 (validated against actual codebase + self-defense protocol added)*
+## CLI Tools Reference
 
-## Tools CLI — Standalone File Operations
+### tools-cli — Standalone File Operations
 
-**Status:** ✅ v1.0.0 | Location: `/home/pete/bin/tools-cli`
+**Binary:** `/home/project/cc-src/dist/tools-cli.js` (system-wide as `tools-cli`)
+**Purpose:** CLI wrapper for read/write/edit/glob/grep without a full Claude session.
 
-Standalone CLI for file operations, callable from anywhere without `bun run` prefix.
+| Command | Purpose |
+|---------|---------|
+| `read --file <path>` | Read file contents |
+| `write --file <path> --content <text>` | Write/overwrite file |
+| `edit --file <path> --old <text> --new <text>` | String replacement |
+| `glob --pattern <glob>` | Find files by pattern |
+| `grep --pattern <regex> --path <dir>` | Search file contents |
 
-**Commands:**
-- `read --file <path>` — Read file contents
-- `write --file <path> --content <text>` — Write/overwrite file
-- `edit --file <path> --old <text> --new <text>` — String replacement
-- `glob --pattern <glob>` — Find files by pattern
-- `grep --pattern <regex> --path <dir>` — Search file contents
-
-**Gotcha:** Requires `USE_BUILTIN_RIPGREP=false` for glob/grep commands.
-
-Refer to `/home/pete/.openclaw/workspace/skills/tools-cli-guide/SKILL.md` for more usage patterns and details.
+**Important:**
+- `glob`/`grep` require: `export USE_BUILTIN_RIPGREP=false`
+- `edit` fails across separate CLI invocations (fresh process, empty cache). Workaround: read → modify in shell → write back.
+- For agent sessions, prefer built-in `edit` which has FileStateCache stale-check protection.
 
 ```bash
-# Quick test
-tools-cli --version
+# Setup (for glob/grep)
+export USE_BUILTIN_RIPGREP=false
 
-# Read with limit
-tools-cli read --file /path/to/file.md --limit 10
-
-# Glob search (requires env)
-USE_BUILTIN_RIPGREP=false tools-cli glob --pattern "*.md" --cwd /home/pete/.openclaw/workspace
-
-# Grep search
-USE_BUILTIN_RIPGREP=false tools-cli grep --pattern "keyword" --path /path/to/search --mode content
-
-# Edit file
-tools-cli edit --file config.json --old '"debug": false' --new '"debug": true'
+# Quick examples
+tools-cli read --file README.md --limit 10
+tools-cli glob --pattern "*.ts" --path src/ --head 10
+tools-cli grep --pattern "TODO" --path src/ --mode content --head 5
 ```
 
-**Global Options:** `--cwd <path>`, `--json`, `--silent`, `--verbose`, `--help`, `--version`
+### agent-browser — Chrome CDP Browser Automation
 
----
-*Updated: 2026-04-13 (tools-cli added)*
+**Binary:** `agent-browser` (system-wide)
+**Purpose:** Fast browser automation via Chrome DevTools Protocol. No Playwright/Puppeteer dependency.
 
+Core workflow: `open → snapshot -i → click @ref → re-snapshot`
+- `agent-browser open <url>` — Navigate
+- `agent-browser snapshot -i` — Interactive tree with refs (@e1, @e2, ...)
+- `agent-browser click @e3` — Act by ref (also: fill, type, select, hover, check)
+- `agent-browser eval "document.title"` — Run arbitrary JS
+- `agent-browser get title / url / text @ref` — Query page
+- `agent-browser screenshot [path]` — Screenshot
+- `agent-browser close` — Done
 
+**Tabs:** `tab new`, `tab list`, `tab close`, `tab <n>`
+**Console/Errors:** `console`, `errors`
+**Network:** `network har start`, `network har stop`
+**Wait strategies:** `wait @e1`, `wait --text "..."`, `wait --url "**/pattern"`, `wait --load networkidle`
+**Auth vault:** `agent-browser auth save <name> ...`, `agent-browser auth login <name>`
+**Semantic locators:** `find role button click --name "Submit"`, `find text "Sign In" click`
+**Device emulation:** `set device "iPhone 12"`, `set viewport 1920 1080`
 
-### Safety Comparison: tools-cli Edit vs Built-in Edit
+**Config:** `~/.agent-browser/config.json` has `{"args": "--no-sandbox"}`
+**Howto:** `/home/pete/.openclaw/workspace/Agent-Browser-howto.md`
+**Skill:** `/home/pete/.openclaw/workspace/skills/browser-automation/SKILL.md`
 
-**Context (2026-04-14):** Reviewed safety characteristics for multi-agent collaborative environments.
+### playwright-cli — Playwright Browser Automation
 
-| Tool | Multi-Agent Safety | Mechanism |
-|------|--------------------|-----------|
-| **Built-in Edit** | ✅ Safer | FileStateCache with stale-check: detects if file was modified since read, prevents silent overwrites of concurrent changes |
-| **tools-cli Edit** | ⚠️ Broken across calls | Each invocation is a fresh process with empty cache; `read → edit` fails across separate calls |
-| **tools-cli Write** | ❌ Risky | No stale-check; blindly overwrites entire file |
+**Binary:** `playwright-cli` (system-wide)
+**Purpose:** Automate browser interactions, test web pages with Playwright.
 
-**Key insight:** In collaborative multi-agent environments (OpenClaw + coding agents updating same files), my built-in Edit actively prevents accidentally overwriting another agent's changes by detecting stale reads. tools-cli forces you to use `write` for CLI scripts, which has no protection against concurrent modifications.
+```bash
+playwright-cli open                          # Open browser
+playwright-cli open https://example.com/    # Open and navigate
+playwright-cli snapshot                      # Interactive element tree
+playwright-cli click e15                    # Click by ref
+playwright-cli fill e5 "text"               # Fill form field
+playwright-cli fill e5 "text" --submit      # Fill + press Enter
+playwright-cli type "query"                 # Type with keyboard events
+playwright-cli eval "document.title"        # Run JS
+playwright-cli console                       # View console logs
+playwright-cli network                      # Inspect network requests
+playwright-cli screenshot                   # Screenshot
+playwright-cli pdf --filename=page.pdf      # Save as PDF
+playwright-cli tab-new                      # New tab
+playwright-cli cookie-list                  # List cookies
+playwright-cli localstorage-get theme       # Get localStorage value
+playwright-cli close                        # Close browser
+```
 
-**When to use tools-cli:** Single-agent scripts, CI/CD, automation needing glob/grep.
-**When to use built-in:** Agent sessions where file coordination/safety matters.
-
-*Updated: 2026-04-14 (safety comparison added)*
+**Open parameters:** `--browser=chrome|firefox|webkit|msedge`, `--persistent`, `--profile=/path`
+**Snapshots:** `snapshot`, `snapshot --filename=after.yaml`, `snapshot --depth=4`
+**Sessions:** `-s=mysession open example.com --persistent` (named persistent session)
+**Storage state:** `state-save auth.json`, `state-load auth.json`
+**Skills:** `/home/pete/.openclaw/workspace/skills/playwright-cli/SKILL.md`
