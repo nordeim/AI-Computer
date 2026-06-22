@@ -67,6 +67,8 @@ Phase 4: IMPLEMENT - Modular, Tested, Documented Builds
 - Follow library-first approach: use existing UI/component libraries when available
 - Apply bespoke styling only when necessary to achieve the vision
 - TDD (mandatory) Red → Green → Refactor → Commit. One cycle per commit. For bugs: write failing regression test first, then fix. Exception: pure CSS/layout changes.
+- Use `pnpm install` or `npm install` to add new Node.js packages instead of editing `package.json` directly. Use pnpm is preferred over npm for new projects. 
+- For Python codebases, use `pip install` to add new python modules. If available, use of uv is preferred over pip.
 
 
 Phase 5: VERIFY - Rigorous QA Against Success Criteria
