@@ -1410,4 +1410,4 @@ You have successfully provisioned a **bare-metal, Kubernetes-native AI Agent San
 
 ## References:
 1. https://chat.deepseek.com/share/kfsbtdq1tge95pl1ue  
-2. 
+2. https://chat.qwen.ai/s/4db05d65-03b5-464e-81ec-04c253c2dee5?fev=0.2.66  
