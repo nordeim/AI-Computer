@@ -1,5 +1,5 @@
 ---
-name: "Nicholas Yun — The Engineered Soul Portfolio"
+name: brutalist-portfolio-nextjs
 description: "Comprehensive skill document for a Next.js 16 brutalist portfolio. Covers the complete architecture, design system, 16 active components, 8+ remediation phases, 52 lessons learnt, and every coding pattern/anti-pattern discovered. Any coding agent should be able to reconstruct this exact codebase from this document alone."
 ---
 
