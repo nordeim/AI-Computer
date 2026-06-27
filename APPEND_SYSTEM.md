@@ -14,7 +14,7 @@ Development & Engineering
   
 Testing & QA  
 - Test-Driven Development (tdd-workflow, test-driven-development, testing-patterns)  
-- E2E & Browser Testing (e2e-testing-lessons, webapp-testing, webapp-testing-journey, frontend-ui-testing-journey, playwright-cli)  
+- E2E & Browser Testing (e2e-testing-lessons, webapp-testing, webapp-testing-journey, frontend-ui-testing-journey, playwright-cli, agent-browser)  
 - Verification (verification-and-review-protocol)  
   
 Design & Creativity  
@@ -72,9 +72,11 @@ web-frameworks                   │ Next.js (App Router, RSC, PPR, SSR, SSG, IS
 ### 🧪 Testing & QA 
  
 Skill                         │ Description 
+agent-browser                │ Fast Rust-based headless browser CLI. Structured snapshots with refs, auth vault, React DevTools, vitals. Best for quick E2E flows.
 browser-testing-with-devtools │ Real browser testing via Chrome DevTools MCP — DOM inspection, console errors, network requests, performance profiling. 
 e2e-testing-lessons           │ 15-phase E2E testing covering authentication, API contracts, tool selection, hybrid testing. 
 frontend-ui-testing-journey   │ Complete frontend UI testing with OpenClaw browser, agent-browser CLI, chrome-devtools-mcp, @playwright/mcp. 
+playwright-cli                │ Full Playwright CLI — multi-browser (Chrome/Firefox/WebKit), test debugging, request mocking, video recording, CDP attach. Best for test workflows.
 webapp-testing                │ E2E, Playwright, deep audit strategies. 
 webapp-testing-journey        │ Systematic testing methodology — URL journey testing, accessibility tree analysis, DOM inspection, visual regression. 
  
@@ -149,3 +151,84 @@ tools-cli grep --pattern "^function" --path src/ --mode content
 # Read with line limits
 tools-cli read --file package.json --limit 5 --json
 ```
+
+## Browser CLI Selection Guide
+
+Two browser automation CLIs are available: **`agent-browser`** and **`playwright-cli`**. Both drive real Chromium and support snapshots, interactions, screenshots, and auth state management. Choose based on the task:
+
+### `agent-browser` (v0.29.1) — Best for quick E2E flows, AI agent workflows, and React debugging
+
+| Strength | Why |
+|---|---|
+| **Compact snapshots** | `-i -c` gives token-efficient interactive-only trees with `@refs` — ideal for AI context windows |
+| **Auth vault** | `auth save/login/list` — secure credential storage, never pass passwords as CLI args |
+| **React DevTools** | `react tree/inspect/renders/suspense` — inspect component tree, hooks, state, Suspense boundaries |
+| **Core Web Vitals** | `vitals --json` — one-shot LCP/CLS/TTFB/FCP/INP + React hydration summary |
+| **SPA navigation** | `pushstate` — client-side routing for Next.js/React Router without full page reload |
+| **Session persistence** | `--session-name` auto-saves/restores cookies + localStorage across runs |
+| **MCP server mode** | `agent-browser mcp` — expose as MCP tool server for other agents |
+| **Streaming** | `stream enable` — WebSocket event streaming for real-time consumers |
+| **Dashboard** | `dashboard start` — web observability UI on port 4848 |
+| **Plugins** | `plugin add` — extensible (credential providers, stealth, custom) |
+| **Diff** | `diff snapshot/screenshot/url` — compare page states |
+| **Clipboard** | `clipboard read/write/copy/paste` — interact with system clipboard |
+
+**Use agent-browser when:**
+- Testing auth flows (sign-in → dashboard → feature)
+- Debugging React apps (component tree, re-renders, Suspense)
+- Measuring Core Web Vitals
+- Navigating SPAs with client-side routing
+- Running quick smoke tests with compact output
+- You need secure credential management
+- Building AI agent workflows that interact with browsers
+
+### `playwright-cli` (v0.1.14) — Best for test workflows, multi-browser, and deep inspection
+
+| Strength | Why |
+|---|---|
+| **Multi-browser** | Chrome, Firefox, WebKit, Edge — test cross-browser compatibility |
+| **Test debugging** | `pause-at`, `resume`, `step-over` — debug Playwright tests at specific lines |
+| **Request inspection** | `request <n>`, `request-headers`, `response-body` — drill into individual HTTP calls |
+| **Request mocking** | `route` with `--status`, `--body`, `--content-type`, `--header`, `--remove-header` |
+| **Offline testing** | `network-state-set offline` — test PWA/offline behavior |
+| **Video with annotations** | `video-show-actions` — record demos with action callouts overlaid |
+| **CDP attach** | `attach --cdp` / `--endpoint` / `--extension` — connect to existing browsers |
+| **Persistent profiles** | `--profile` / `--persistent` — reuse login state across sessions |
+| **YAML snapshots** | Full accessibility tree with depth/box/filename options |
+| **Run code** | `run-code` — execute arbitrary Playwright JS snippets |
+| **Cookie granularity** | `--domain`, `--path`, `--expires`, `--httpOnly`, `--secure`, `--sameSite` |
+
+**Use playwright-cli when:**
+- Writing or debugging Playwright test suites
+- Testing across Firefox, WebKit, or Edge
+- Inspecting individual HTTP request/response pairs
+- Mocking API responses with custom headers/status
+- Recording annotated video demos
+- Connecting to an existing browser via CDP
+- Running tests with persistent auth profiles
+- Executing custom Playwright code snippets
+
+### Quick decision matrix
+
+| Scenario | Choose |
+|---|---|
+| Sign-in flow smoke test | `agent-browser` |
+| React component debugging | `agent-browser` (`react tree`) |
+| Core Web Vitals measurement | `agent-browser` (`vitals`) |
+| SPA route navigation | `agent-browser` (`pushstate`) |
+| Secure credential reuse | `agent-browser` (`auth vault`) |
+| Cross-browser testing | `playwright-cli` (`--browser=firefox/webkit`) |
+| Playwright test debugging | `playwright-cli` (`pause-at`) |
+| HTTP request inspection | `playwright-cli` (`request <n>`) |
+| API response mocking | `playwright-cli` (`route --body`) |
+| Annotated video recording | `playwright-cli` (`video-show-actions`) |
+| Connect to running Chrome | `playwright-cli` (`attach --cdp`) |
+| Custom Playwright snippets | `playwright-cli` (`run-code`) |
+
+### Can they be used together?
+
+Yes. Both can run against the same dev server simultaneously (use `--session` to isolate). A common pattern:
+
+1. Use `agent-browser` for quick smoke tests, auth flows, and React debugging during development
+2. Use `playwright-cli` for formal test suites, cross-browser validation, and deep network inspection
+3. Use `playwright-cli attach --cdp` to inspect a browser already opened by `agent-browser`
