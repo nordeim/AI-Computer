@@ -93,6 +93,16 @@ Skill                      │ Description
 brutalist-portfolio-nextjs │ Complete Next.js 16 brutalist portfolio — architecture, design system, 16 components, lessons learned. 
 personal-portfolio         │ Tactile Brutalist + High-End Editorial portfolio SPA with React 19, Vite 6, Tailwind v4. 
 web-shader-extractor       │ Extract WebGL/Canvas/Shader visual effects from webpages and port to standalone projects. 
+
+ Skill                            │ Description and appropriate for 
+ nextjs16-tailwind4                    │ React 19, TypeScript strict, App Router, Server Components, OWASP 2025, Core Web Vitals, WCAG AAA, mobile nav │
+ nextjs-react-expert                   │ React 19, Next.js 16, 57 rules, RSC streaming, Turbopack, React Compiler, LCP/INP/CLS                         │
+ brutalist-portfolio-nextjs            │ React 19, TypeScript strict, App Router, Server Components, mobile nav debugging                              │
+ react19-ts6-vite8-tailwindv4-mvp      │ Tailwind CSS v4 CSS-first @theme, pnpm, Vitest + Playwright E2E, WCAG AAA, lifecycle focus                    │
+ fullstack-dev                         │ React 19, TypeScript strict, App Router, Server Components, WebSocket/Socket.io                               │
+ web-frameworks                        │ React 19, cacheComponents, async params, standalone output, task pipelines, remote caching                    │
+ super-frontend-design                 │ React 19, Tailwind v4 CSS-first @theme, App Router Server Components                                          │
+ personal-portfolio                    │ Tailwind CSS v4 CSS-first @theme, pnpm, hash-based routing, import.meta.glob, dual-theme, use trigger
  
 ## External Tool: tools-cli
 
