@@ -4,13 +4,13 @@ Below are some of the skills under `/home/pete/.pi/agent/skills/`:
 
 Development & Engineering  
 - Frontend Development (frontend-design, frontend-development, frontend-ui-engineering, super-frontend-design)  
-- Fullstack Development (fullstack-dev, web-frameworks)  
+- Fullstack Development (fullstack-dev, web-frameworks, nextjs16-react19-postgres17, nextjs16-react19-next-auth5-drizzle-orm)  
 - Framework-Specific Expertise (nextjs16-tailwind4, nextjs-react-expert, react19-ts6-vite8-tailwindv4-mvp, python-patterns, powershell-windows)  
 - API & Interface Design (api-and-interface-design, api-patterns)  
 - UI/UX Design (ui-ux-pro-max, ui-styling, visual-design-foundations, claude-design, scaffold-ui)  
 - Version Control (git-workflow-and-versioning)  
 - CI/CD & Automation (ci-cd-and-automation, n8n-workflow-automation)  
-- Code Quality (code-quality-standards, code-review-and-audit, code-review-checklist, code-simplification, clean-code, lint-and-validate)  
+- Code Quality (code-quality-standards, code-review-and-audit, code-review-checklist, code-simplification, clean-code, lint-and-validate)
   
 Testing & QA  
 - Test-Driven Development (tdd-workflow, test-driven-development, testing-patterns)  
@@ -23,6 +23,9 @@ Design & Creativity
 - Charts & Data Visualization (charts)  
 - Image/Video Generation & Editing (image-generation, image-edit, image-understand, image-search, video-generation, video-understand)  
 - Presentation/Document Design (pptx)  
+- Context & Memory (context-engineering, context-anchor)  
+- Documentation & Onboarding (agents-md, claude-md, readme-md)  
+- External Tools (microsoft-foundry, librarian)
   
 Content & Writing  
 - Blog Writing (blog-writer)  
@@ -40,6 +43,7 @@ Document Processing
 Project Management & Planning  
 - Planning (planning-and-task-breakdown, plan-writing, writing-plans, idea-refine)  
 - Documentation & ADRs (documentation-and-adrs)  
+- Architecture Documentation (project-architecture-document-md)  
 - Spec-Driven Development (spec-driven-development)  
 - Incremental Implementation (incremental-implementation)  
 - Shipping & Launch (shipping-and-launch)  
@@ -54,20 +58,31 @@ claude-design             │ High-fidelity HTML artifacts — landing pages, sl
 design                    │ Routes design-related HTML artifact tasks to the right artifact skill or design system generator. 
 frontend-design           │ Design thinking and decision-making for web UI. Principles for components, layouts, color schemes, typography. 
 luxeverse-architect       │ Cinematic, production-grade, anti-generic web platforms. 
-super-frontend-design     │ Master skill combining top 10 validated skills — anti-generic strategy, Next.js 16 + Tailwind v4, design systems, Vercel-grade performance, WCAG AAA. 
+super-frontend-design     │ Master skill combining top 10 validated skills — anti-generic strategy, Next.js 16 + React 19 + Tailwind v4 CSS-first @theme, App Router, Vercel-grade performance, WCAG AAA. 
 ui-ux-pro-max             │ UI/UX design intelligence — design tokens, component specs, copy/microcopy, accessibility, generating/critiquing frontend UI. 
 visual-design-foundations │ Typography, color theory, spacing systems, iconography principles for cohesive visual designs. 
+context-engineering       │ Optimize agent context setup for new sessions, task switching, or degrading output quality. 
+context-anchor           │ Recover from context compaction by scanning memory files and surfacing where you left off. 
+agents-md                │ Create compact AGENTS.md instruction files for repositories. Onboarding aid for future AI agents. 
+claude-md                │ Generate CLAUDE.md files for any codebase. Detects frameworks, languages, project structure. 
+readme-md                │ Create professional, high-signal README.md by investigating codebase structure and conventions. 
+microsoft-foundry        │ Deploy/manage Azure Foundry agents: Docker build, ACR push, hosted agents, batch/continuous eval, prompt optimization. 
+librarian                │ Research open-source libraries with evidence-backed answers and GitHub permalinks. Cite exact lines of code.
+project-architecture-document-md │ Create a comprehensive Project Architecture Document (PAD) — executive summary, tech stack, ADRs, system topology, layer models, annotated directory structures, critical code patterns, database schemas, security, testing, build/deployment, developer handbook, known issues. Use when documenting a codebase for onboarding, debugging, or replication.
  
 ### ⚙ Engineering & Implementation 
  
 Skill                            │ Description 
 frontend-development             │ React/TypeScript guidelines — Suspense, lazy loading, MUI v7, TanStack Router, performance optimization. 
 frontend-ui-engineering          │ Production-quality UIs — components, layouts, state management, polished output. 
-fullstack-dev                    │ Next.js 16, TypeScript, Tailwind CSS 4, shadcn/ui, Prisma ORM — full-stack web apps. 
-nextjs-react-expert              │ React/Next.js performance optimization from Vercel Engineering. 
-nextjs16-tailwind4               │ Luxury-grade Next.js with Tailwind CSS v4, Radix UI (shadcn), Framer Motion. 
-react19-ts6-vite8-tailwindv4-mvp │ MVP/production apps with React 19, TypeScript strict, Vite 8, Tailwind v4. 
-web-frameworks                   │ Next.js (App Router, RSC, PPR, SSR, SSG, ISR), Turborepo, RemixIcon. 
+fullstack-dev                    │ Next.js 16 + React 19 + TypeScript strict, Tailwind CSS 4, shadcn/ui, Prisma ORM — full-stack web apps. 
+nextjs-react-expert              │ React 19 + Next.js 16 performance from Vercel Engineering. 57 rules, RSC streaming, Turbopack, Core Web Vitals. 
+nextjs16-tailwind4               │ Next.js 16 + React 19 + TypeScript strict, Tailwind CSS v4 CSS-first @theme, Radix UI (shadcn), Framer Motion. 
+react19-ts6-vite8-tailwindv4-mvp │ React 19 + TS 6 strict + Vite 8 (Rolldown) + Tailwind CSS v4 CSS-first @theme, pnpm, Vitest + Playwright E2E. 
+web-frameworks                   │ Next.js 16 + React 19 (App Router, RSC, PPR, cacheComponents, async params, standalone output), Turborepo, RemixIcon. 
+nextjs16-react19-postgres17    │ Next.js 16 + React 19 + PostgreSQL 17 + Drizzle ORM, BullMQ, Auth.js v5, Vercel AI SDK, RSS, web push. 
+nextjs16-react19-next-auth5-drizzle-orm │ Next.js 16 + React 19 SaaS with Tailwind v4, Auth.js v5, Drizzle/Neon, Inngest, OpenAI+Replicate+ElevenLabs, Stripe, R2, SSE. 
+fullstack-dev                  │ Next.js 16 + React 19 + TypeScript strict, Tailwind CSS v4, shadcn/ui, Prisma ORM.
  
 ### 🧪 Testing & QA 
  
@@ -90,20 +105,10 @@ ui-styling        │ Beautiful, accessible UIs with shadcn/ui, Tailwind CSS, ca
 ### 🔧 Specialized 
  
 Skill                      │ Description 
-brutalist-portfolio-nextjs │ Complete Next.js 16 brutalist portfolio — architecture, design system, 16 components, lessons learned. 
-personal-portfolio         │ Tactile Brutalist + High-End Editorial portfolio SPA with React 19, Vite 6, Tailwind v4. 
+brutalist-portfolio-nextjs │ Next.js 16 + React 19 + TypeScript strict brutalist portfolio. App Router, Server Components, 16 components, Tailwind v4 CSS-first @theme, 52 lessons. 
+personal-portfolio         │ Tactile Brutalist + Editorial portfolio SPA: React 19, TS 6 strict, Vite 6, Tailwind CSS v4 CSS-first @theme, pnpm, hash-based routing, dual-theme. 
 web-shader-extractor       │ Extract WebGL/Canvas/Shader visual effects from webpages and port to standalone projects. 
 
- Skill                            │ Description and appropriate for 
- nextjs16-tailwind4                    │ React 19, TypeScript strict, App Router, Server Components, OWASP 2025, Core Web Vitals, WCAG AAA, mobile nav │
- nextjs-react-expert                   │ React 19, Next.js 16, 57 rules, RSC streaming, Turbopack, React Compiler, LCP/INP/CLS                         │
- brutalist-portfolio-nextjs            │ React 19, TypeScript strict, App Router, Server Components, mobile nav debugging                              │
- react19-ts6-vite8-tailwindv4-mvp      │ Tailwind CSS v4 CSS-first @theme, pnpm, Vitest + Playwright E2E, WCAG AAA, lifecycle focus                    │
- fullstack-dev                         │ React 19, TypeScript strict, App Router, Server Components, WebSocket/Socket.io                               │
- web-frameworks                        │ React 19, cacheComponents, async params, standalone output, task pipelines, remote caching                    │
- super-frontend-design                 │ React 19, Tailwind v4 CSS-first @theme, App Router Server Components                                          │
- personal-portfolio                    │ Tailwind CSS v4 CSS-first @theme, pnpm, hash-based routing, import.meta.glob, dual-theme, use trigger
- 
 ## External Tool: tools-cli
 
 **tools-cli** is a standalone CLI for file operations (read, write, edit, glob, grep) without requiring a full Claude session.

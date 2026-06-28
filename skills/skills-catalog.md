@@ -1,6 +1,6 @@
 # Skills Catalog
 
-> **137 skills** organized into 10 categories. Each entry shows the skill name and a concise description of what it does and when to use it. Skills marked with `*` are external (outside `/home/pete/.pi/agent/skills/`).
+> **138 skills** organized into 10 categories. Each entry shows the skill name and a concise description of what it does and when to use it. Skills marked with `*` are external (outside `/home/pete/.pi/agent/skills/`).
 
 ---
 
@@ -134,6 +134,7 @@
 | **loop-builder** | Design unattended agent "loops": scheduled, self-verifying workflows for recurring tasks. |
 | **task-review** | After complex tasks, evaluate whether to save the path as a reusable skill. |
 | **distill-codebase-skill** | Reference template for distilling codebase knowledge into a reusable SKILL.md. Use after major updates, security remediation, or architectural overhauls to capture lessons learned, anti-patterns, debugging guides, and best practices for future agents. |
+| **project-architecture-document-md** | Create a comprehensive Project Architecture Document (PAD) for any codebase. Covers executive summary, tech stack with version pinning, Architecture Decision Records (ADRs), system topology diagrams, layer models, annotated directory structures, critical code patterns with invariants, database schemas, security architecture, testing strategy, build/deployment, developer handbook, and known issues. Produces a single source-of-truth markdown document for onboarding, debugging, and replication. |
 | **idea-refine** | Iterative idea refinement through divergent and convergent thinking. |
 | **context-engineering** | Optimize agent context setup for new sessions, task switching, or degrading output quality. |
 | **context-anchor** | Recover from context compaction by scanning memory files and surfacing where you left off. |
@@ -223,11 +224,11 @@
 | 4 | AI / ML / Multimodal SDK Skills | 8 |
 | 5 | Testing, QA & Performance | 14 |
 | 6 | Code Quality, Security & Architecture | 13 |
-| 7 | Planning, Workflow & Project Management | 19 |
+| 7 | Planning, Workflow & Project Management | 20 |
 | 8 | Documentation & Content Creation | 14 |
 | 9 | Career, Learning & Personal Development | 14 |
 | 10 | DevOps, Infrastructure & External Integrations | 21 |
-| | **Total** | **137** |
+| | **Total** | **138** |
 
 ---
 
