@@ -1,0 +1,5 @@
+Ask your PI agent to spin up a local OpenAI API compatible endpoint proxy service:
+
+1. https://chat.qwen.ai/s/229968bd-6585-4390-a67d-d2b3c056d52e?fev=0.2.67
+2. https://chat.deepseek.com/share/na6xsnu5spp3jrnk39 
+3. https://chat.z.ai/s/07a63ef5-0a47-44e1-863c-52214a75b6ae
