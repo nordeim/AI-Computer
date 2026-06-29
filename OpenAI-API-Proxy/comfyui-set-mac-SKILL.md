@@ -6,7 +6,7 @@ This guide provides step-by-step instructions for installing ComfyUI on a Mac wi
 
 **Target System:** Mac with Apple Silicon, 16GB+ RAM (recommended 32GB+)
 **ComfyUI Version:** 0.26.0
-**Python Version:** 3.13.x
+**Python Version:** 3.12.x (recommended), 3.13.x (bleeding edge, some custom nodes may fail)
 
 ### ⚠️ Critical Mac-Specific Issues
 
@@ -48,11 +48,11 @@ This covers: model discovery (HuggingFace/CivitAI), LFS/gated repo handling, com
 ## 1. Prerequisites
 
 ### System Requirements
-- **OS:** macOS (tested on Sequoia 26.x)
+- **OS:** macOS Tahoe 26.x (or newer)
 - **Architecture:** Apple Silicon (M1/M2/M3/M4)
 - **RAM:** 16GB minimum, 32GB+ recommended
 - **Disk:** 50GB+ free space for models
-- **Python:** 3.10+ (3.13 recommended)
+- **Python:** 3.10+ (3.12 recommended, 3.13 bleeding edge)
 
 ### Required Software
 ```bash
@@ -62,8 +62,8 @@ brew --version
 # Install Homebrew if needed
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-# Install Python 3.13
-brew install python@3.13
+# Install Python 3.12 (recommended for stability; 3.13 is bleeding edge)
+brew install python@3.12
 
 # Install wget (optional but useful)
 brew install wget
@@ -79,8 +79,8 @@ brew install wget
 # Create venv directory
 mkdir -p ~/.venv
 
-# Create Python 3.13 virtual environment
-/opt/homebrew/bin/python3.13 -m venv ~/.venv
+# Create Python 3.12 virtual environment
+/opt/homebrew/bin/python3.12 -m venv ~/.venv
 
 # Verify installation
 source ~/.venv/bin/activate
@@ -130,7 +130,7 @@ git clone https://github.com/comfyanonymous/ComfyUI.git
 
 # Option B: If you have an existing installation
 # Just use the existing directory
-ls ~/ComfyUI-Mac-Silicon  # or wherever your installation is
+ls ~/ComfyUI  # or wherever your installation is
 ```
 
 ### Step 3.2: Navigate to ComfyUI Directory
@@ -236,10 +236,13 @@ curl -L -o vae/ae.safetensors \
   "https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/vae/ae.safetensors"
 ```
 
-### Step 5.4: Download TurboTime LoRA (Optional)
+### Step 5.4: Download LoRA (Optional, Architecture-Specific)
 
 ```bash
 # Download TurboTime LoRA for faster generation (~386 MB)
+# ⚠️ WARNING: This LoRA is for Ideogram 4 ONLY.
+# Do NOT use with Z-Image or Krea2 models (different architecture = crash).
+# If you're using z_image_turbo_bf16, skip this step.
 curl -L -o loras/ideogram4_turbotime_v1.safetensors \
   "https://huggingface.co/ostris/ideogram_4_turbotime_lora/resolve/main/ideogram_4_turbotime_v1.safetensors"
 
@@ -286,11 +289,11 @@ Use a detached launch with stdout/stderr redirected to a real log file. `TQDM_DI
 
 ```bash
 export TQDM_DISABLE=1
-cd ~/ComfyUI-Mac-Silicon
+cd ~/ComfyUI
 source ~/.venv/bin/activate
 nohup env TQDM_DISABLE=1 DISABLE_TQDM=1 PYTHONUNBUFFERED=1 \
   ~/.venv/bin/python main.py --force-fp16 --listen 127.0.0.1 --port 8188 \
-  > ~/ComfyUI-Mac-Silicon/comfyui-runtime.log 2>&1 < /dev/null &
+  > ~/ComfyUI/comfyui-runtime.log 2>&1 < /dev/null &
 ```
 
 ### Step 6.1: Start ComfyUI
@@ -305,7 +308,7 @@ source ~/.venv/bin/activate
 # Start ComfyUI with broken pipe fix
 nohup env TQDM_DISABLE=1 DISABLE_TQDM=1 PYTHONUNBUFFERED=1 \
   ~/.venv/bin/python main.py --force-fp16 --listen 127.0.0.1 --port 8188 \
-  > ~/ComfyUI-Mac-Silicon/comfyui-runtime.log 2>&1 < /dev/null &
+  > ~/ComfyUI/comfyui-runtime.log 2>&1 < /dev/null &
 ```
 
 ### Step 6.2: Verify ComfyUI is Running
@@ -324,22 +327,22 @@ open http://127.0.0.1:8188
 # Standard launch (with broken pipe fix)
 nohup env TQDM_DISABLE=1 DISABLE_TQDM=1 PYTHONUNBUFFERED=1 \
   ~/.venv/bin/python main.py --force-fp16 --listen 127.0.0.1 --port 8188 \
-  > ~/ComfyUI-Mac-Silicon/comfyui-runtime.log 2>&1 < /dev/null &
+  > ~/ComfyUI/comfyui-runtime.log 2>&1 < /dev/null &
 
 # With split attention (if memory issues)
 nohup env TQDM_DISABLE=1 DISABLE_TQDM=1 PYTHONUNBUFFERED=1 \
   ~/.venv/bin/python main.py --force-fp16 --listen 127.0.0.1 --port 8188 --use-split-cross-attention \
-  > ~/ComfyUI-Mac-Silicon/comfyui-runtime.log 2>&1 < /dev/null &
+  > ~/ComfyUI/comfyui-runtime.log 2>&1 < /dev/null &
 
 # Different port (if 8188 is in use)
 nohup env TQDM_DISABLE=1 DISABLE_TQDM=1 PYTHONUNBUFFERED=1 \
   ~/.venv/bin/python main.py --force-fp16 --listen 127.0.0.1 --port 8189 \
-  > ~/ComfyUI-Mac-Silicon/comfyui-runtime-8189.log 2>&1 < /dev/null &
+  > ~/ComfyUI/comfyui-runtime-8189.log 2>&1 < /dev/null &
 
 # Verbose logging
 nohup env TQDM_DISABLE=1 DISABLE_TQDM=1 PYTHONUNBUFFERED=1 \
   ~/.venv/bin/python main.py --force-fp16 --listen 127.0.0.1 --port 8188 --verbose \
-  > ~/ComfyUI-Mac-Silicon/comfyui-runtime.log 2>&1 < /dev/null &
+  > ~/ComfyUI/comfyui-runtime.log 2>&1 < /dev/null &
 ```
 
 ---
@@ -499,25 +502,33 @@ for prompt_id, info in data.items():
 
 ---
 
-## 8. Adding LoRA (TurboTime Mode)
+## 8. ⚠️ LoRA Compatibility Warning
 
-### Step 8.1: Add LoRA Loader Node
+### CRITICAL: Architecture Mismatch
+
+**Do NOT use Ideogram 4 LoRAs with Z-Image or Krea2 models.**
+
+LoRAs are architecture-specific. Z-Image (Tencent) and Ideogram 4 (Ideogram AI) have completely different underlying DiT/UNet architectures and tensor dimensions. Applying an Ideogram 4 LoRA (`ideogram4_turbotime_v1.safetensors`) to a Z-Image model will result in a **tensor size mismatch error** or silent failure.
+
+| Model | Compatible LoRA | Incompatible LoRA |
+|-------|----------------|-------------------|
+| `z_image_turbo_bf16` | Z-Image specific (if available) | ❌ Ideogram 4 TurboTime |
+| `krea2_turbo_bf16` | Krea2 specific (if available) | ❌ Ideogram 4 TurboTime |
+| `ideogram4_bf16` (when available) | ✅ Ideogram 4 TurboTime | — |
+
+### If You Must Use a LoRA
+
+1. **Only use LoRAs specifically trained for your model's architecture**
+2. Verify the LoRA was trained for the exact model (e.g., Z-Image LoRA for Z-Image model)
+3. If no architecture-specific LoRA exists, run without one — the base models work well
+
+### Step 8.1: Add LoRA Loader Node (When Compatible)
 
 1. **Right-click** on an empty area of the canvas
 2. Select **"Add Node"** → **"Loaders"** → **"Load LoRA"**
-   - Or use the search: type "Load LoRA" in the node search
+3. Set `lora_name`, `strength_model`, and `strength_clip`
 
-### Step 8.2: Configure LoRA Node
-
-In the **Load LoRA** node, set:
-
-| Parameter | Value |
-|-----------|-------|
-| `lora_name` | `ideogram4_turbotime_v1.safetensors` |
-| `strength_model` | `1.0` |
-| `strength_clip` | `1.0` |
-
-### Step 8.3: Connect LoRA Node
+### Step 8.2: Connect LoRA Node
 
 **Connection Diagram:**
 ```
@@ -525,30 +536,14 @@ In the **Load LoRA** node, set:
 [CLIP Loader (clip)] → [Load LoRA (clip in)] → [Load LoRA (clip out)] → [CLIP Text Encode]
 ```
 
-**Step-by-step connections:**
-1. Connect **model** output from main UNET loader → **Load LoRA (model input)**
-2. Connect **clip** output from CLIP loader → **Load LoRA (clip input)**
-3. Connect **Load LoRA (model output)** → to the next node (ModelSamplingAuraFlow or KSampler)
-4. Connect **Load LoRA (clip output)** → to CLIP Text Encode nodes
+### Step 8.3: Generation Settings With Compatible LoRA
 
-### Step 8.4: Update Generation Settings
-
-With TurboTime LoRA enabled:
-
-| Parameter | Standard | With TurboTime |
-|-----------|----------|----------------|
-| **Steps** | 25-50 | 2-8 |
-| **CFG** | 4-8 | 1 |
-| **Negative Prompt** | Required | Not needed |
-| **Sampler** | dpmpp_2m | euler |
-| **Scheduler** | karras | normal |
-
-### Step 8.5: TurboTime LoRA Benefits
-
-- **10x faster generation:** 2-8 steps vs 25+ steps
-- **No unconditional model needed:** Can remove the unconditional model node
-- **No CFG required:** Set CFG to 1
-- **Quality maintained:** Minimal quality loss
+| Parameter | Standard | With Compatible LoRA |
+|-----------|----------|----------------------|
+| **Steps** | 8 | 2-8 (model-dependent) |
+| **CFG** | 1 | 1 |
+| **Sampler** | res_multistep | euler (LoRA-dependent) |
+| **Scheduler** | simple | normal (LoRA-dependent) |
 
 ---
 
@@ -572,16 +567,16 @@ LISTENER=$(lsof -tiTCP:8188 -sTCP:LISTEN || true)
 sleep 3
 
 # Start detached with stable logging
-cd ~/ComfyUI-Mac-Silicon
+cd ~/ComfyUI
 source ~/.venv/bin/activate
 nohup env TQDM_DISABLE=1 DISABLE_TQDM=1 PYTHONUNBUFFERED=1 \
   ~/.venv/bin/python main.py --force-fp16 --listen 127.0.0.1 --port 8188 \
-  > ~/ComfyUI-Mac-Silicon/comfyui-runtime.log 2>&1 < /dev/null &
+  > ~/ComfyUI/comfyui-runtime.log 2>&1 < /dev/null &
 ```
 
 **Traceback location:** Check the persistent runtime log:
 ```bash
-tail -200 ~/ComfyUI-Mac-Silicon/comfyui-runtime.log
+tail -200 ~/ComfyUI/comfyui-runtime.log
 ```
 
 ---
@@ -623,12 +618,12 @@ TypeError: unsupported operand type(s) for |: 'type' and 'NoneType'
 
 **Solution:**
 ```bash
-# Install Python 3.13
-brew install python@3.13
+# Install Python 3.12 (recommended for stability)
+brew install python@3.12
 
-# Create new venv with Python 3.13
+# Create new venv with Python 3.12
 rm -rf ~/.venv
-/opt/homebrew/bin/python3.13 -m venv ~/.venv
+/opt/homebrew/bin/python3.12 -m venv ~/.venv
 
 # Activate and verify
 source ~/.venv/bin/activate
@@ -771,6 +766,9 @@ python main.py --force-fp16 --listen 127.0.0.1 --port 8188 --use-split-cross-att
 # Or use lower precision
 python main.py --force-fp16 --listen 127.0.0.1 --port 8188
 
+# Allow MPS to use more unified memory (may cause system instability)
+export PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.0
+
 # Check available memory
 memory_pressure 2>/dev/null || echo "Memory pressure tool not available"
 ```
@@ -819,13 +817,14 @@ ls -la ~/ComfyUI/user/default/workflows/
 The size of tensor a (4) must match the size of tensor b (128) at non-singleton dimension 1
 ```
 
-**Cause:** Mixing incompatible model nodes or VAE dimensions
+**Cause:** Mixing incompatible model nodes, VAE dimensions, or applying LoRAs trained for a different architecture (e.g., using an Ideogram 4 LoRA on a Z-Image model)
 
 **Solution:**
 - Don't mix SD3, AuraFlow, Flux, and Z Image nodes randomly
 - Use the correct VAE for your model. For `z_image_turbo_bf16.safetensors`, use `ae.safetensors`.
 - Use the correct latent node. For z-image, use `EmptySD3LatentImage`, not `EmptyLatentImage`.
 - For z-image, known-good sampler settings are `res_multistep` + `simple`, `steps=8`, `cfg=1.0`.
+- **Do NOT use Ideogram 4 LoRAs with Z-Image or Krea2 models** — they have different architectures and will cause tensor mismatch errors.
 
 ---
 
@@ -864,16 +863,16 @@ LISTENER=$(lsof -tiTCP:8188 -sTCP:LISTEN || true)
 [ -n "$LISTENER" ] && kill -9 $LISTENER
 
 # Start ComfyUI with stable detached logging (fixes BrokenPipeError)
-cd ~/ComfyUI-Mac-Silicon
+cd ~/ComfyUI
 nohup env TQDM_DISABLE=1 DISABLE_TQDM=1 PYTHONUNBUFFERED=1 \
   ~/.venv/bin/python main.py --force-fp16 --listen 127.0.0.1 --port 8188 \
-  > ~/ComfyUI-Mac-Silicon/comfyui-runtime.log 2>&1 < /dev/null &
+  > ~/ComfyUI/comfyui-runtime.log 2>&1 < /dev/null &
 
 # Check if running
 curl -s http://127.0.0.1:8188/system_stats | python3 -m json.tool
 
 # Check logs
-tail -200 ~/ComfyUI-Mac-Silicon/comfyui-runtime.log
+tail -200 ~/ComfyUI/comfyui-runtime.log
 
 # Fix broken pip
 python -m ensurepip --upgrade
@@ -913,7 +912,7 @@ pip install gitpython opencv-python sqlalchemy alembic toml scikit-image
 | Component | Version |
 |-----------|---------|
 | ComfyUI | 0.26.0 |
-| Python | 3.13.x |
+| Python | 3.12.x (recommended) |
 | PyTorch | 2.12.x |
 | Device | MPS (Apple Silicon) |
 | TQDM Fix | `TQDM_DISABLE=1` (required) |
@@ -937,14 +936,14 @@ if ! command -v brew &> /dev/null; then
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
-# 2. Install Python 3.13
-echo "Installing Python 3.13..."
-brew install python@3.13
+# 2. Install Python 3.12 (recommended for stability)
+echo "Installing Python 3.12..."
+brew install python@3.12
 
 # 3. Create virtual environment
 echo "Creating Python virtual environment..."
 mkdir -p ~/.venv
-/opt/homebrew/bin/python3.13 -m venv ~/.venv
+/opt/homebrew/bin/python3.12 -m venv ~/.venv
 
 # 4. Activate venv
 source ~/.venv/bin/activate
@@ -956,10 +955,11 @@ pip install --upgrade pip setuptools wheel
 # 6. Clone ComfyUI
 echo "Cloning ComfyUI..."
 cd ~
-if [ ! -d "ComfyUI" ]; then
+COMFYUI_DIR="$HOME/ComfyUI"
+if [ ! -d "$COMFYUI_DIR" ]; then
     git clone https://github.com/comfyanonymous/ComfyUI.git
 fi
-cd ComfyUI
+cd "$COMFYUI_DIR"
 
 # 7. Install PyTorch
 echo "Installing PyTorch..."
@@ -1011,8 +1011,8 @@ echo "=== Installation Complete ==="
 echo ""
 echo "To start ComfyUI (with broken pipe fix):"
 echo "  source ~/.venv/bin/activate"
-echo "  cd ~/ComfyUI-Mac-Silicon"
-echo "  nohup env TQDM_DISABLE=1 DISABLE_TQDM=1 PYTHONUNBUFFERED=1 ~/.venv/bin/python main.py --force-fp16 --listen 127.0.0.1 --port 8188 > ~/ComfyUI-Mac-Silicon/comfyui-runtime.log 2>&1 < /dev/null &"
+echo "  cd $COMFYUI_DIR"
+echo "  nohup env TQDM_DISABLE=1 DISABLE_TQDM=1 PYTHONUNBUFFERED=1 ~/.venv/bin/python main.py --force-fp16 --listen 127.0.0.1 --port 8188 > $COMFYUI_DIR/comfyui-runtime.log 2>&1 < /dev/null &"
 echo ""
 echo "Then open: http://127.0.0.1:8188"
 echo ""
@@ -1045,8 +1045,9 @@ echo "Do NOT use fp8 models (ideogram4_fp8) - they don't work on Mac MPS"
                                                   ▼         ▼
                                         ┌─────────────────────┐
                                         │ Load LoRA (Optional) │
-                                        │ - ideogram4_turbo   │
-                                        │ - strength: 1.0     │
+                                        │ ⚠️ Must be arch-    │
+                                        │ compatible with     │
+                                        │ your model!         │
                                         └─────────────────────┘
                                             │           │
                                             │           │
@@ -1109,7 +1110,7 @@ echo "Do NOT use fp8 models (ideogram4_fp8) - they don't work on Mac MPS"
 Before running generation, verify:
 
 ### Environment
-- [ ] Python version is 3.13+ (or 3.11 for better compatibility)
+- [ ] Python version is 3.12+ (or 3.11 for better compatibility)
 - [ ] Virtual environment is activated
 - [ ] PyTorch with MPS support is installed
 - [ ] ComfyUI is launched detached with stdout/stderr redirected to `comfyui-runtime.log` (fixes broken pipe error)
@@ -1136,19 +1137,19 @@ Before running generation, verify:
 ### Quick Test
 ```bash
 # Check installed models
-ls -lh ~/ComfyUI-Mac-Silicon/models/diffusion_models/z_image_turbo_bf16.safetensors
-ls -lh ~/ComfyUI-Mac-Silicon/models/text_encoders/qwen_3_4b.safetensors
-ls -lh ~/ComfyUI-Mac-Silicon/models/vae/ae.safetensors
+ls -lh ~/ComfyUI/models/diffusion_models/z_image_turbo_bf16.safetensors
+ls -lh ~/ComfyUI/models/text_encoders/qwen_3_4b.safetensors
+ls -lh ~/ComfyUI/models/vae/ae.safetensors
 
 # Start ComfyUI with stable detached logging
-cd ~/ComfyUI-Mac-Silicon
+cd ~/ComfyUI
 source ~/.venv/bin/activate
 nohup env TQDM_DISABLE=1 DISABLE_TQDM=1 PYTHONUNBUFFERED=1 \
   ~/.venv/bin/python main.py --force-fp16 --listen 127.0.0.1 --port 8188 \
-  > ~/ComfyUI-Mac-Silicon/comfyui-runtime.log 2>&1 < /dev/null &
+  > ~/ComfyUI/comfyui-runtime.log 2>&1 < /dev/null &
 
 # Check logs
-tail -200 ~/ComfyUI-Mac-Silicon/comfyui-runtime.log
+tail -200 ~/ComfyUI/comfyui-runtime.log
 ```
 
 ---
@@ -1158,14 +1159,15 @@ tail -200 ~/ComfyUI-Mac-Silicon/comfyui-runtime.log
 - **Author:** ComfyUI Setup Agent
 - **Created:** 2026-06-29
 - **Last Updated:** 2026-06-29
-- **Tested on:** macOS Sequoia 26.x, Apple Silicon (128 GB RAM)
+- **Tested on:** macOS Tahoe 26.x, Apple Silicon (128 GB RAM)
 - **ComfyUI Version:** 0.26.0
-- **Python Version:** 3.13.14
+- **Python Version:** 3.12.x
 - **PyTorch Version:** 2.12.1
-- **Status:** Production Ready
+- **Status:** Production Ready (v1.3 — validated against official Comfy-Org templates, architecture mismatch fixed)
 
 ### Changelog
 
+- **2026-06-30 (v1.3):** Critical fix: LoRA architecture mismatch warning added (Ideogram 4 LoRA cannot be used with Z-Image/Krea2). Fixed macOS version (Sequoia→Tahoe). Unified directory paths (removed `ComfyUI-Mac-Silicon` inconsistency). Changed Python recommendation from 3.13 to 3.12. Added `PYTORCH_MPS_HIGH_WATERMARK_RATIO` tip.
 - **2026-06-29 (v1.2):** Corrected z-image workflow from recovered PNG metadata: `ae.safetensors`, `EmptySD3LatentImage`, `res_multistep` + `simple`, 8 steps. Corrected BrokenPipeError fix to use detached launch with stdout/stderr redirected to `comfyui-runtime.log`.
 - **2026-06-29 (v1.1):** Added initial broken pipe mitigation, documented MPS fp8 incompatibility, added alternative bf16 models, fixed missing dependencies (gitpython, opencv-python)
 - **2026-06-29 (v1.0):** Initial release with complete installation guide and 10 pitfalls
