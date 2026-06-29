@@ -712,3 +712,259 @@ launchctl load ~/Library/LaunchAgents/com.litellm.proxy.plist
 - **Admin UI disabled**: `disable_admin_ui: true` prevents the `/ui` endpoint from being accessible.
 - **Single process**: The launchd service runs one litellm process. For high concurrency, consider `--num_workers 4` in the command arguments.
 - **Auto-restart**: `KeepAlive` with `SuccessfulExit: false` restarts the proxy if it crashes, but not on clean shutdown.
+
+---
+
+## Appendix B: Linux Configuration — Lessons Learned (Pop!_OS / Ubuntu)
+
+This section distills the practical experience of configuring Claude Code to use a running LiteLLM proxy on a Linux host (tested on Pop!_OS 22.04, Python venv, Claude Code installed via npm global).
+
+### Key Differences from macOS
+
+| Concern | macOS | Linux |
+|---------|-------|-------|
+| Shell | `zsh` (default) | `bash` (default) — configure `~/.bashrc`, not `~/.zshrc` |
+| Auto-start | `launchd` + `~/Library/LaunchAgents/` | `systemd` user service (see below) |
+| Claude binary | `npm install -g` → `/usr/local/bin/claude` | `npm install -g` → `/usr/bin/claude` (symlinked) |
+| Env var persistence | `~/.zshrc` | `~/.bashrc` (sourced by login shells) |
+
+### The Critical Insight: `~/.claude/settings.json` > Shell Env Vars
+
+On Linux, Claude Code does **not** reliably inherit shell environment variables exported in `~/.bashrc` when launched from a desktop shortcut, IDE terminal, or any non-login shell. The **only** persistent, reliable mechanism is the `env` block in `~/.claude/settings.json`:
+
+```json
+{
+  "env": {
+    "ANTHROPIC_BASE_URL": "http://localhost:4000",
+    "ANTHROPIC_AUTH_TOKEN": "sk-local-proxy",
+    "ANTHROPIC_MODEL": "claude-3-5-sonnet-20241022",
+    "ANTHROPIC_SMALL_FAST_MODEL": "claude-3-5-sonnet-20241022"
+  },
+  "apiBaseUrl": "http://localhost:4000",
+  "model": "claude-3-5-sonnet-20241022"
+}
+```
+
+This file is read by Claude Code on **every** invocation regardless of how it was launched. Always use this as the primary configuration method.
+
+### Step-by-Step Linux Configuration
+
+#### 1. Create `~/.claude/settings.json`
+
+```bash
+mkdir -p ~/.claude
+```
+
+Write the file above. The `env` block injects variables into the Claude process automatically.
+
+#### 2. Create `~/.claude/.credentials.json` (Skip Login)
+
+```json
+{
+  "apiKey": "sk-local-proxy",
+  "hasCompletedOnboarding": true
+}
+```
+
+Without this file, Claude Code will prompt for an Anthropic login even though the proxy doesn't need real credentials.
+
+#### 3. Verify `~/.claude.json` Has Onboarding Flag
+
+```bash
+python3 -c "import json; d=json.load(open('/home/pete/.claude.json')); print(d.get('hasCompletedOnboarding'))"
+```
+
+If `hasCompletedOnboarding` is missing or `false`, add it:
+
+```json
+{
+  "hasCompletedOnboarding": true
+}
+```
+
+#### 4. Add Shell Exports to `~/.bashrc` (For Other Tools)
+
+While Claude Code uses `settings.json`, other tools (OpenAI SDK, curl, scripts) need shell env vars:
+
+```bash
+# --- LiteLLM Proxy (http://localhost:4000) ---
+export OPENAI_API_BASE="http://localhost:4000/v1"
+export OPENAI_API_KEY="sk-local-proxy"
+export ANTHROPIC_BASE_URL="http://localhost:4000"
+export ANTHROPIC_AUTH_TOKEN="sk-local-proxy"
+export ANTHROPIC_MODEL="claude-3-5-sonnet-20241022"
+export ANTHROPIC_SMALL_FAST_MODEL="claude-3-5-sonnet-20241022"
+```
+
+#### 5. Verify the Proxy Is Running
+
+```bash
+curl -s http://localhost:4000/health/liveness
+# Expected: "I'm alive!"
+```
+
+#### 6. Test the Anthropic Endpoint Directly
+
+```bash
+curl -s http://localhost:4000/v1/messages \
+  -H "x-api-key: sk-local-proxy" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "content-type: application/json" \
+  -d '{"model":"claude-3-5-sonnet-20241022","max_tokens":50,"messages":[{"role":"user","content":"Say hi in 3 words."}]}'
+```
+
+#### 7. Run Claude Code
+
+```bash
+claude -p "Say hello in 5 words"
+# Expected: Response from minimax-m3 via proxy, no login prompt
+```
+
+### Tips & Best Practices
+
+1. **Auth token value is arbitrary** — Since `master_key` is commented out in `config.yaml`, the proxy accepts any non-empty auth token. `sk-local-proxy` is the convention, but `dummy-key` or anything else works too.
+
+2. **Don't set `ANTHROPIC_API_KEY`** — Claude Code reads `ANTHROPIC_AUTH_TOKEN` for proxy auth. Setting `ANTHROPIC_API_KEY` can cause confusion or conflicts. Use `ANTHROPIC_AUTH_TOKEN` only.
+
+3. **Model name must match a proxy alias** — The `ANTHROPIC_MODEL` value must be one of the `model_name` entries in `config.yaml` (`claude-3-5-sonnet-20241022`, `minimax-m3`, or `gpt-4o`). If you use a name not in the list, you'll get a 404.
+
+4. **Check proxy logs to confirm routing** — After running `claude`, verify the request hit the proxy:
+   ```bash
+   tail -5 ~/nvidia-proxy/litellm.log
+   # Look for: POST /v1/messages?beta=true HTTP/1.1 200 OK
+   ```
+
+5. **The `LITELLM_MASTER_KEY` warning is harmless** — The CRITICAL log line about `LITELLM_MASTER_KEY` not being set is expected for basic proxy-only use. It just means all requests are treated as internal users with no admin access — which is fine for a personal proxy.
+
+6. **Cache cost warnings are cosmetic** — The `register_model: model=... not in built-in cost map` warnings mean LiteLLM doesn't know MiniMax-M3's pricing. Costs will show as $0.00 in logs. This doesn't affect functionality.
+
+### Challenges Encountered & Solutions
+
+| Challenge | Root Cause | Solution |
+|-----------|------------|----------|
+| Claude Code prompts for login despite env vars set | Env vars were in current shell session but not in `settings.json`; new `claude` invocations from fresh terminals didn't inherit them | Created `~/.claude/.credentials.json` with `apiKey` + `hasCompletedOnboarding` |
+| `ANTHROPIC_AUTH_TOKEN` value mismatch between docs and running session | Skill says `sk-local-proxy`, but existing session used `dummy-key` | Either works — proxy accepts any non-empty token when `master_key` is unset. Standardized on `sk-local-proxy` for consistency. |
+| `~/.bashrc` had commented-out `OPENAI_API_KEY` lines | Previous OpenAI key experiments left behind | Left them commented; added clean LiteLLM proxy section at end of file |
+| No `~/.claude/settings.json` existed | Fresh Linux install — only `~/.claude.json` (onboarding state) was present | Created `settings.json` with the `env` block — this is the critical file |
+
+### Troubleshooting on Linux
+
+#### Claude Code Returns 401 or "Unauthorized"
+
+```bash
+# 1. Verify proxy is running
+curl -s http://localhost:4000/health/liveness
+
+# 2. Check credentials file
+cat ~/.claude/.credentials.json
+
+# 3. Check settings.json env block
+cat ~/.claude/settings.json
+
+# 4. Test endpoint manually
+curl -s http://localhost:4000/v1/messages \
+  -H "x-api-key: sk-local-proxy" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "content-type: application/json" \
+  -d '{"model":"claude-3-5-sonnet-20241022","max_tokens":10,"messages":[{"role":"user","content":"hi"}]}'
+```
+
+#### Claude Code Prompts for Login on Every Start
+
+```bash
+# Recreate credentials file
+cat > ~/.claude/.credentials.json << 'EOF'
+{
+  "apiKey": "sk-local-proxy",
+  "hasCompletedOnboarding": true
+}
+EOF
+
+# Verify onboarding flag in ~/.claude.json
+python3 -c "import json; json.load(open('/home/pete/.claude.json'))['hasCompletedOnboarding']"
+```
+
+#### Proxy Not Running After Reboot
+
+On Linux, use a systemd user service instead of macOS `launchd`:
+
+```bash
+mkdir -p ~/.config/systemd/user
+```
+
+Create `~/.config/systemd/user/litellm-proxy.service`:
+
+```ini
+[Unit]
+Description=LiteLLM Proxy
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/nvidia-proxy
+Environment=NVIDIA_NIM_API_KEY=nvapi-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ExecStart=%h/.venvs/litellm/bin/litellm --config %h/nvidia-proxy/config.yaml --port 4000
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
+```
+
+Enable and start:
+
+```bash
+systemctl --user daemon-reload
+systemctl --user enable litellm-proxy
+systemctl --user start litellm-proxy
+systemctl --user status litellm-proxy
+```
+
+#### "Model not found" Error
+
+The model name in `ANTHROPIC_MODEL` must exactly match a `model_name` in `config.yaml`. Check available models:
+
+```bash
+curl -s http://localhost:4000/v1/models | python3 -m json.tool
+```
+
+#### Port 4000 Already in Use
+
+```bash
+# Find and kill
+sudo lsof -ti :4000 | xargs kill -9
+
+# Or with fuser
+fuser -k 4000/tcp
+```
+
+### Verification Checklist
+
+After configuration, confirm all of these:
+
+- [ ] `curl http://localhost:4000/health/liveness` → `"I'm alive!"`
+- [ ] `cat ~/.claude/settings.json` → has `env` block with `ANTHROPIC_BASE_URL`
+- [ ] `cat ~/.claude/.credentials.json` → has `apiKey` and `hasCompletedOnboarding`
+- [ ] `claude -p "Say hello in 5 words"` → returns a response (not a login prompt)
+- [ ] `tail ~/nvidia-proxy/litellm.log` → shows `POST /v1/messages` 200 OK
+
+### Linux File Structure
+
+```
+~/
+├── .bashrc                         # Shell env vars (OPENAI_*, ANTHROPIC_*)
+├── .claude.json                    # Skip onboarding flag
+├── .claude/
+│   ├── settings.json               # Claude Code proxy config (CRITICAL)
+│   └── .credentials.json           # Skip login flag
+├── .venvs/
+│   └── litellm/                    # Python venv with litellm
+├── nvidia-proxy/
+│   ├── config.yaml                 # LiteLLM proxy config
+│   ├── litellm.log                 # Stdout logs
+│   └── litellm.err.log             # Stderr logs
+└── .config/
+    └── systemd/
+        └── user/
+            └── litellm-proxy.service  # Auto-start on login
+```
