@@ -1,0 +1,1175 @@
+# ComfyUI Mac Silicon Installation & Configuration Guide
+
+## Overview
+
+This guide provides step-by-step instructions for installing ComfyUI on a Mac with Apple Silicon (M1/M2/M3/M4), including Python environment setup, model downloads, and configuration for optimal performance.
+
+**Target System:** Mac with Apple Silicon, 16GB+ RAM (recommended 32GB+)
+**ComfyUI Version:** 0.26.0
+**Python Version:** 3.13.x
+
+### ⚠️ Critical Mac-Specific Issues
+
+This guide addresses two critical issues for Mac users:
+
+1. **Broken Pipe Error:** ComfyUI crashes with `[Errno 32] Broken pipe` when it is backgrounded with stdout/stderr still attached to a shell pipe that later closes. **Fix:** launch with `nohup` and redirect stdout/stderr to `comfyui-runtime.log`.
+
+2. **fp8 Model Incompatibility:** Ideogram 4 fp8 models use Float8_e4m3fn format which is NOT supported on Apple Silicon MPS backend. **Fix:** Use bf16 models instead (z_image_turbo_bf16, krea2_turbo_bf16).
+
+For detailed solutions, see [Troubleshooting & Pitfalls](#9-troubleshooting--pitfalls).
+
+### 📦 Model Management
+
+For the complete workflow of researching, downloading, installing, and creating workflows for new models, see the **ComfyUI Model Manager** skill:
+
+```bash
+~/.pi/agent/skills/comfyui-model-manager/SKILL.md
+```
+
+This covers: model discovery (HuggingFace/CivitAI), LFS/gated repo handling, compatibility checking, workflow generation for SDXL/Flux/Krea2/Z-Image/Pony, and validation.
+
+---
+
+## Table of Contents
+
+1. [Prerequisites](#1-prerequisites)
+2. [Python Environment Setup](#2-python-environment-setup)
+3. [ComfyUI Installation](#3-comfyui-installation)
+4. [Dependency Installation](#4-dependency-installation)
+5. [Model Downloads (Ideogram 4)](#5-model-downloads-ideogram-4)
+6. [Launching ComfyUI](#6-launching-comfyui)
+7. [Loading Workflows](#7-loading-workflows)
+8. [Adding LoRA (TurboTime Mode)](#8-adding-lora-turbotime-mode)
+9. [Troubleshooting & Pitfalls](#9-troubleshooting--pitfalls)
+10. [Quick Reference](#10-quick-reference)
+
+---
+
+## 1. Prerequisites
+
+### System Requirements
+- **OS:** macOS (tested on Sequoia 26.x)
+- **Architecture:** Apple Silicon (M1/M2/M3/M4)
+- **RAM:** 16GB minimum, 32GB+ recommended
+- **Disk:** 50GB+ free space for models
+- **Python:** 3.10+ (3.13 recommended)
+
+### Required Software
+```bash
+# Check if Homebrew is installed
+brew --version
+
+# Install Homebrew if needed
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Install Python 3.13
+brew install python@3.13
+
+# Install wget (optional but useful)
+brew install wget
+```
+
+---
+
+## 2. Python Environment Setup
+
+### Step 2.1: Create Virtual Environment
+
+```bash
+# Create venv directory
+mkdir -p ~/.venv
+
+# Create Python 3.13 virtual environment
+/opt/homebrew/bin/python3.13 -m venv ~/.venv
+
+# Verify installation
+source ~/.venv/bin/activate
+python --version
+# Should output: Python 3.13.x
+
+# Upgrade pip
+pip install --upgrade pip
+```
+
+### Step 2.2: Add to Shell Configuration
+
+Add the venv activation to your shell config files:
+
+```bash
+# For zsh (default on Mac)
+echo 'source ~/.venv/bin/activate' >> ~/.zshrc
+
+# For bash
+echo 'source ~/.venv/bin/activate' >> ~/.bashrc
+
+# For immediate effect in current session
+source ~/.venv/bin/activate
+```
+
+### Step 2.3: Verify PATH Setup
+
+```bash
+# Check that python points to the venv
+which python
+# Should output: /Users/<username>/.venv/bin/python
+
+python --version
+# Should output: Python 3.13.x
+```
+
+---
+
+## 3. ComfyUI Installation
+
+### Step 3.1: Clone or Download ComfyUI
+
+```bash
+# Option A: Clone from GitHub
+cd ~
+git clone https://github.com/comfyanonymous/ComfyUI.git
+
+# Option B: If you have an existing installation
+# Just use the existing directory
+ls ~/ComfyUI-Mac-Silicon  # or wherever your installation is
+```
+
+### Step 3.2: Navigate to ComfyUI Directory
+
+```bash
+cd ~/ComfyUI  # or your ComfyUI directory
+```
+
+### Step 3.3: Verify ComfyUI Structure
+
+```bash
+# Check that main.py exists
+ls -la main.py
+
+# Check models directory
+ls -la models/
+# Should contain: diffusion_models, text_encoders, vae, loras, etc.
+```
+
+---
+
+## 4. Dependency Installation
+
+### Step 4.1: Install PyTorch for Mac
+
+```bash
+# Make sure venv is activated
+source ~/.venv/bin/activate
+
+# Install PyTorch with MPS (Metal Performance Shaders) support
+pip install torch torchvision torchaudio
+
+# Verify MPS support
+python -c "import torch; print(f'MPS available: {torch.backends.mps.is_available()}')"
+```
+
+### Step 4.2: Install ComfyUI Requirements
+
+```bash
+cd ~/ComfyUI
+
+# Install all requirements
+pip install -r requirements.txt
+
+# This installs: numpy, pillow, transformers, safetensors, etc.
+```
+
+### Step 4.3: Install Additional Dependencies
+
+```bash
+# Install SQLAlchemy (required for newer versions)
+pip install sqlalchemy alembic
+
+# Install other common dependencies
+pip install aiohttp aiohappyeyeballs
+```
+
+---
+
+## 5. Model Downloads
+
+### ⚠️ Important: Mac Compatibility
+
+**Do NOT use fp8 models on Mac!** The fp8 (Float8_e4m3fn) format is NOT supported on Apple Silicon MPS backend. Use bf16 models instead.
+
+### Available Models (Mac Compatible)
+
+| Model | Format | Size | Notes |
+|-------|--------|------|-------|
+| `z_image_turbo_bf16.safetensors` | bf16 | 11 GB | ✅ Recommended for Mac |
+| `krea2_turbo_bf16.safetensors` | bf16 | 24 GB | ✅ Works on Mac |
+| `flux1-dev.safetensors` | bf16 | 22 GB | ✅ Works on Mac |
+| `ideogram4_fp8_scaled.safetensors` | fp8 | 8.6 GB | ❌ **NOT Mac compatible** |
+| `ideogram4_unconditional_fp8_scaled.safetensors` | fp8 | 8.6 GB | ❌ **NOT Mac compatible** |
+
+### Step 5.1: Download Mac-Compatible Models
+
+```bash
+cd ~/ComfyUI/models
+
+# Download z_image_turbo_bf16 (recommended for Mac, ~11 GB)
+curl -L -o diffusion_models/z_image_turbo_bf16.safetensors \
+  "https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/diffusion_models/z_image_turbo_bf16.safetensors"
+
+# Alternative: Download krea2_turbo_bf16 (~24 GB)
+curl -L -o diffusion_models/krea2_turbo_bf16.safetensors \
+  "https://huggingface.co/Comfy-Org/krea2/resolve/main/diffusion_models/krea2_turbo_bf16.safetensors"
+```
+
+### Step 5.2: Download Text Encoder
+
+```bash
+# Download text encoder (~1.2 GB)
+curl -L -o text_encoders/qwen_3_4b.safetensors \
+  "https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/text_encoders/qwen_3_4b.safetensors"
+```
+
+### Step 5.3: Download VAE
+
+```bash
+# Download Z Image VAE (~320 MB)
+curl -L -o vae/ae.safetensors \
+  "https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/vae/ae.safetensors"
+```
+
+### Step 5.4: Download TurboTime LoRA (Optional)
+
+```bash
+# Download TurboTime LoRA for faster generation (~386 MB)
+curl -L -o loras/ideogram4_turbotime_v1.safetensors \
+  "https://huggingface.co/ostris/ideogram_4_turbotime_lora/resolve/main/ideogram_4_turbotime_v1.safetensors"
+
+# Note: This LoRA may have file integrity issues. If validation fails, use without LoRA.
+```
+
+### Step 5.5: Verify Downloads
+
+```bash
+echo "=== Installed Models ==="
+echo ""
+echo "Diffusion Models:"
+ls -lh diffusion_models/*.safetensors
+echo ""
+echo "Text Encoders:"
+ls -lh text_encoders/*.safetensors
+echo ""
+echo "VAE:"
+ls -lh vae/*.safetensors
+echo ""
+echo "LoRAs:"
+ls -lh loras/*.safetensors
+```
+
+### Expected File Sizes
+
+| File | Size | Location |
+|------|------|----------|
+| `z_image_turbo_bf16.safetensors` | ~11 GB | `diffusion_models/` |
+| `krea2_turbo_bf16.safetensors` | ~24 GB | `diffusion_models/` |
+| `qwen_3_4b.safetensors` | ~1.2 GB | `text_encoders/` |
+| `ae.safetensors` | ~320 MB | `vae/` |
+| `ideogram4_turbotime_v1.safetensors` | ~386 MB | `loras/` (optional) |
+
+---
+
+## 6. Launching ComfyUI
+
+### ⚠️ Critical: Fix Broken Pipe Error
+
+If ComfyUI is launched in the background from a non-interactive shell, do **not** leave stdout/stderr attached to that shell. When the shell exits, ComfyUI can later write logs/progress to a dead pipe and crash with `[Errno 32] Broken pipe`.
+
+Use a detached launch with stdout/stderr redirected to a real log file. `TQDM_DISABLE=1` is helpful, but the key fix is stable log redirection:
+
+```bash
+export TQDM_DISABLE=1
+cd ~/ComfyUI-Mac-Silicon
+source ~/.venv/bin/activate
+nohup env TQDM_DISABLE=1 DISABLE_TQDM=1 PYTHONUNBUFFERED=1 \
+  ~/.venv/bin/python main.py --force-fp16 --listen 127.0.0.1 --port 8188 \
+  > ~/ComfyUI-Mac-Silicon/comfyui-runtime.log 2>&1 < /dev/null &
+```
+
+### Step 6.1: Start ComfyUI
+
+```bash
+# Navigate to ComfyUI directory
+cd ~/ComfyUI
+
+# Make sure venv is activated
+source ~/.venv/bin/activate
+
+# Start ComfyUI with broken pipe fix
+nohup env TQDM_DISABLE=1 DISABLE_TQDM=1 PYTHONUNBUFFERED=1 \
+  ~/.venv/bin/python main.py --force-fp16 --listen 127.0.0.1 --port 8188 \
+  > ~/ComfyUI-Mac-Silicon/comfyui-runtime.log 2>&1 < /dev/null &
+```
+
+### Step 6.2: Verify ComfyUI is Running
+
+```bash
+# Check if ComfyUI is running
+curl -s http://127.0.0.1:8188/system_stats | python3 -m json.tool
+
+# Open in browser
+open http://127.0.0.1:8188
+```
+
+### Step 6.3: Common Launch Options
+
+```bash
+# Standard launch (with broken pipe fix)
+nohup env TQDM_DISABLE=1 DISABLE_TQDM=1 PYTHONUNBUFFERED=1 \
+  ~/.venv/bin/python main.py --force-fp16 --listen 127.0.0.1 --port 8188 \
+  > ~/ComfyUI-Mac-Silicon/comfyui-runtime.log 2>&1 < /dev/null &
+
+# With split attention (if memory issues)
+nohup env TQDM_DISABLE=1 DISABLE_TQDM=1 PYTHONUNBUFFERED=1 \
+  ~/.venv/bin/python main.py --force-fp16 --listen 127.0.0.1 --port 8188 --use-split-cross-attention \
+  > ~/ComfyUI-Mac-Silicon/comfyui-runtime.log 2>&1 < /dev/null &
+
+# Different port (if 8188 is in use)
+nohup env TQDM_DISABLE=1 DISABLE_TQDM=1 PYTHONUNBUFFERED=1 \
+  ~/.venv/bin/python main.py --force-fp16 --listen 127.0.0.1 --port 8189 \
+  > ~/ComfyUI-Mac-Silicon/comfyui-runtime-8189.log 2>&1 < /dev/null &
+
+# Verbose logging
+nohup env TQDM_DISABLE=1 DISABLE_TQDM=1 PYTHONUNBUFFERED=1 \
+  ~/.venv/bin/python main.py --force-fp16 --listen 127.0.0.1 --port 8188 --verbose \
+  > ~/ComfyUI-Mac-Silicon/comfyui-runtime.log 2>&1 < /dev/null &
+```
+
+---
+
+## 7. Loading Workflows
+
+### ⚠️ Important: Use Mac-Compatible Workflows
+
+**Do NOT use workflows designed for fp8 models!** They will fail on Mac MPS backend.
+
+### Step 7.1: Create Mac-Compatible Workflow
+
+Since there's no official Mac-compatible workflow, create a simple test workflow:
+
+```bash
+# Create a simple workflow directory
+mkdir -p ~/ComfyUI/user/default/workflows
+
+# Create a Mac-compatible test workflow
+cat > ~/ComfyUI/user/default/workflows/mac_test_workflow.json << 'EOF'
+{
+  "1": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "z_image_turbo_bf16.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "2": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen_3_4b.safetensors",
+      "type": "lumina2"
+    }
+  },
+  "3": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "ae.safetensors"
+    }
+  },
+  "4": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "A beautiful sunset over the ocean with vibrant colors in the sky",
+      "clip": ["2", 0]
+    }
+  },
+  "5": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "ugly, blurry, low quality",
+      "clip": ["2", 0]
+    }
+  },
+  "6": {
+    "class_type": "EmptySD3LatentImage",
+    "inputs": {
+      "width": 1024,
+      "height": 1024,
+      "batch_size": 1
+    }
+  },
+  "7": {
+    "class_type": "ModelSamplingAuraFlow",
+    "inputs": {
+      "shift": 3.0,
+      "model": ["1", 0]
+    }
+  },
+  "8": {
+    "class_type": "FluxGuidance",
+    "inputs": {
+      "guidance": 1.0,
+      "conditioning": ["4", 0]
+    }
+  },
+  "9": {
+    "class_type": "KSampler",
+    "inputs": {
+      "seed": 42,
+      "steps": 8,
+      "cfg": 1.0,
+      "sampler_name": "res_multistep",
+      "scheduler": "simple",
+      "denoise": 1.0,
+      "model": ["7", 0],
+      "positive": ["8", 0],
+      "negative": ["5", 0],
+      "latent_image": ["6", 0]
+    }
+  },
+  "10": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": ["9", 0],
+      "vae": ["3", 0]
+    }
+  },
+  "11": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "filename_prefix": "mac_test",
+      "images": ["10", 0]
+    }
+  }
+}
+EOF
+```
+
+### Step 7.2: Load Workflow in ComfyUI
+
+1. Open ComfyUI in browser: `http://127.0.0.1:8188`
+2. Click **"Workflows"** in the left sidebar
+3. Click **"Refresh"** to reload workflow list
+4. Click on **"mac_test_workflow"** to load the workflow
+
+### Step 7.3: Configure Model Selection
+
+In the workflow, ensure these nodes are configured:
+
+| Node | Setting | Value |
+|------|---------|-------|
+| Load Diffusion Model | `unet_name` | `z_image_turbo_bf16.safetensors` |
+| Load CLIP | `clip_name` | `qwen_3_4b.safetensors` |
+| Load CLIP | `type` | `lumina2` |
+| Load VAE | `vae_name` | `ae.safetensors` |
+
+### Step 7.4: Generate via API (Recommended)
+
+For testing, using the API is more reliable than the UI:
+
+```bash
+# Queue the workflow
+cat ~/ComfyUI/user/default/workflows/mac_test_workflow.json | python3 -c "
+import sys, json
+workflow = json.load(sys.stdin)
+prompt = {'prompt': workflow}
+print(json.dumps(prompt))
+" | curl -s -X POST http://127.0.0.1:8188/prompt \
+  -H "Content-Type: application/json" \
+  -d @-
+
+# Wait and check for results
+sleep 60
+curl -s http://127.0.0.1:8188/history | python3 -c "
+import sys, json
+data = json.load(sys.stdin)
+for prompt_id, info in data.items():
+    outputs = info.get('outputs', {})
+    for node_id, output in outputs.items():
+        if 'images' in output:
+            for img in output['images']:
+                print(f'✅ Image: {img.get("filename")}')
+"
+```
+
+---
+
+## 8. Adding LoRA (TurboTime Mode)
+
+### Step 8.1: Add LoRA Loader Node
+
+1. **Right-click** on an empty area of the canvas
+2. Select **"Add Node"** → **"Loaders"** → **"Load LoRA"**
+   - Or use the search: type "Load LoRA" in the node search
+
+### Step 8.2: Configure LoRA Node
+
+In the **Load LoRA** node, set:
+
+| Parameter | Value |
+|-----------|-------|
+| `lora_name` | `ideogram4_turbotime_v1.safetensors` |
+| `strength_model` | `1.0` |
+| `strength_clip` | `1.0` |
+
+### Step 8.3: Connect LoRA Node
+
+**Connection Diagram:**
+```
+[UNET Loader (model)] → [Load LoRA (model in)] → [Load LoRA (model out)] → [Next Node]
+[CLIP Loader (clip)] → [Load LoRA (clip in)] → [Load LoRA (clip out)] → [CLIP Text Encode]
+```
+
+**Step-by-step connections:**
+1. Connect **model** output from main UNET loader → **Load LoRA (model input)**
+2. Connect **clip** output from CLIP loader → **Load LoRA (clip input)**
+3. Connect **Load LoRA (model output)** → to the next node (ModelSamplingAuraFlow or KSampler)
+4. Connect **Load LoRA (clip output)** → to CLIP Text Encode nodes
+
+### Step 8.4: Update Generation Settings
+
+With TurboTime LoRA enabled:
+
+| Parameter | Standard | With TurboTime |
+|-----------|----------|----------------|
+| **Steps** | 25-50 | 2-8 |
+| **CFG** | 4-8 | 1 |
+| **Negative Prompt** | Required | Not needed |
+| **Sampler** | dpmpp_2m | euler |
+| **Scheduler** | karras | normal |
+
+### Step 8.5: TurboTime LoRA Benefits
+
+- **10x faster generation:** 2-8 steps vs 25+ steps
+- **No unconditional model needed:** Can remove the unconditional model node
+- **No CFG required:** Set CFG to 1
+- **Quality maintained:** Minimal quality loss
+
+---
+
+## 9. Troubleshooting & Pitfalls
+
+### 🔴 CRITICAL: Broken Pipe Error (Detached Logging Issue)
+
+**Error:**
+```
+[Errno 32] Broken pipe
+BrokenPipeError: [Errno 32] Broken pipe
+```
+
+**Cause:** ComfyUI was launched in the background from a non-interactive shell while stdout/stderr still pointed at that shell's pipe. After the shell/tool exits, ComfyUI keeps running, but any later log/progress write can hit a dead pipe and crash. This is a launch/logging issue, NOT a model issue.
+
+**Fix:** Kill the old listener and restart ComfyUI detached with stdout/stderr redirected to a real log file:
+```bash
+# Kill the exact process listening on 8188
+LISTENER=$(lsof -tiTCP:8188 -sTCP:LISTEN || true)
+[ -n "$LISTENER" ] && kill -9 $LISTENER
+sleep 3
+
+# Start detached with stable logging
+cd ~/ComfyUI-Mac-Silicon
+source ~/.venv/bin/activate
+nohup env TQDM_DISABLE=1 DISABLE_TQDM=1 PYTHONUNBUFFERED=1 \
+  ~/.venv/bin/python main.py --force-fp16 --listen 127.0.0.1 --port 8188 \
+  > ~/ComfyUI-Mac-Silicon/comfyui-runtime.log 2>&1 < /dev/null &
+```
+
+**Traceback location:** Check the persistent runtime log:
+```bash
+tail -200 ~/ComfyUI-Mac-Silicon/comfyui-runtime.log
+```
+
+---
+
+### 🔴 CRITICAL: Ideogram 4 fp8 Models Incompatible with MPS
+
+**Error:**
+```
+RuntimeError: MPS backend does not support Float8_e4m3fn dtype
+```
+
+**Cause:** The `ideogram4_fp8_scaled.safetensors` models use Float8_e4m3fn format, which is NOT supported on Apple Silicon MPS backend.
+
+**Solution:** Use bf16 models instead. Available alternatives:
+- `z_image_turbo_bf16.safetensors` (11 GB) - Recommended for Mac
+- `krea2_turbo_bf16.safetensors` (24 GB) - Also works
+- `flux1-dev.safetensors` (22 GB) - Flux model
+
+```bash
+# Check available models
+ls -lh ~/ComfyUI/models/diffusion_models/
+
+# Use z_image_turbo_bf16 instead of ideogram4_fp8
+# In workflow, set unet_name to: z_image_turbo_bf16.safetensors
+```
+
+**Note:** There is NO bf16 variant of Ideogram 4 available from Comfy-Org. The fp8 models are designed for NVIDIA GPUs only.
+
+---
+
+### Pitfall 1: Python Version Error
+
+**Error:**
+```
+TypeError: unsupported operand type(s) for |: 'type' and 'NoneType'
+```
+
+**Cause:** Python 3.9 or lower doesn't support `str | None` syntax
+
+**Solution:**
+```bash
+# Install Python 3.13
+brew install python@3.13
+
+# Create new venv with Python 3.13
+rm -rf ~/.venv
+/opt/homebrew/bin/python3.13 -m venv ~/.venv
+
+# Activate and verify
+source ~/.venv/bin/activate
+python --version  # Should show Python 3.13.x
+```
+
+---
+
+### Pitfall 2: Missing SQLAlchemy Module
+
+**Error:**
+```
+ModuleNotFoundError: No module named 'sqlalchemy'
+```
+
+**Solution:**
+```bash
+source ~/.venv/bin/activate
+pip install sqlalchemy alembic
+```
+
+---
+
+### Pitfall 3: Port Already in Use
+
+**Error:**
+```
+Port 8188 is already in use on address 127.0.0.1
+```
+
+**Solution:**
+```bash
+# Find and kill the process using port 8188
+lsof -ti:8188 | xargs kill -9
+
+# Or use a different port
+python main.py --force-fp16 --listen 127.0.0.1 --port 8189
+```
+
+---
+
+### Pitfall 4: Database Lock Error
+
+**Error:**
+```
+Could not acquire lock on database 'comfyui.db'
+```
+
+**Solution:**
+```bash
+# Kill all ComfyUI processes
+pkill -9 -f "python main.py"
+
+# Wait a moment
+sleep 3
+
+# Delete the lock file
+rm -f ~/ComfyUI/user/comfyui.db-journal
+
+# Restart ComfyUI
+python main.py --force-fp16 --listen 127.0.0.1 --port 8188
+```
+
+---
+
+### Pitfall 5: ComfyUI-Manager Missing Dependencies
+
+**Error:**
+```
+[ERROR] [ComfyUI-Manager] Neither `python -m pip` nor `uv` are available
+ModuleNotFoundError: No module named 'git'
+```
+
+**Solution:**
+```bash
+source ~/.venv/bin/activate
+
+# Fix pip first
+python -m ensurepip --upgrade
+python -m pip install --upgrade pip setuptools wheel
+
+# Install git module
+pip install gitpython
+
+# Or install ComfyUI-Manager requirements
+cd ~/ComfyUI/custom_nodes/ComfyUI-Manager
+pip install -r requirements.txt
+```
+
+---
+
+### Pitfall 6: Impact Pack Missing OpenCV
+
+**Error:**
+```
+ModuleNotFoundError: No module named 'cv2'
+```
+
+**Solution:**
+```bash
+source ~/.venv/bin/activate
+pip install opencv-python
+```
+
+---
+
+### Pitfall 7: Download Interrupted/Incomplete Files
+
+**Symptom:** File size doesn't match expected size
+
+**Solution:**
+```bash
+# Check file size
+ls -lh models/diffusion_models/ideogram4_fp8_scaled.safetensors
+
+# If incomplete, re-download with resume support
+curl -L -C - -o models/diffusion_models/ideogram4_fp8_scaled.safetensors \
+  "https://huggingface.co/Comfy-Org/Ideogram-4/resolve/main/diffusion_models/ideogram4_fp8_scaled.safetensors"
+
+# Or delete and re-download
+rm models/diffusion_models/ideogram4_fp8_scaled.safetensors
+curl -L -o models/diffusion_models/ideogram4_fp8_scaled.safetensors \
+  "https://huggingface.co/Comfy-Org/Ideogram-4/resolve/main/diffusion_models/ideogram4_fp8_scaled.safetensors"
+```
+
+---
+
+### Pitfall 8: MPS Out of Memory
+
+**Error:**
+```
+MPS backend out of memory
+```
+
+**Solution:**
+```bash
+# Use split attention to reduce memory usage
+python main.py --force-fp16 --listen 127.0.0.1 --port 8188 --use-split-cross-attention
+
+# Or use lower precision
+python main.py --force-fp16 --listen 127.0.0.1 --port 8188
+
+# Check available memory
+memory_pressure 2>/dev/null || echo "Memory pressure tool not available"
+```
+
+---
+
+### Pitfall 9: LoRA Not Loading
+
+**Symptom:** LoRA node shows "model not found"
+
+**Solution:**
+```bash
+# Verify LoRA file exists and is not empty
+ls -lh models/loras/ideogram4_turbotime_v1.safetensors
+
+# Check file size (should be ~386 MB)
+# If 0 bytes or very small, re-download:
+rm models/loras/ideogram4_turbotime_v1.safetensors
+curl -L -o models/loras/ideogram4_turbotime_v1.safetensors \
+  "https://huggingface.co/ostris/ideogram_4_turbotime_lora/resolve/main/ideogram_4_turbotime_v1.safetensors"
+```
+
+**Known Issue:** The ideogram4_turbotime_v1.safetensors file may fail safetensors validation even after re-download. This appears to be a file integrity issue. Consider using the model without LoRA if this occurs.
+
+---
+
+### Pitfall 10: Workflow Not Appearing
+
+**Symptom:** New workflow doesn't show in the Workflows panel
+
+**Solution:**
+```bash
+# Ensure workflow is in the correct directory
+ls -la ~/ComfyUI/user/default/workflows/
+
+# Click "Refresh" in the Workflows panel in ComfyUI
+# If still not showing, restart ComfyUI
+```
+
+---
+
+### Pitfall 11: Tensor Size Mismatch
+
+**Error:**
+```
+The size of tensor a (4) must match the size of tensor b (128) at non-singleton dimension 1
+```
+
+**Cause:** Mixing incompatible model nodes or VAE dimensions
+
+**Solution:**
+- Don't mix SD3, AuraFlow, Flux, and Z Image nodes randomly
+- Use the correct VAE for your model. For `z_image_turbo_bf16.safetensors`, use `ae.safetensors`.
+- Use the correct latent node. For z-image, use `EmptySD3LatentImage`, not `EmptyLatentImage`.
+- For z-image, known-good sampler settings are `res_multistep` + `simple`, `steps=8`, `cfg=1.0`.
+
+---
+
+### Pitfall 12: Python 3.13 Compatibility Issues
+
+**Symptom:** Various package installation failures or strange errors
+
+**Note:** Python 3.13 is newer and may cause issues with some packages. If you encounter persistent problems:
+
+```bash
+# Consider downgrading to Python 3.11
+brew install python@3.11
+
+# Recreate venv with Python 3.11
+rm -rf ~/.venv
+/opt/homebrew/bin/python3.11 -m venv ~/.venv
+
+# Reactivate and reinstall dependencies
+source ~/.venv/bin/activate
+pip install --upgrade pip
+pip install -r ~/ComfyUI/requirements.txt
+```
+
+---
+
+## 10. Quick Reference
+
+### Essential Commands
+
+```bash
+# Activate environment
+source ~/.venv/bin/activate
+
+# Kill the exact listener if port 8188 is stuck
+LISTENER=$(lsof -tiTCP:8188 -sTCP:LISTEN || true)
+[ -n "$LISTENER" ] && kill -9 $LISTENER
+
+# Start ComfyUI with stable detached logging (fixes BrokenPipeError)
+cd ~/ComfyUI-Mac-Silicon
+nohup env TQDM_DISABLE=1 DISABLE_TQDM=1 PYTHONUNBUFFERED=1 \
+  ~/.venv/bin/python main.py --force-fp16 --listen 127.0.0.1 --port 8188 \
+  > ~/ComfyUI-Mac-Silicon/comfyui-runtime.log 2>&1 < /dev/null &
+
+# Check if running
+curl -s http://127.0.0.1:8188/system_stats | python3 -m json.tool
+
+# Check logs
+tail -200 ~/ComfyUI-Mac-Silicon/comfyui-runtime.log
+
+# Fix broken pip
+python -m ensurepip --upgrade
+python -m pip install --upgrade pip setuptools wheel
+
+# Install missing dependencies
+pip install gitpython opencv-python sqlalchemy alembic toml scikit-image
+```
+
+### Model Paths
+
+| Model Type | Path |
+|------------|------|
+| Diffusion Models | `~/ComfyUI/models/diffusion_models/` |
+| Text Encoders | `~/ComfyUI/models/text_encoders/` |
+| VAE | `~/ComfyUI/models/vae/` |
+| LoRAs | `~/ComfyUI/models/loras/` |
+| Checkpoints | `~/ComfyUI/models/checkpoints/` |
+
+### Mac-Compatible Models
+
+| Model | Path | Notes |
+|-------|------|-------|
+| `z_image_turbo_bf16.safetensors` | `diffusion_models/` | ✅ Recommended |
+| `krea2_turbo_bf16.safetensors` | `diffusion_models/` | ✅ Works |
+| `flux1-dev.safetensors` | `diffusion_models/` | ✅ Works |
+| `qwen_3_4b.safetensors` | `text_encoders/` | ✅ Required |
+| `ae.safetensors` | `vae/` | ✅ Required for z-image |
+
+### Browser Access
+
+- **ComfyUI Interface:** http://127.0.0.1:8188
+- **System Stats API:** http://127.0.0.1:8188/system_stats
+
+### Installed Versions
+
+| Component | Version |
+|-----------|---------|
+| ComfyUI | 0.26.0 |
+| Python | 3.13.x |
+| PyTorch | 2.12.x |
+| Device | MPS (Apple Silicon) |
+| TQDM Fix | `TQDM_DISABLE=1` (required) |
+
+---
+
+## Appendix A: Full Installation Script
+
+```bash
+#!/bin/bash
+# ComfyUI Mac Silicon Installation Script
+# Includes fixes for broken pipe error and missing dependencies
+
+set -e
+
+echo "=== ComfyUI Mac Silicon Installation ==="
+
+# 1. Install Homebrew if needed
+if ! command -v brew &> /dev/null; then
+    echo "Installing Homebrew..."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
+
+# 2. Install Python 3.13
+echo "Installing Python 3.13..."
+brew install python@3.13
+
+# 3. Create virtual environment
+echo "Creating Python virtual environment..."
+mkdir -p ~/.venv
+/opt/homebrew/bin/python3.13 -m venv ~/.venv
+
+# 4. Activate venv
+source ~/.venv/bin/activate
+
+# 5. Upgrade pip and fix broken pip installation
+python -m ensurepip --upgrade
+pip install --upgrade pip setuptools wheel
+
+# 6. Clone ComfyUI
+echo "Cloning ComfyUI..."
+cd ~
+if [ ! -d "ComfyUI" ]; then
+    git clone https://github.com/comfyanonymous/ComfyUI.git
+fi
+cd ComfyUI
+
+# 7. Install PyTorch
+echo "Installing PyTorch..."
+pip install torch torchvision torchaudio
+
+# 8. Install requirements
+echo "Installing ComfyUI requirements..."
+pip install -r requirements.txt
+
+# 9. Install additional dependencies (fixes ComfyUI-Manager and Impact Pack errors)
+pip install sqlalchemy alembic opencv-python gitpython toml scikit-image
+
+# 10. Download models - NOTE: Use bf16 models for Mac, NOT fp8
+# fp8 models use Float8_e4m3fn which is NOT supported on MPS backend
+echo "Downloading models (bf16 for Mac compatibility)..."
+mkdir -p models/diffusion_models models/text_encoders models/vae models/loras
+
+# z_image_turbo_bf16 - Works on Mac (recommended)
+curl -L -o models/diffusion_models/z_image_turbo_bf16.safetensors \
+  "https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/diffusion_models/z_image_turbo_bf16.safetensors" &
+
+# Alternative: krea2_turbo_bf16 - Also works on Mac
+curl -L -o models/diffusion_models/krea2_turbo_bf16.safetensors \
+  "https://huggingface.co/Comfy-Org/krea2/resolve/main/diffusion_models/krea2_turbo_bf16.safetensors" &
+
+# Text encoder
+curl -L -o models/text_encoders/qwen_3_4b.safetensors \
+  "https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/text_encoders/qwen_3_4b.safetensors" &
+
+# Z Image VAE
+curl -L -o models/vae/ae.safetensors \
+  "https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/vae/ae.safetensors" &
+
+# Wait for downloads
+wait
+
+# 11. Add venv and TQDM fix to shell config (fixes broken pipe error)
+echo "Adding venv and TQDM fix to shell configuration..."
+echo 'source ~/.venv/bin/activate' >> ~/.zshrc
+echo 'export TQDM_DISABLE=1' >> ~/.zshrc
+echo 'source ~/.venv/bin/activate' >> ~/.bashrc
+echo 'export TQDM_DISABLE=1' >> ~/.bashrc
+
+# Apply to current session
+export TQDM_DISABLE=1
+
+echo ""
+echo "=== Installation Complete ==="
+echo ""
+echo "To start ComfyUI (with broken pipe fix):"
+echo "  source ~/.venv/bin/activate"
+echo "  cd ~/ComfyUI-Mac-Silicon"
+echo "  nohup env TQDM_DISABLE=1 DISABLE_TQDM=1 PYTHONUNBUFFERED=1 ~/.venv/bin/python main.py --force-fp16 --listen 127.0.0.1 --port 8188 > ~/ComfyUI-Mac-Silicon/comfyui-runtime.log 2>&1 < /dev/null &"
+echo ""
+echo "Then open: http://127.0.0.1:8188"
+echo ""
+echo "IMPORTANT: Use bf16 models (z_image_turbo_bf16, krea2_turbo_bf16)"
+echo "Do NOT use fp8 models (ideogram4_fp8) - they don't work on Mac MPS"
+```
+
+---
+
+## Appendix B: Workflow Connection Diagram (Mac Compatible)
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    z_image_turbo_bf16 (Mac Compatible)                      │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌──────────────────┐
+│ UNET Loader      │
+│ - z_image_turbo  │
+│   _bf16          │──── model ──────────────────────────────┐
+│ (NOT fp8!)       │                                         │
+└──────────────────┘                                         │
+                                                             │
+┌──────────────────┐                                         │
+│ CLIP Loader      │                                         │
+│ - qwen_3_4b      │──── clip ────────────────────┐         │
+│ - type: lumina2  │                              │         │
+└──────────────────┘                              │         │
+                                                  │         │
+                                                  ▼         ▼
+                                        ┌─────────────────────┐
+                                        │ Load LoRA (Optional) │
+                                        │ - ideogram4_turbo   │
+                                        │ - strength: 1.0     │
+                                        └─────────────────────┘
+                                            │           │
+                                            │           │
+                              model out     │           │     clip out
+                                            ▼           ▼
+┌──────────────────┐         ┌──────────────────┐    ┌──────────────────┐
+│ ModelSampling    │◄────────│                  │    │ CLIP Text Encode │
+│ AuraFlow         │         │                  │◄───│ (Positive)       │
+│ - shift: 3.0     │         │                  │    │                  │
+└──────────────────┘         │                  │    └──────────────────┘
+                             │                  │
+                             │                  │    ┌──────────────────┐
+                             │                  │    │ CLIP Text Encode │
+                             │                  │◄───│ (Negative)       │
+                             │                  │    │                  │
+                             │                  │    └──────────────────┘
+                             └──────────────────┘
+                                     │
+                                     ▼
+                             ┌──────────────────┐
+                             │ KSampler         │
+                             │ - steps: 8       │
+                             │ - cfg: 1         │
+                             │ - sampler: res_multistep │
+                             │ - scheduler: simple│
+                             └──────────────────┘
+                                     │
+                                     ▼
+                             ┌──────────────────┐
+                             │ VAE Decode       │
+                             │ - ae.safetensors │
+                             └──────────────────┘
+                                     │
+                                     ▼
+                             ┌──────────────────┐
+                             │ Save Image       │
+                             └──────────────────┘
+```
+
+### Node Configuration (Mac Compatible)
+
+| Node | Parameter | Value |
+|------|-----------|-------|
+| UNETLoader | unet_name | `z_image_turbo_bf16.safetensors` |
+| CLIPLoader | clip_name | `qwen_3_4b.safetensors` |
+| CLIPLoader | type | `lumina2` |
+| VAELoader | vae_name | `ae.safetensors` |
+| EmptySD3LatentImage | width/height | `1024` / `1024` |
+| ModelSamplingAuraFlow | shift | `3.0` |
+| FluxGuidance | guidance | `1.0` |
+| KSampler | steps | `8` |
+| KSampler | cfg | `1.0` |
+| KSampler | sampler_name | `res_multistep` |
+| KSampler | scheduler | `simple` |
+
+---
+
+## Appendix C: Verification Checklist
+
+Before running generation, verify:
+
+### Environment
+- [ ] Python version is 3.13+ (or 3.11 for better compatibility)
+- [ ] Virtual environment is activated
+- [ ] PyTorch with MPS support is installed
+- [ ] ComfyUI is launched detached with stdout/stderr redirected to `comfyui-runtime.log` (fixes broken pipe error)
+- [ ] `TQDM_DISABLE=1` is set
+- [ ] Missing dependencies installed: `pip install gitpython opencv-python sqlalchemy alembic toml scikit-image`
+
+### Models (Mac Compatible)
+- [ ] At least one bf16 diffusion model downloaded:
+  - [ ] `z_image_turbo_bf16.safetensors` (~11 GB) ✅ Recommended
+  - [ ] OR `krea2_turbo_bf16.safetensors` (~24 GB)
+  - [ ] OR `flux1-dev.safetensors` (~22 GB)
+- [ ] Text encoder downloaded:
+  - [ ] `qwen_3_4b.safetensors` (~1.2 GB)
+- [ ] VAE downloaded:
+  - [ ] `ae.safetensors` (~320 MB)
+- [ ] **NOT using fp8 models** (ideogram4_fp8 is not Mac compatible)
+
+### ComfyUI
+- [ ] ComfyUI starts without errors
+- [ ] No "Broken pipe" errors in logs
+- [ ] Workflow loads in browser
+- [ ] Model selections match installed files
+
+### Quick Test
+```bash
+# Check installed models
+ls -lh ~/ComfyUI-Mac-Silicon/models/diffusion_models/z_image_turbo_bf16.safetensors
+ls -lh ~/ComfyUI-Mac-Silicon/models/text_encoders/qwen_3_4b.safetensors
+ls -lh ~/ComfyUI-Mac-Silicon/models/vae/ae.safetensors
+
+# Start ComfyUI with stable detached logging
+cd ~/ComfyUI-Mac-Silicon
+source ~/.venv/bin/activate
+nohup env TQDM_DISABLE=1 DISABLE_TQDM=1 PYTHONUNBUFFERED=1 \
+  ~/.venv/bin/python main.py --force-fp16 --listen 127.0.0.1 --port 8188 \
+  > ~/ComfyUI-Mac-Silicon/comfyui-runtime.log 2>&1 < /dev/null &
+
+# Check logs
+tail -200 ~/ComfyUI-Mac-Silicon/comfyui-runtime.log
+```
+
+---
+
+## Document Information
+
+- **Author:** ComfyUI Setup Agent
+- **Created:** 2026-06-29
+- **Last Updated:** 2026-06-29
+- **Tested on:** macOS Sequoia 26.x, Apple Silicon (128 GB RAM)
+- **ComfyUI Version:** 0.26.0
+- **Python Version:** 3.13.14
+- **PyTorch Version:** 2.12.1
+- **Status:** Production Ready
+
+### Changelog
+
+- **2026-06-29 (v1.2):** Corrected z-image workflow from recovered PNG metadata: `ae.safetensors`, `EmptySD3LatentImage`, `res_multistep` + `simple`, 8 steps. Corrected BrokenPipeError fix to use detached launch with stdout/stderr redirected to `comfyui-runtime.log`.
+- **2026-06-29 (v1.1):** Added initial broken pipe mitigation, documented MPS fp8 incompatibility, added alternative bf16 models, fixed missing dependencies (gitpython, opencv-python)
+- **2026-06-29 (v1.0):** Initial release with complete installation guide and 10 pitfalls
+
+---
+
+*This guide was created by documenting real installation experience including all pitfalls encountered and solutions applied.*
