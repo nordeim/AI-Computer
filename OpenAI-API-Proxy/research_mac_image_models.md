@@ -1351,3 +1351,215 @@ Below is a **conceptual JSON** you can adapt; replace `ModelSwitch` with the spe
 ***
 
 If you want, next I can help you translate one of these conceptual schemas into an exact ComfyUI JSON matching the node type names in your current installation (e.g., after you tell me the exact `type` strings for your ComfyUI‑MLX nodes), or add ControlNet/LoRA subgraphs on top for Z‑Image and FLUX within this combined template.
+
+---
+
+To add ControlNet and LoRA subgraphs on top of your combined Z‑Image + FLUX template, treat them as optional “branches” that plug into the same core text‑to‑image graph: prompt → encoder → model → sampler → VAE → output. [docs.comfy](https://docs.comfy.org/tutorials/image/z-image/z-image-turbo)
+
+Below is a meticulous design plan you can follow when editing your JSON.
+
+***
+
+## Design goals
+
+- Keep one **combined template** with `model_choice` (`"zimage"` / `"flux"`).  
+- Add **ControlNet branch** that can attach to whichever model is selected (Z‑Image Union ControlNet for Z‑Image; generic/FLUX‑specific ControlNet for FLUX). [comfy](https://comfy.org/workflows/image_z_image_turbo_fun_union_controlnet-7553d92529e0/)
+- Add **LoRA branch** that feeds style/character LoRAs into the active model (Z‑Image LoRAs for Z‑Image, FLUX LoRAs for FLUX). [youtube](https://www.youtube.com/watch?v=qk_HdCqjNHw)
+
+On your M4 Pro with 128 GB RAM, you can safely run Z‑Image Turbo + Union ControlNet + LoRAs and FLUX2 Klein + LoRAs at 1024×1024 and above without tight VRAM constraints. [zimageturbo](https://zimageturbo.org/z-image-turbo-controlnet)
+
+***
+
+## 1. ControlNet subgraph for Z‑Image Turbo
+
+### 1.1 Required models and patch
+
+For Z‑Image ControlNet Union, ComfyUI’s official guide and templates use the **Z‑Image‑Turbo‑Fun‑Controlnet‑Union** model patch: [youtube](https://www.youtube.com/watch?v=Fx41mfbsqzI)
+
+- ControlNet model file:  
+  - `Z-Image-Turbo-Fun-Controlnet-Union.safetensors`  
+  - Stored under: `ComfyUI/models/model_patches/` (per docs). [docs.comfy](https://docs.comfy.org/tutorials/image/z-image/z-image-turbo)
+
+Your SKILL already documents Z‑Image Turbo bf16 UNet, VAE, and Qwen3 text encoder paths; this patch completes the ControlNet setup. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/44072005/20117530-c23a-4f62-aeb0-75ad512f0b26/comfyui-set-mac-SKILL.md?AWSAccessKeyId=ASIA2F3EMEYEVVUSEPCB&Signature=nUU4I6rdnnsNbHC3LX5DUSI5xmc%3D&x-amz-security-token=IQoJb3JpZ2luX2VjEPL%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMSJHMEUCIHBjs6eyjoZKNLtxTCwc4arsykkpTGarw7EcT7%2Fwvs%2FHAiEA7lgPUNv4HP25pxaYm6LQkI5270GKCFgijz4bwLsXOhMq%2FAQIu%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARABGgw2OTk3NTMzMDk3MDUiDBbzM%2FmlL6W62OlhcyrQBB6ABU%2F34H99pgRdv2q%2F62IXjb8Lvjjly7igh90ZzyPqveLfpKGTWSHUurd3kQHtz4xObMvzMzkO0mLw%2BsBYd1Atx%2FKa9rosTopJ43PRsXa06oMEzck9S2A6RGnTPJvsTMIiOrcaRKq2rf%2Fwf7Ow1tUBrQ7GRVDgmXK%2FS4u647O%2FpihOv57BeCEl8%2FUQcvN4JZ41EH38Is8qgZ%2BXAU4QNC1fWxatadS53qOoVSbFdDUPjvlRbXRx75e%2BYatpSwH8vZpYGAaHRdvFJWZJNnVYYsb9wh3iEtrQyIMN9I63m%2BFqOvvDYLxT4z7%2BD6J5T%2Bhm9BOK7HM91KergwxTR8Q92FnrDUlZk%2BKriubbJoNSMOE5JI2xFgjhjjnL45lbUzmJjYzXCSAMFIh%2BVcwwGHbrT2CzboJuRPiFqH0KHj9bm9jZW1kOo8PaPbCPLa5VlH3ltNMcsQ3BHC2PM6gz55IbYa1GzdlpYzBua0y769kBeiLYjI%2FRD6e8QhqgZaSEHOlxCVOpE5IB17t%2FC%2FfbDAIsI%2B6ABCMKgtSya6D6mIzjkyHvl1P8LwJAZZJE2KuHyqvs8PBbMmm%2B%2BFuSR9iX7thrIQP9q66znlWi8PwWV2D9N6j4fkjk0uioVa3%2BnATqjQ3CftOxSrH83O9LjAidBLLqITEuM6Oqy8RvQskBv0ZcZWi71xbNeVj8kerZ7ex56cLmpWLWanHsWseMItCOaum5JdPwlxmwrnlJQrDAZj3a%2FBJ1ffqMo5u4hZxctIRAac0LkeV24M1Ql55zrOuLh7r7W4ww4bmM0gY6mAHKV450HAKxVE5b8kcxNXjX%2BRu0k9HPdpNPO6LiNKGkLakYxSHSYaaFVfQWsLcR%2FA9CE%2BbJRrvPPHPTXp99e%2BlyXqEVRwUxPd1dPSfG%2BHXZHj5WY7udol70k8uO3lypePc0twAH68TKNiSHRTFAnfui%2Bh36QjpsG7c6VxCDC0bjGdEP0eJZlLzpoehPjGGCneQcuPiYh8fvHA%3D%3D&Expires=1782786740)
+
+### 1.2 Branch structure
+
+Extend the combined workflow with a **ControlNet branch**:
+
+New inputs:
+
+- `reference_image` (image file path or image input node).  
+- `control_mode` (combo: `"none"`, `"canny"`, `"depth"`, `"pose"`). [comfy](https://comfy.org/workflows/image_z_image_turbo_fun_union_controlnet-7553d92529e0/)
+
+New nodes (conceptually):
+
+1. `LoadImage`  
+   - Loads `reference_image`.  
+2. `ResizeImageToMatchLatent`  
+   - Resizes reference to match the target resolution (no crop).  
+   - Outputs resized image and width/height if needed. [zimageturbo](https://zimageturbo.org/z-image-turbo-controlnet)
+3. `ControlNetPreprocessor`  
+   - Branches based on `control_mode`:  
+     - Canny edge detector.  
+     - Depth model (e.g., Depth Anything).  
+     - Pose estimator (DW Pose / OpenPose). [youtube](https://www.youtube.com/watch?v=KmYNxtLZQTU)
+   - Outputs preprocessed control map(s) (IMAGE).  
+4. `ZImageControlNetLoader` / model‑patch node  
+   - Loads `Z-Image-Turbo-Fun-Controlnet-Union.safetensors`. [youtube](https://www.youtube.com/watch?v=Fx41mfbsqzI)
+5. `ControlNetApply`  
+   - Takes:  
+     - Base MODEL (Z‑Image Turbo MLX/PyTorch).  
+     - ControlNet model patch.  
+     - Preprocessed control map(s).  
+   - Outputs modified MODEL (or extra conditioning) that the sampler uses. [comfy](https://comfy.org/workflows/image_z_image_turbo_fun_union_controlnet-7553d92529e0/)
+
+Integration with core sampler:
+
+- When `model_choice == "zimage"` and `control_mode != "none"`, feed the **ControlNet‑modified MODEL** into your `MLXSampler` (or KSampler) and optionally adjust steps slightly upward (e.g., from 8 to 10) to account for ControlNet conditioning. [youtube](https://www.youtube.com/watch?v=Fx41mfbsqzI)
+- When `control_mode == "none"`, skip the ControlNet branch and use the original MODEL.  
+
+This mirrors ComfyUI’s official “Z‑Image Turbo Fun Union ControlNet” template but keeps it abstract enough to fit your combined graph. [docs.comfy](https://docs.comfy.org/tutorials/image/z-image/z-image-turbo)
+
+***
+
+## 2. LoRA subgraph for Z‑Image Turbo
+
+### 2.1 LoRA storage and loader
+
+Z‑Image LoRA guides consistently use LoRA files placed in:  
+
+- `ComfyUI/models/loras/` for Z‑Image‑Turbo LoRAs (style, character, etc.). [stablediffusiontutorials](https://www.stablediffusiontutorials.com/2025/11/z-image-turbo-lora-training.html)
+
+Many workflows use specialized LoRA loader nodes, such as **RGThree Power LoRA Loader** or similar, designed to attach LoRAs to the running model and adjust their strengths. [youtube](https://www.youtube.com/watch?v=o_yT7pEyRP8)
+
+### 2.2 Branch structure
+
+Add a **LoRA branch** to your combined graph:
+
+New inputs:
+
+- `zimage_lora_name` (combo listing installed Z‑Image LoRAs).  
+- `zimage_lora_strength` (float, e.g., 0.0–1.0). [youtube](https://www.youtube.com/watch?v=qk_HdCqjNHw)
+
+New nodes:
+
+1. `ZImageLoRALoader` (e.g., Power LoRA Loader)  
+   - Inputs: base MODEL (Z‑Image Turbo), `zimage_lora_name`, `zimage_lora_strength`.  
+   - Outputs: LoRA‑patched MODEL with the LoRA applied. [runcomfy](https://www.runcomfy.com/comfyui-workflows/z-image-turbo-ai-toolkit-lora-inference-in-comfyui-training-matched-results)
+
+Integration:
+
+- When `model_choice == "zimage"` and a LoRA is selected, feed the **LoRA‑patched MODEL** into the sampler instead of the original Z‑Image model (or ControlNet‑modified model if both branches are on). [runcomfy](https://www.runcomfy.com/comfyui-workflows/z-image-turbo-ai-toolkit-lora-inference-in-comfyui-training-matched-results)
+- Keep CFG at 1.0; LoRAs typically work with the base CFG used by Z‑Image Turbo. [youtube](https://www.youtube.com/watch?v=3Z9LTRN8ci4)
+
+On your M4 Pro, you can run multiple LoRAs simultaneously if the loader supports multi‑LoRA stacking; just track strengths carefully to avoid over‑baking styles. [youtube](https://www.youtube.com/watch?v=o_yT7pEyRP8)
+
+***
+
+## 3. ControlNet subgraph for FLUX2 Klein
+
+FLUX2 Klein ComfyUI workflows show typical **ControlNet patterns**: Canny, Depth, Pose plus Beta‑style schedulers, with some packs exposing dedicated nodes and NVFP4/GGUF model formats for VRAM efficiency. [docs.comfy](https://docs.comfy.org/tutorials/flux/flux-2-klein)
+
+### 3.1 Required models
+
+You’ll need FLUX‑compatible ControlNet models—for example, Canny/Depth/Pose ControlNet checkpoints that work with FLUX2 Klein (many tutorials bundle download links and tuned settings). [youtube](https://www.youtube.com/watch?v=jV7SNCMEKMw)
+
+Store them under `models/controlnet/` per ComfyUI convention. [youtube](https://www.youtube.com/watch?v=GYJYud-E2I0)
+
+### 3.2 Branch structure
+
+Reuse the same pattern as Z‑Image but with FLUX nodes:
+
+New inputs:
+
+- `flux_control_mode` (combo: `"none"`, `"canny"`, `"depth"`, `"pose"`).  
+
+New nodes:
+
+1. `LoadImage` (reference image).  
+2. `ResizeImageToMatchLatent`.  
+3. `ControlNetPreprocessor` (same idea as Z‑Image, but tuned to FLUX’s recommended resolution and preprocessors). [youtube](https://www.youtube.com/watch?v=jV7SNCMEKMw)
+4. `FluxControlNetLoader` (loads FLUX ControlNet model).  
+5. `ControlNetApply` (attaches to FLUX2 Klein MODEL).  
+
+Integration:
+
+- When `model_choice == "flux"` and `flux_control_mode != "none"`, pass the FLUX model through `FluxControlNetLoader`/`ControlNetApply` before the **MLXSampler**; use Beta 57 or similar scheduler recommended for FLUX2 Klein, with steps in the 12–16 range. [youtube](https://www.youtube.com/watch?v=57ppu1WmqLU)
+- If `flux_control_mode == "none"`, skip the ControlNet branch and use the base FLUX model.  
+
+Your M4 Pro can handle ControlNet at 1024×1024 and higher with FLUX2 Klein, so you can experiment with higher resolutions and more complex control maps. [docs.comfy](https://docs.comfy.org/tutorials/flux/flux-2-klein)
+
+***
+
+## 4. LoRA subgraph for FLUX2 Klein
+
+FLUX2 Klein tutorials show LoRA integration for style and image edit, often via LoRA loader nodes that patch the UNet/encoder at runtime and let you tune strengths per LoRA. [youtube](https://www.youtube.com/watch?v=GYJYud-E2I0)
+
+### 4.1 LoRA storage and loader
+
+Place FLUX‑specific LoRAs under e.g.:  
+
+- `ComfyUI/models/loras/flux/` or directly in `models/loras/` with appropriately named files. [youtube](https://www.youtube.com/watch?v=jV7SNCMEKMw)
+
+Use a generic LoRA loader node that works with FLUX models (sometimes installed via FLUX enhancer packs or RGThree node packs). [github](https://github.com/capitan01R/ComfyUI-Flux2Klein-Enhancer)
+
+### 4.2 Branch structure
+
+Add a FLUX LoRA branch:
+
+New inputs:
+
+- `flux_lora_name` (combo listing installed FLUX LoRAs).  
+- `flux_lora_strength` (float, e.g., 0.0–1.0).  
+
+New nodes:
+
+1. `FluxLoRALoader`  
+   - Inputs: base FLUX MODEL (or ControlNet‑patched model), `flux_lora_name`, `flux_lora_strength`.  
+   - Outputs: LoRA‑patched FLUX MODEL. [youtube](https://www.youtube.com/watch?v=57ppu1WmqLU)
+
+Integration:
+
+- When `model_choice == "flux"` and a FLUX LoRA is selected, feed the LoRA‑patched FLUX model into the sampler. [youtube](https://www.youtube.com/watch?v=GYJYud-E2I0)
+- Keep CFG around 7.0, and adjust steps (e.g., 12–14) based on the FLUX LoRA’s recommended settings. [comfy](https://www.comfy.org/fr/workflows/image_flux2_klein_text_to_image-814fd547d86e/)
+
+***
+
+## 5. How to wire both branches into the combined template
+
+In the combined MLX graph you already sketched:
+
+- **ModelSwitch node**: keep it as the central selector for base Z‑Image vs FLUX models (and VAEs).  
+- Add **two parallel enhancement branches**:
+  - Z‑Image ControlNet + LoRA branch that only activates when `model_choice == "zimage"`.  
+  - FLUX ControlNet + LoRA branch that only activates when `model_choice == "flux"`.  
+
+Implementation strategy:
+
+1. **Z‑Image path**  
+   - Base model from ModelSwitch → Z‑Image LoRA loader (optional) → Z‑Image ControlNet branch (optional) → MLXSampler. [youtube](https://www.youtube.com/watch?v=qk_HdCqjNHw)
+
+2. **FLUX path**  
+   - Base model from ModelSwitch → FLUX LoRA loader (optional) → FLUX ControlNet branch (optional) → MLXSampler (with FLUX‑tuned scheduler). [docs.comfy](https://docs.comfy.org/tutorials/flux/flux-2-klein)
+
+You can do this by having separate “Model + VAE + ControlNet + LoRA” nodes for each path, then in the sampler’s `model` input you choose the appropriate output based on `model_choice` (via a small switch node or two samplers wired to different branches). [facebook](https://www.facebook.com/groups/comfyui/posts/950399787732722/)
+
+***
+
+## 6. Recommended defaults for your M4 Pro
+
+Given your hardware:
+
+- Z‑Image Turbo + ControlNet + LoRA:  
+  - 1024×1024, steps≈10, CFG≈1.0, Union ControlNet with Canny or Depth, LoRA strengths around 0.4–0.7. [youtube](https://www.youtube.com/watch?v=3Z9LTRN8ci4)
+- FLUX2 Klein + ControlNet + LoRA:  
+  - 1024×1024 (or 1536×1536), steps≈12–16, CFG≈7.0, Beta 57 or similar scheduler, LoRA strengths around 0.5–0.8 depending on LoRA. [comfy](https://www.comfy.org/fr/workflows/image_flux2_klein_text_to_image-814fd547d86e/)
+
+You can expose these as default widget values in the combined template and adjust per run.
+
+***
+
+If you’d like, next I can help you translate this plan into a more concrete JSON fragment for the Z‑Image ControlNet+LoRA branch (with specific node types and connections) that you can merge into your existing `image_zimage_m4pro.json`.
+
+---
+
