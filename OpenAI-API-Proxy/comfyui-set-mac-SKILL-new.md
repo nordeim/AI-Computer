@@ -34,7 +34,7 @@ This covers: model discovery (HuggingFace/CivitAI), LFS/gated repo handling, com
 
 ### 🆕 Critical v1.5 Update Notices (Read First)
 
-This v1.5 update (2026-06-30) incorporates findings from the companion research report at `research/mlx-image-gen-mac-2026.md`. Four changes are urgent:
+This v1.5 update (2026-06-30) incorporates findings from the companion research report at `/home/z/my-project/download/research/mlx-image-gen-mac-2026.md`. Four changes are urgent:
 
 #### 1. DiffusionKit was archived on 21 March 2026
 
@@ -46,7 +46,7 @@ This v1.5 update (2026-06-30) incorporates findings from the companion research 
 
 Previous versions of this guide treated `mflux` as a CLI-only tool. mflux 0.18.0 has a first-class Python API suitable for production deployment. The new API supports 9 model families (Z-Image, FLUX.2 4B/9B, Ideogram 4, ERNIE-Image, FIBO, SeedVR2, Qwen-Image, Depth Pro, FLUX.1) with multi-LoRA, image-to-image, ControlNet, depth conditioning, and seed reproducibility.
 
-**Action:** See [Method 2](#method-2-native-mlx-via-mflux-python-api-recommended-for-production) for the Python API path. Ten companion scripts at `research/scripts/` provide production-ready patterns (see [Appendix D](#appendix-d--companion-scripts-manifest)).
+**Action:** See [Method 2](#method-2-native-mlx-via-mflux-python-api-recommended-for-production) for the Python API path. Ten companion scripts at `/home/z/my-project/download/research/scripts/` provide production-ready patterns (see [Appendix D](#appendix-d--companion-scripts-manifest)).
 
 #### 3. Apple M5 requires macOS 26.2+ for Neural Accelerator support
 
@@ -164,7 +164,7 @@ For commercial use (paid client work, SaaS products, advertising), only the foll
 | FLUX.2 [klein] 9B / 9B KV | FLUX.2-dev Non-Commercial | ❌ Non-commercial only |
 | Ideogram 4 | Ideogram 4 Non-Commercial | ❌ Non-commercial only |
 
-For the deep license audit and per-model recommendations, see [research report §7.3](research/mlx-image-gen-mac-2026.md#73-commercial-use--strict-license-audit).
+For the deep license audit and per-model recommendations, see [research report §7.3](/home/z/my-project/download/research/mlx-image-gen-mac-2026.md#73-commercial-use--strict-license-audit).
 
 ---
 
@@ -184,7 +184,7 @@ Memory bandwidth is the single most important hardware metric for diffusion mode
 
 > **Note:** The combination of a 9.3B DiT + 8B Qwen3-VL encoder (Ideogram 4) is extremely heavy. On 16GB Macs, you MUST use quantized (4-bit) variants to avoid OOM. On 24GB Macs, prefer int4 for Ideogram 4; int8 requires 27GB and only fits on 48GB+ Macs.
 
-> **M5 Neural Accelerator:** Apple's 19 Nov 2025 ML research blog reports up to 4× speedup for compute-bound workloads (TTFT) and 1.2-1.3× for memory-bandwidth-bound workloads. For FLUX-dev-4bit image generation, the speedup is **3.8×** vs M4. Requires macOS 26.2+. See [research report §4.2](research/mlx-image-gen-mac-2026.md#42-m5-vs-m4-with-mlx--apples-official-benchmarks) for the full benchmark table.
+> **M5 Neural Accelerator:** Apple's 19 Nov 2025 ML research blog reports up to 4× speedup for compute-bound workloads (TTFT) and 1.2-1.3× for memory-bandwidth-bound workloads. For FLUX-dev-4bit image generation, the speedup is **3.8×** vs M4. Requires macOS 26.2+. See [research report §4.2](/home/z/my-project/download/research/mlx-image-gen-mac-2026.md#42-m5-vs-m4-with-mlx--apples-official-benchmarks) for the full benchmark table.
 
 ---
 
@@ -206,7 +206,7 @@ Depending on your workflow preference and production needs, choose one of seven 
 
 **Deprecated Method (DO NOT USE):** The previous "ComfyUI + DiffusionKit" path via `thoddnn/ComfyUI-MLX` is **archived and stale** (DiffusionKit archived 21 Mar 2026). Migrate to Method 5 (Mflux-ComfyUI) instead. See [Appendix E: Migration Guide](#appendix-e--migration-guide-v14--v15).
 
-For the full runtime decision matrix, see [research report §2.8](research/mlx-image-gen-mac-2026.md#28-runtime-decision-matrix).
+For the full runtime decision matrix, see [research report §2.8](/home/z/my-project/download/research/mlx-image-gen-mac-2026.md#28-runtime-decision-matrix).
 
 ---
 
@@ -326,7 +326,7 @@ Run it with:
 uv run generate.py
 ```
 
-📖 **Companion script:** `research/scripts/01_z_image_turbo_basic.py`
+📖 **Companion script:** `/home/z/my-project/download/research/scripts/01_z_image_turbo_basic.py`
 
 ### Step M2.2: Production Server (OpenAI-Compatible API)
 
@@ -379,7 +379,7 @@ if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
 ```
 
-📖 **Companion script:** `research/scripts/02_production_server.py`
+📖 **Companion script:** `/home/z/my-project/download/research/scripts/02_production_server.py`
 
 ### Step M2.3: Multi-LoRA Loading
 
@@ -397,7 +397,7 @@ image = model.generate_image(
 image.save("cyber_samurai.png")
 ```
 
-📖 **Companion script:** `research/scripts/03_multi_lora.py`
+📖 **Companion script:** `/home/z/my-project/download/research/scripts/03_multi_lora.py`
 
 ### Step M2.4: Image-to-Image Editing
 
@@ -415,7 +415,7 @@ image = model.generate_image(
 image.save("watercolor.png")
 ```
 
-📖 **Companion script:** `research/scripts/04_image_to_image.py`
+📖 **Companion script:** `/home/z/my-project/download/research/scripts/04_image_to_image.py`
 
 ### Step M2.5: ControlNet + Depth Pro Pipeline
 
@@ -440,7 +440,7 @@ image = model.generate_image(
 image.save("portrait.png")
 ```
 
-📖 **Companion script:** `research/scripts/05_controlnet_depth.py`
+📖 **Companion script:** `/home/z/my-project/download/research/scripts/05_controlnet_depth.py`
 
 ### Step M2.6: Live Preview with mlx-taef
 
@@ -462,7 +462,7 @@ for step_output in model.generate_image_stream(
     preview.save(f"preview_{step_output.step:02d}.png")
 ```
 
-📖 **Companion script:** `research/scripts/06_live_preview.py`
+📖 **Companion script:** `/home/z/my-project/download/research/scripts/06_live_preview.py`
 
 ### Step M2.7: TeaCache Step-Skipping (30-50% Speedup)
 
@@ -483,7 +483,7 @@ image = model.generate_image(
 image.save("mountain.png")
 ```
 
-📖 **Companion script:** `research/scripts/07_teacache_speedup.py`
+📖 **Companion script:** `/home/z/my-project/download/research/scripts/07_teacache_speedup.py`
 
 ### Step M2.8: Metadata Reproducibility
 
@@ -505,17 +505,17 @@ with open("generation_metadata.json", "w") as f:
     json.dump(metadata, f, indent=2)
 ```
 
-📖 **Companion script:** `research/scripts/08_metadata_reproducibility.py`
+📖 **Companion script:** `/home/z/my-project/download/research/scripts/08_metadata_reproducibility.py`
 
 ### Step M2.9: Benchmark Harness
 
-📖 **Companion script:** `research/scripts/09_benchmark_harness.py` — runs each model 3 times and reports mean/min/max wall-clock time + peak RSS.
+📖 **Companion script:** `/home/z/my-project/download/research/scripts/09_benchmark_harness.py` — runs each model 3 times and reports mean/min/max wall-clock time + peak RSS.
 
 ### Step M2.10: Commercial-Safe Pipeline
 
-📖 **Companion script:** `research/scripts/10_commercial_safe_pipeline.py` — end-to-end pipeline using FLUX.2 [klein] 4B distilled (Apache 2.0), the safest commercial pick.
+📖 **Companion script:** `/home/z/my-project/download/research/scripts/10_commercial_safe_pipeline.py` — end-to-end pipeline using FLUX.2 [klein] 4B distilled (Apache 2.0), the safest commercial pick.
 
-For the full Python API reference, see [research report §5](research/mlx-image-gen-mac-2026.md#section-5--custom-mlx-code-patterns).
+For the full Python API reference, see [research report §5](/home/z/my-project/download/research/mlx-image-gen-mac-2026.md#section-5--custom-mlx-code-patterns).
 
 ---
 
@@ -697,7 +697,7 @@ SD 1.5, SDXL, Flux.1, Z-Image, Qwen Image, FLUX.2, and even Hunyuan video genera
 
 Draw Things is **not** the right pick for production deployment, batch processing, or integration into a larger Python application — those use cases belong to Method 2 (mflux Python API).
 
-For the full Draw Things deep-dive, see [research report §2.4](research/mlx-image-gen-mac-2026.md#24-draw-things--closed-source-native-mac-app).
+For the full Draw Things deep-dive, see [research report §2.4](/home/z/my-project/download/research/mlx-image-gen-mac-2026.md#24-draw-things--closed-source-native-mac-app).
 
 ---
 
@@ -784,7 +784,7 @@ This is dramatically simpler than the equivalent PyTorch-MPS workflow (Method 3)
 | Iteration speed | Edit script + rerun | Drag wires + tweak |
 | Production deployment | Trivial (it's Python) | Requires ComfyUI server |
 
-For the full Mflux-ComfyUI deep-dive, see [research report §6](research/mlx-image-gen-mac-2026.md#section-6--comfyui-integration-patterns).
+For the full Mflux-ComfyUI deep-dive, see [research report §6](/home/z/my-project/download/research/mlx-image-gen-mac-2026.md#section-6--comfyui-integration-patterns).
 
 ---
 
@@ -815,7 +815,7 @@ open Package.swift  # opens in Xcode
 
 FLUX.2 [klein] 4B distilled and 9B variants. The Reddit launch thread describes it as: *"1-click app to run FLUX.2-klein on M-series Macs (8GB+). Text-to-image generation, Image-to-image editing (upload a photo, ...)"*.
 
-For more, see [research report §2.6](research/mlx-image-gen-mac-2026.md#26-fluxforge-studio--swift-mlx).
+For more, see [research report §2.6](/home/z/my-project/download/research/mlx-image-gen-mac-2026.md#26-fluxforge-studio--swift-mlx).
 
 ---
 
@@ -858,9 +858,9 @@ mlx-omni-server --port 8000
 
 The above servers are primarily LLM-focused. For image-only API serving, wrap mflux in FastAPI directly. See [Method 2.2](#step-m22-production-server-openai-compatible-api) for the code pattern, or use the companion script:
 
-📖 **Companion script:** `research/scripts/02_production_server.py`
+📖 **Companion script:** `/home/z/my-project/download/research/scripts/02_production_server.py`
 
-For the full server landscape, see [research report §2.7](research/mlx-image-gen-mac-2026.md#27-mlx-studio-mlx-openai-server-mlx-omni-server--production-servers).
+For the full server landscape, see [research report §2.7](/home/z/my-project/download/research/mlx-image-gen-mac-2026.md#27-mlx-studio-mlx-openai-server-mlx-omni-server--production-servers).
 
 ---
 
@@ -1483,7 +1483,7 @@ You can generate these JSON structures automatically by:
 2. Prompting a local LLM (e.g., Qwen2.5-7B) to output this exact schema
 3. Using the ComfyUI Ideogram V4 node's built-in JSON prompt field
 
-FIBO by Bria AI also supports JSON-native prompting via its SmolLM3-3B text encoder — see [research report §1.6](research/mlx-image-gen-mac-2026.md#16-fibo-by-bria-ai-released-oct-2025).
+FIBO by Bria AI also supports JSON-native prompting via its SmolLM3-3B text encoder — see [research report §1.6](/home/z/my-project/download/research/mlx-image-gen-mac-2026.md#16-fibo-by-bria-ai-released-oct-2025).
 
 ---
 
@@ -1533,7 +1533,7 @@ image = model.generate_image(
 image.save("cyber_samurai.png")
 ```
 
-📖 **Companion script:** `research/scripts/03_multi_lora.py`
+📖 **Companion script:** `/home/z/my-project/download/research/scripts/03_multi_lora.py`
 
 ### Step 8.3: Generation Settings With Compatible LoRA
 
@@ -2040,7 +2040,7 @@ image = model.generate_image(
 image.save("puffin.png")
 ```
 
-📖 **Companion script:** `research/scripts/01_z_image_turbo_basic.py`
+📖 **Companion script:** `/home/z/my-project/download/research/scripts/01_z_image_turbo_basic.py`
 
 ### Mflux-ComfyUI Install (NEW in v1.5)
 
@@ -2059,11 +2059,11 @@ pip install -r requirements.txt  # if any
 
 ### Production Server Pattern (NEW in v1.5)
 
-📖 **Companion script:** `research/scripts/02_production_server.py`
+📖 **Companion script:** `/home/z/my-project/download/research/scripts/02_production_server.py`
 
 ```bash
 # Run the production server
-uv run research/scripts/02_production_server.py
+uv run /home/z/my-project/download/research/scripts/02_production_server.py
 
 # Test it
 curl -X POST http://localhost:8000/v1/images/generations \
@@ -2073,7 +2073,7 @@ curl -X POST http://localhost:8000/v1/images/generations \
 
 ### TeaCache Speedup (NEW in v1.5)
 
-📖 **Companion script:** `research/scripts/07_teacache_speedup.py`
+📖 **Companion script:** `/home/z/my-project/download/research/scripts/07_teacache_speedup.py`
 
 ```python
 from mlx_teacache import TeaCacheWrapper
@@ -2154,7 +2154,7 @@ See [Appendix E: Migration Guide](#appendix-e--migration-guide-v14--v15) for the
 
 ## 11. Production Deployment Patterns (NEW v1.5)
 
-This section references the 10 companion Python scripts at `research/scripts/`. Each script is a self-contained `uv run --script` Python file with inline dependencies — no virtualenv setup required.
+This section references the 10 companion Python scripts at `/home/z/my-project/download/research/scripts/`. Each script is a self-contained `uv run --script` Python file with inline dependencies — no virtualenv setup required.
 
 ### 11.1 Bare mflux Python Script (Single Image)
 
@@ -2163,7 +2163,7 @@ This section references the 10 companion Python scripts at `research/scripts/`. 
 The simplest possible mflux script — generates a single Z-Image Turbo int8 image. Use this as the starting point for any custom Python pipeline.
 
 ```bash
-uv run research/scripts/01_z_image_turbo_basic.py
+uv run /home/z/my-project/download/research/scripts/01_z_image_turbo_basic.py
 ```
 
 Expected runtime on M4 Pro 24 GB: ~60-80 seconds for 1024×1024 at 9 steps.
@@ -2175,7 +2175,7 @@ Expected runtime on M4 Pro 24 GB: ~60-80 seconds for 1024×1024 at 9 steps.
 FastAPI server exposing `/v1/images/generations` (OpenAI-compatible). Pre-loads models at startup, serves requests with no cold-start penalty after warmup.
 
 ```bash
-uv run research/scripts/02_production_server.py
+uv run /home/z/my-project/download/research/scripts/02_production_server.py
 # Server starts on http://0.0.0.0:8000
 ```
 
@@ -2227,7 +2227,7 @@ Runs each model 3 times and reports mean/min/max wall-clock time + peak RSS. Use
 
 End-to-end pipeline using FLUX.2 [klein] 4B distilled — the safest commercial pick. Apache 2.0 license, ~6 GB RSS, 4-step generation.
 
-For the full production deployment deep-dive, see [research report §5](research/mlx-image-gen-mac-2026.md#section-5--custom-mlx-code-patterns) and [§11](research/mlx-image-gen-mac-2026.md#section-6--comfyui-integration-patterns).
+For the full production deployment deep-dive, see [research report §5](/home/z/my-project/download/research/mlx-image-gen-mac-2026.md#section-5--custom-mlx-code-patterns) and [§11](/home/z/my-project/download/research/mlx-image-gen-mac-2026.md#section-6--comfyui-integration-patterns).
 
 ---
 
@@ -2274,7 +2274,7 @@ If you intend to use generated images commercially (paid client work, SaaS produ
 - **Qwen-Image-2512 4-bit** — best commercial-quality open-weight, ~26 GB RSS, strong multilingual
 - **FLUX.2 [klein] 4B distilled int8** — for speed (run both simultaneously, switch per project)
 
-For the deep license audit with per-model recommendations, see [research report §7.3](research/mlx-image-gen-mac-2026.md#73-commercial-use--strict-license-audit).
+For the deep license audit with per-model recommendations, see [research report §7.3](/home/z/my-project/download/research/mlx-image-gen-mac-2026.md#73-commercial-use--strict-license-audit).
 
 ---
 
@@ -2403,7 +2403,7 @@ echo "IMPORTANT: Use bf16 or MLX-quantized models (z_image_turbo_bf16, flux2-kle
 echo "Do NOT use fp8 models (ideogram4_fp8) — they don't work on Mac MPS"
 echo ""
 echo "NEW in v1.5: mflux 0.18.0 Python API + 10 companion scripts"
-echo "  See: research/scripts/"
+echo "  See: /home/z/my-project/download/research/scripts/"
 ```
 
 ---
@@ -2614,7 +2614,7 @@ nohup env TQDM_DISABLE=1 DISABLE_TQDM=1 PYTHONUNBUFFERED=1 \
 tail -200 ~/ComfyUI/comfyui-runtime.log
 
 # NEW v1.5: Test mflux Python API directly
-uv run research/scripts/01_z_image_turbo_basic.py
+uv run /home/z/my-project/download/research/scripts/01_z_image_turbo_basic.py
 # Should produce puffin.png in current directory
 ```
 
@@ -2622,7 +2622,7 @@ uv run research/scripts/01_z_image_turbo_basic.py
 
 ## Appendix D: Companion Scripts Manifest (NEW v1.5)
 
-The `research/scripts/` directory contains 10 production-ready Python scripts. Each is a self-contained `uv run --script` Python file with inline dependencies — no virtualenv setup required.
+The `/home/z/my-project/download/research/scripts/` directory contains 10 production-ready Python scripts. Each is a self-contained `uv run --script` Python file with inline dependencies — no virtualenv setup required.
 
 ### Quick Start
 
@@ -2631,7 +2631,7 @@ The `research/scripts/` directory contains 10 production-ready Python scripts. E
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Run any script
-uv run research/scripts/01_z_image_turbo_basic.py
+uv run /home/z/my-project/download/research/scripts/01_z_image_turbo_basic.py
 ```
 
 The first run downloads the model from HuggingFace (10–60 GB depending on model) and may take several minutes. Subsequent runs use the cached weights.
@@ -2689,7 +2689,7 @@ These scripts are MIT-licensed. The models they invoke have their own licenses �
 
 ### See Also
 
-- Research report: `research/mlx-image-gen-mac-2026.md`
+- Research report: `/home/z/my-project/download/research/mlx-image-gen-mac-2026.md`
 - Existing SKILL.md (v1.4 baseline): `/home/z/my-project/upload/comfyui-set-mac-SKILL.md`
 - mflux project: https://github.com/filipstrand/mflux
 
@@ -2801,11 +2801,11 @@ uv pip install mlx-teacache
 
 ```bash
 # Test 1: Minimal mflux Python API
-uv run research/scripts/01_z_image_turbo_basic.py
+uv run /home/z/my-project/download/research/scripts/01_z_image_turbo_basic.py
 # Should produce puffin.png
 
 # Test 2: Production server
-uv run research/scripts/02_production_server.py &
+uv run /home/z/my-project/download/research/scripts/02_production_server.py &
 sleep 30  # wait for model to load
 curl -X POST http://localhost:8000/v1/images/generations \
   -H "Content-Type: application/json" \
@@ -2813,14 +2813,14 @@ curl -X POST http://localhost:8000/v1/images/generations \
 kill %1  # stop server
 
 # Test 3: Commercial-safe pipeline (Apache 2.0)
-uv run research/scripts/10_commercial_safe_pipeline.py
+uv run /home/z/my-project/download/research/scripts/10_commercial_safe_pipeline.py
 # Should produce commercial_mug.png
 ```
 
 #### Step 6: Run benchmark harness to validate performance
 
 ```bash
-uv run research/scripts/09_benchmark_harness.py
+uv run /home/z/my-project/download/research/scripts/09_benchmark_harness.py
 ```
 
 This runs each model 3 times and reports mean/min/max wall-clock time + peak RSS. Use this to validate that your hardware performs as expected.
@@ -2894,8 +2894,8 @@ uv tool install mflux==0.14.0
 
 ### Companion Artifacts
 
-- **Research report:** `research/mlx-image-gen-mac-2026.md` (11,570 words, 49 cited sources)
-- **Companion scripts:** `research/scripts/` (10 production-ready Python scripts)
+- **Research report:** `/home/z/my-project/download/research/mlx-image-gen-mac-2026.md` (11,570 words, 49 cited sources)
+- **Companion scripts:** `/home/z/my-project/download/research/scripts/` (10 production-ready Python scripts)
 - **v1.4 baseline (reference):** `/home/z/my-project/upload/comfyui-set-mac-SKILL.md`
 
 ### Changelog
@@ -2914,72 +2914,4 @@ uv tool install mflux==0.14.0
 
 ---
 
-*This guide was created by documenting real installation experience including all pitfalls encountered and solutions applied. v1.5 update is based on extensive H1 2026 web research (56 searches, 14 deep page reads, 49 cited sources) consolidated in the companion research report at `research/mlx-image-gen-mac-2026.md`. Validated against official Comfy-Org, MLXBits, SceneWorks, filipstrand/mflux, black-forest-labs/flux2, MLX community, briaai, and Apple ML Research sources.*
-
----
-
-# download/ — Final Deliverables
-
-This folder contains the user-facing deliverables from the v1.5 update.
-
-## Contents
-
-| File / Folder | Purpose | Size |
-|---|---|---|
-| `comfyui-set-mac-SKILL.md` | **v1.5 SKILL.md** — the main ComfyUI Mac install guide (2,917 lines, 14k words) | 110 KB |
-| `research/mlx-image-gen-mac-2026.md` | **Research report** — 11,570 words, 49 cited sources, deep technical analysis | 84 KB |
-| `research/scripts/` | **10 companion Python scripts** — production-ready, MIT-licensed, runnable via `uv run` | 21 KB |
-| `research/scripts/README.md` | Quick start guide for the 10 scripts | 2.5 KB |
-
-## Quick start
-
-```bash
-# Read the main install guide
-less comfyui-set-mac-SKILL.md
-
-# Run the first companion script
-uv run research/scripts/01_z_image_turbo_basic.py
-```
-
-## What's new in v1.5
-
-The v1.5 SKILL.md expands the v1.4 baseline (1,442 lines → 2,917 lines) with:
-
-- 4 critical update notices (DiffusionKit archived, mflux 0.18.0 Python API, M5 macOS 26.2+, Ideogram 4 MLX branch)
-- Model Landscape expanded from 3 to 9 families
-- Runtime Methods expanded from 3 to 7
-- 5 new pitfalls (16-20)
-- New Section 11 (Production Deployment Patterns)
-- New Section 12 (License Audit for commercial use)
-- New Appendix D (Companion Scripts Manifest)
-- New Appendix E (Migration Guide v1.4 → v1.5)
-- 34 references to the 10 companion Python scripts
-- 15 cross-references to the research report
-
-See the v1.5 changelog entry in `comfyui-set-mac-SKILL.md` for the full list of changes.
-
-## Companion scripts
-
-The 10 scripts in `research/scripts/` are self-contained `uv run --script` Python files with inline dependencies — no virtualenv setup required.
-
-| Script | Purpose |
-|---|---|
-| `01_z_image_turbo_basic.py` | Minimal mflux Python API — Z-Image Turbo int8 |
-| `02_production_server.py` | FastAPI OpenAI-compatible image server |
-| `03_multi_lora.py` | Multi-LoRA loading with scales |
-| `04_image_to_image.py` | Image-to-image editing |
-| `05_controlnet_depth.py` | ControlNet Canny + Depth Pro pipeline |
-| `06_live_preview.py` | Live preview with mlx-taef TAE decoder |
-| `07_teacache_speedup.py` | TeaCache step-skipping (30-50% speedup) |
-| `08_metadata_reproducibility.py` | Metadata export + reproduce workflow |
-| `09_benchmark_harness.py` | Benchmark harness for hardware validation |
-| `10_commercial_safe_pipeline.py` | Commercial-safe pipeline (FLUX.2 klein 4B, Apache 2.0) |
-
-See `research/scripts/README.md` for full details.
-
-## Related artifacts
-
-- **Workspace README:** `../README.md` (top-level workspace overview)
-- **Workspace MANIFEST:** `../MANIFEST.txt` (exact file list with sizes)
-- **v1.4 baseline:** `../upload/comfyui-set-mac-SKILL.md` (for diff comparison)
-- **Research audit trail:** `../research/notes/` (14 clean-text primary source extracts)
+*This guide was created by documenting real installation experience including all pitfalls encountered and solutions applied. v1.5 update is based on extensive H1 2026 web research (56 searches, 14 deep page reads, 49 cited sources) consolidated in the companion research report at `/home/z/my-project/download/research/mlx-image-gen-mac-2026.md`. Validated against official Comfy-Org, MLXBits, SceneWorks, filipstrand/mflux, black-forest-labs/flux2, MLX community, briaai, and Apple ML Research sources.*
