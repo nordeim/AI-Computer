@@ -1559,7 +1559,242 @@ You can expose these as default widget values in the combined template and adjus
 
 ***
 
-If you’d like, next I can help you translate this plan into a more concrete JSON fragment for the Z‑Image ControlNet+LoRA branch (with specific node types and connections) that you can merge into your existing `image_zimage_m4pro.json`.
+---
+
+Below is a concrete JSON fragment for a **Z‑Image Turbo ControlNet + LoRA branch** that you can merge into your existing `image_zimage_m4pro.json`. It follows the official Z‑Image Turbo Fun Union ControlNet workflow structure (Canny‑based guidance) and uses a Power LoRA Loader–style node for LoRAs, but keeps names generic enough that you can adapt them to your installed node types. [comfy](https://comfy.org/workflows/image_z_image_turbo_fun_union_controlnet-7553d92529e0/)
+
+I’ll first outline the logic, then show the JSON fragment with node IDs and links keyed to the earlier Z‑Image template (nodes 1–13).
+
+***
+
+## ControlNet + LoRA branch design for Z‑Image Turbo
+
+### Models and paths assumed (matching SKILL.md + official docs)
+
+- Z‑Image Turbo base:  
+  - `models/diffusion_models/z_image_turbo_bf16.safetensors`  
+  - `models/text_encoders/qwen_3_4b.safetensors`  
+  - `models/vae/ae.safetensors` [docs.comfy](https://docs.comfy.org/zh-CN/tutorials/image/z-image/z-image-turbo)
+- ControlNet patch:  
+  - `models/model_patches/Z-Image-Turbo-Fun-Controlnet-Union.safetensors` (Fun Union ControlNet). [zimageturbo](https://zimageturbo.org/z-image-turbo-controlnet)
+- LoRAs (Z‑Image Turbo):  
+  - `models/loras/<your_zimage_lora>.safetensors` (style/character LoRAs placed under `models/loras/` as recommended in Z‑Image LoRA guides). [stablediffusiontutorials](https://www.stablediffusiontutorials.com/2025/11/z-image-turbo-lora-training.html)
+
+### New functionality
+
+For **Z‑Image** when `model_choice = "zimage"`:
+
+- **ControlNet branch** (optional):  
+  - Load a reference image.  
+  - Resize it to match target resolution.  
+  - Generate a Canny control map.  
+  - Load Fun Union ControlNet patch.  
+  - Apply ControlNet to the base Z‑Image model. [youtube](https://www.youtube.com/watch?v=Fx41mfbsqzI)
+
+- **LoRA branch** (optional):  
+  - Load one or more Z‑Image LoRAs.  
+  - Apply them to the (possibly ControlNet‑patched) model with a strength slider. [comfy](https://comfy.icu/node/Power-Lora-Loader-rgthree)
+
+The sampler then uses the enhanced MODEL (base → ControlNet → LoRA) instead of the plain Z‑Image Turbo MODEL.
+
+***
+
+## JSON fragment: Z‑Image ControlNet + LoRA nodes
+
+This fragment assumes your existing Z‑Image graph uses:
+
+- Node 8: Z‑Image base model loader (MODEL out).  
+- Node 11: Sampler (takes MODEL, seed, steps, cfg, conditioning, latent).  
+
+The new nodes are **IDs 14–21**, and two new links, so they don’t clash with the earlier 1–13 IDs.
+
+> Important: adjust `type` values to match the actual node types in your ComfyUI setup (for example, ControlNet loader node names can differ slightly between packs; same for Power LoRA Loader). [comfyai](https://comfyai.run/documentation/Power%20Lora%20Loader%20(rgthree))
+
+```json
+{
+  "nodes": [
+    {
+      "id": 14,
+      "type": "LoadImage",
+      "title": "ControlNet Reference Image",
+      "pos": [50, 550],
+      "size": [260, 140],
+      "widgets_values": [
+        "reference.png"               // path or default image
+      ],
+      "outputs": [
+        { "name": "IMAGE", "type": "IMAGE", "links":  [runcomfy](https://www.runcomfy.com/comfyui-nodes/rgthree-comfy/Power-Lora-Loader--rgthree-) }
+      ]
+    },
+    {
+      "id": 15,
+      "type": "ImageScaleToMaxDimension",
+      "title": "Resize Ref to Target Resolution",
+      "pos": [340, 560],
+      "size": [260, 140],
+      "inputs": [
+        { "name": "image", "type": "IMAGE", "link": 13 },
+        { "name": "max_side_length", "type": "INT", "link": 3 }   // Width from node 3
+      ],
+      "widgets_values": [
+        1024,                            // default max dimension
+        "lanczos"
+      ],
+      "outputs": [
+        { "name": "IMAGE", "type": "IMAGE", "links":  [z-image-turbo](https://z-image-turbo.ai/z-image-controlnet) }
+      ]
+    },
+    {
+      "id": 16,
+      "type": "ControlNetPreprocessorCanny",
+      "title": "ControlNet Canny Preprocessor",
+      "pos": [640, 560],
+      "size": [280, 160],
+      "inputs": [
+        { "name": "image", "type": "IMAGE", "link": 14 }
+      ],
+      "widgets_values": [
+        1.0,                             // low threshold
+        2.0                              // high threshold
+      ],
+      "outputs": [
+        { "name": "IMAGE", "type": "IMAGE", "links":  [runcomfy](https://www.runcomfy.com/comfyui-workflows/z-image-turbo-ai-toolkit-lora-inference-in-comfyui-training-matched-results) }
+      ]
+    },
+    {
+      "id": 17,
+      "type": "ControlNetLoader",
+      "title": "Load Z-Image Fun Union ControlNet",
+      "pos": [940, 560],
+      "size": [280, 140],
+      "widgets_values": [
+        "Z-Image-Turbo-Fun-Controlnet-Union"   // model_patches entry name
+      ],
+      "outputs": [
+        { "name": "CONTROL_NET", "type": "CONTROL_NET", "links":  [youtube](https://www.youtube.com/watch?v=3Z9LTRN8ci4) }
+      ]
+    },
+    {
+      "id": 18,
+      "type": "ControlNetApply",
+      "title": "Apply ControlNet to Z-Image MODEL",
+      "pos": [1240, 260],
+      "size": [350, 200],
+      "inputs": [
+        { "name": "model", "type": "MODEL", "link": 8 },   // base Z-Image model from node 8
+        { "name": "control_net", "type": "CONTROL_NET", "link": 16 },
+        { "name": "image", "type": "IMAGE", "link": 15 },
+        { "name": "strength", "type": "FLOAT", "link": null }
+      ],
+      "widgets_values": [
+        0.9                               // default control strength (0.9–0.95 recommended)
+      ],
+      "outputs": [
+        { "name": "MODEL", "type": "MODEL", "links":  [x](https://x.com/sora_biz/status/1848343652214710642) }
+      ]
+    },
+    {
+      "id": 19,
+      "type": "PrimitiveCombo",
+      "title": "Z-Image LoRA Name",
+      "pos": [1240, 480],
+      "size": [260, 120],
+      "widgets_values": [
+        "none",                          // current value
+        "none",
+        [
+          "none",
+          "Z-Image-Turbo-pencil-sketch",
+          "Z-Image-Turbo-Ghibli-Style"
+        ]
+      ],
+      "outputs": [
+        { "name": "value", "type": "STRING", "links":  [youtube](https://www.youtube.com/watch?v=3eWNocEJ8BM) }
+      ]
+    },
+    {
+      "id": 20,
+      "type": "PrimitiveFloat",
+      "title": "Z-Image LoRA Strength",
+      "pos": [1240, 620],
+      "size": [200, 80],
+      "widgets_values": [0.5],
+      "outputs": [
+        { "name": "value", "type": "FLOAT", "links":  [youtube](https://www.youtube.com/watch?v=ttIJClSc8Vk) }
+      ]
+    },
+    {
+      "id": 21,
+      "type": "PowerLoraLoader",          // rgthree Power LoRA Loader or equivalent
+      "title": "Apply Z-Image LoRA",
+      "pos": [1580, 260],
+      "size": [360, 220],
+      "inputs": [
+        { "name": "model", "type": "MODEL", "link": 17 },   // MODEL from ControlNetApply
+        { "name": "clip", "type": "CLIP", "link": null },   // optional CLIP; can use Qwen CLIP if required
+        { "name": "lora_name", "type": "STRING", "link": 18 },
+        { "name": "strength", "type": "FLOAT", "link": 19 }
+      ],
+      "widgets_values": [
+        "z_image_turbo_bf16",            // base model name for internal stack (example)
+        "qwen_3_4b"                      // CLIP name if node requires it
+      ],
+      "outputs": [
+        { "name": "MODEL", "type": "MODEL", "links":  [zimage](https://zimage.net/blog/z-image-turbo-fun-controlnet-union) }
+      ]
+    }
+  ],
+  "links": [
+    { "id": 13, "from_node": 14, "from_output": 0, "to_node": 15, "to_input": 0 },
+    { "id": 14, "from_node": 15, "from_output": 0, "to_node": 16, "to_input": 0 },
+    { "id": 15, "from_node": 16, "from_output": 0, "to_node": 18, "to_input": 2 },
+    { "id": 16, "from_node": 17, "from_output": 0, "to_node": 18, "to_input": 1 },
+    { "id": 17, "from_node": 18, "from_output": 0, "to_node": 21, "to_input": 0 },
+    { "id": 18, "from_node": 19, "from_output": 0, "to_node": 21, "to_input": 2 },
+    { "id": 19, "from_node": 20, "from_output": 0, "to_node": 21, "to_input": 3 },
+    { "id": 20, "from_node": 21, "from_output": 0, "to_node": 11, "to_input": 0 }
+  ]
+}
+```
+
+***
+
+## How this fragment hooks into your existing `image_zimage_m4pro.json`
+
+1. **Base Z‑Image model**  
+   - Node 8 still loads `z_image_turbo_bf16` (MODEL out). [docs.comfy](https://docs.comfy.org/tutorials/image/z-image/z-image-turbo)
+   - Node 18 (ControlNetApply) takes that MODEL and outputs a **ControlNet‑enhanced MODEL**.
+
+2. **LoRA application**  
+   - Node 21 (PowerLoraLoader) takes the ControlNet‑enhanced MODEL and applies a selected LoRA with a given strength, outputting a **LoRA‑patched MODEL**. [runcomfy](https://www.runcomfy.com/comfyui-nodes/rgthree-comfy/Power-Lora-Loader--rgthree-)
+
+3. **Sampler input change**  
+   - In your original nodes, `KSampler` (or `MLXSampler`) node 11 currently takes `model` from node 8.  
+   - After merging this fragment, change node 11’s `model` input link to come from node 21 instead:  
+     - Replace the link `{ "from_node": 8, ... "to_node": 11, "to_input": 0 }`  
+     - With `{ "from_node": 21, "from_output": 0, "to_node": 11, "to_input": 0 }` (link id 20 above).  
+
+4. **Optional usage**  
+
+- **ControlNet only**:  
+  - Set `Z-Image LoRA Name` to `"none"`; the Power LoRA Loader should pass through the model unchanged (or you can implement it to bypass when `"none"` is selected). [z-image-turbo](https://z-image-turbo.ai/z-image-controlnet)
+- **LoRA only (no ControlNet)**:  
+  - Bypass the ControlNetApply node by linking node 8 (MODEL) directly into node 21 (`model` input), and keep ControlNet strength at 0 or control nodes disconnected. [youtube](https://www.youtube.com/watch?v=o_yT7pEyRP8)
+
+On your M4 Pro, recommended defaults when both branches are active:  
+
+- Steps ≈10, CFG ≈1.0, 1024×1024, ControlNet strength ≈0.9, LoRA strength ≈0.4–0.7. [youtube](https://www.youtube.com/watch?v=3Z9LTRN8ci4)
+
+***
+
+## Practical merging notes
+
+- Install **ControlNet Union** and put `Z-Image-Turbo-Fun-Controlnet-Union.safetensors` in `models/model_patches/` exactly as in the official Comfy docs; otherwise the `ControlNetLoader` won’t see it. [zimageturbo](https://zimageturbo.org/z-image-turbo-controlnet)
+- Install **RGThree ComfyUI nodes** (Power LoRA Loader), via ComfyUI’s Custom Nodes Manager (“rgthree’s ComfyUI Nodes”) so node type `PowerLoraLoader` (or its exact name) becomes available. [x](https://x.com/sora_biz/status/1848343652214710642)
+- After merging, test with simple prompts and a single LoRA at low strength to verify the wiring; then enable Canny ControlNet and verify the model follows structure from the reference image as in the Union ControlNet demo workflows. [youtube](https://www.youtube.com/watch?v=3eWNocEJ8BM)
+
+If you want, next I can do a similar concrete fragment for the **FLUX2 Klein ControlNet + LoRA branch**, tuned for FLUX schedulers and LoRA loaders, so your combined template has full parity between Z‑Image and FLUX on the M4 Pro.
 
 ---
 
+https://www.perplexity.ai/search/please-meticulously-plan-to-do-OEkzQMB2S.itkOizy.61WQ 
