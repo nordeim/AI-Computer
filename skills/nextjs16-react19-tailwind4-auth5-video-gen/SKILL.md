@@ -1,6 +1,6 @@
 ---
 name: nextjs16-react19-tailwind4-auth5-video-gen
-description: hybrid Next.js app with a full backend, Auth.js v5, Drizzle/PostgreSQL, Inngest, Stripe, Cloudflare R2, OpenAI/Replicate/ElevenLabs
+description: Production-grade Next.js 16 + React 19 + Tailwind CSS v4 full-stack SaaS. Covers App Router Server Components, TypeScript strict, CSS-first @theme design system, Drizzle ORM + PostgreSQL, Auth.js v5 authentication, job queue orchestration (Inngest/BullMQ), AI pipeline integration (OpenAI, Replicate, ElevenLabs), credit-based Stripe billing, Cloudflare R2 storage, SSE streaming, idempotent transactions, WCAG AAA accessibility, OWASP 2025 security hardening, Docker deployment, Vitest + Playwright testing, CI/CD, and live-site validation. Comprehensive engineering reference with audit history, ADRs, 60+ lessons learned, z-index maps, color tokens, and debugging guides for AI media generation, content platforms, or any full-stack Next.js SaaS.
 version: 9.0
 ---
 

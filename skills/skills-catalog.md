@@ -1,32 +1,40 @@
 # Skills Catalog
 
-> **138 skills** organized into 10 categories. Each entry shows the skill name and a concise description of what it does and when to use it. Skills marked with `*` are external (outside `/home/pete/.pi/agent/skills/`).
+> **139 skills** organized into 10 categories. Each entry shows the skill name and a concise description of what it does and when to use it. Skills marked with `*` are external (outside `/home/pete/.pi/agent/skills/`).
 
 ---
 
 ## 1. Frontend Development & UI Engineering
+
+478> **Skills for building, styling, and shipping production-grade web interfaces.**
 
 | Skill | Description |
 |-------|-------------|
 | **frontend-development** | React/TypeScript guidelines: Suspense, lazy loading, features directory, MUI v7, TanStack Router, performance patterns. Use when building pages, components, or routing. |
 | **frontend-ui-engineering** | Production-quality UI build patterns. Use when the output must look/feel hand-crafted rather than AI-generated. |
 | **frontend-design** | Design thinking for web UI — color, typography, layout, component design. Teaches principles, not fixed values. |
-| **react19-ts6-vite8-tailwindv4-mvp** | MVP/production React 19 + TypeScript 6 strict + Vite 8 (Rolldown) + Tailwind CSS v4 CSS-first @theme. File-based routing, pnpm, Vitest + Playwright E2E. Complete lifecycle from scaffold to shipping tested, type-safe, WCAG AAA, production-grade code. Use for new greenfield web apps with React + Vite + Tailwind v4. |
-| **nextjs16-tailwind4** | Luxury-grade Next.js 16 + React 19 + TypeScript strict with Tailwind CSS v4 CSS-first @theme, Radix UI (shadcn), Framer Motion. App Router, Server Components, avant-garde anti-generic UI, OWASP 2025 security audits, Core Web Vitals performance, WCAG AAA accessibility, mobile nav debugging. |
-| **nextjs-react-expert** | React 19 + Next.js 16 performance optimization from Vercel Engineering. 57 rules: eliminate waterfalls, reduce bundle size, server/client-side optimizations. Covers App Router, Server Components, RSC streaming, Turbopack, React Compiler, Core Web Vitals (LCP/INP/CLS). Use when profiling or optimizing production React/Next.js apps. |
-| **super-frontend-design** | Master skill combining top 10 frontend skills. Anti-generic strategy, Next.js 16 + React 19 + Tailwind v4 CSS-first @theme, App Router Server Components, design systems, Vercel-grade performance, WCAG AAA, end-to-end QA. |
-| **tailwind-patterns** | Tailwind CSS v4 patterns: CSS-first `@theme` config, container queries, design tokens, modern utility patterns. |
+| **react19-ts6-vite8-tailwindv4-mvp** | MVP/production React 19 + Vite 8 + Tailwind v4. File-based routing, pnpm, Vitest + Playwright. Use for greenfield web apps with React + Vite (not Next.js). |
+| **nextjs16-tailwind4** | Next.js 16 + React  + Tailwind v4 with Framer Motion. Luxury-grade, avant-garde UI, OWASP 2025, Core Web Vitals, WCAG AAA. Use for distinctive marketing sites with animated motion. |
+| **nextjs-react-expert** | Next.js 16 + React 19 performance (Vercel Engineering). 57 rules: waterfall elimination, bundle size, RSC streaming, Turbopack, React Compiler, Core Web Vitals. Use when profiling or optimizing production React/Next.js apps. |
+| **super-frontend-design** | Master skill: anti-generic strategy, Next.js 16 + React  + Tailwind v4, App Router Server Components, design systems, Vercel-grade performance, WCAG AAA. |
+| **tailwind-patterns** | Tailwind CSS v4 CSS-first `@theme` config, container queries, design tokens, modern utility patterns. |
 | **ui-styling** | shadcn/ui + Tailwind CSS + canvas-based visual design. Use for design systems, responsive layouts, dark mode, accessible components. |
 | **ui-ux-pro-max** | UI/UX design intelligence: layout generation, design tokens, component specs, accessibility, turning UX recs into code. |
 | **scaffold-ui** | Generates anti-generic React components with brutalist Tailwind styling and strict DOM hygiene (no rounded/shadow/gradient). |
-| **personal-portfolio** | Tactile Brutalist + Editorial portfolio SPA: React 19, TypeScript 6 strict, Vite 6, Tailwind CSS v4 CSS-first @theme, pnpm. Kinetic typography, hash-based routing, import.meta.glob, dual-theme (night/day), WCAG AAA. Use for distinctive anti-generic portfolio sites. |
-| **brutalist-portfolio-nextjs** | Complete Next.js 16 + React 19 + TypeScript strict brutalist portfolio reference. App Router, Server Components, 16 components, Tailwind v4 CSS-first @theme, 8+ remediation phases, 52 lessons learned. WCAG AAA, custom hooks, anti-pattern debugging, mobile nav debugging. Use for brutalist/avant-garde portfolio builds. |
+| **personal-portfolio** | Tactile Brutalist + Editorial portfolio SPA: React 19, Vite 6, Tailwind v4, hash-based routing, dual-theme (night/day), WCAG AAA. Use for portfolio sites with React + Vite. |
+| **brutalist-portfolio-nextjs** | Complete Next.js 16 brutalist portfolio. App Router, Server Components, 16 components, Tailwind v4, 8+ remediation phases, 52 lessons learned. Use for brutalist/avant-garde portfolio builds. |
 | **luxeverse-architect** | Cinematic, production-grade anti-generic web platform architecture and execution framework. |
 | **avant-garde-design-v4** | Elite web design for distinctive interfaces. Luxury/premium brand experiences, landing pages, Tailwind v3→v4 migration. |
+| **nextjs16-react19-next-auth5-drizzle-orm** | Next.js 16 SaaS: Auth.js v5, Drizzle/Postgres, Inngest, OpenAI/Replicate/ElevenLabs AI pipeline, Stripe, R2. 5-layer architecture, luxury-dark cinematic design, WCAG AAA. Use for production SaaS with auth and AI. |
+| **nextjs16-react19-tailwind4-auth5-video-gen** | Production Next.js 16 + React  + Tailwind v4 SaaS with Drizzle ORM, Auth.js v5, Inngest, Stripe, R2, AI pipeline (OpenAI/Replicate/ElevenLabs). Comprehensive reference: 60+ lessons, audit history, ADRs, z-index maps, color tokens, debugging guides. Use for AI media generation, content platforms, or any full-stack Next.js SaaS. |
+
+> **Cross-reference:** `web-frameworks` (Full-Stack) covers Next.js 16 App Router, Server Components, RSC, PPR — also relevant for frontend architecture decisions.
 
 ---
 
 ## 2. Design Artifacts & Visual Creation
+
+> **Tools for creating visual content, design systems, and graphic assets.**
 
 | Skill | Description |
 |-------|-------------|
@@ -40,26 +48,31 @@
 | **image-search** | ZAI in-house image search. Retrieve real images with optional captions, OSS-hosted direct URLs. |
 | **web-shader-extractor** | Extract WebGL/Canvas/Shader effects from live pages, deobfuscate, and port to standalone native JS projects. |
 
+> **Cross-reference:** `aesthetic` and `visual-design-foundations` are also highly relevant to frontend development (Category 1).
+
 ---
 
 ## 3. Full-Stack & Backend Development
 
+> **Server-side, API, and full-stack application development.**
+
 | Skill | Description |
 |-------|-------------|
-| **fullstack-dev** | Full-stack Next.js 16 + React 19 + TypeScript strict with Tailwind CSS v4, shadcn/ui, Prisma ORM. App Router, Server Components, API routes, WebSocket/Socket.io, database schemas, full project scaffolding. |
-| **nextjs16-react19-postgres17** | Full-stack Next.js 16 + React 19 + PostgreSQL 17 reference: Drizzle ORM, BullMQ job queues (Redis), Auth.js v5, Vercel AI SDK (Anthropic + OpenAI), RSS/Atom ingestion, web push notifications. 5-layer architecture (proxy → app → features → domain → lib), App Router Server Components, async params, Suspense boundaries, PPR/cacheComponents, TypeScript strict + erasableSyntaxOnly, pnpm, Zod, Vitest + Playwright E2E + testcontainers. Editorial design system with CSS Subgrid, WCAG AAA, 3-layer AI provenance (JSON-LD + HTTP header + meta), Docker standalone output. Use for production SaaS with auth, job queues, AI pipelines, RSS ingestion, web push, admin panels. |
-| **nextjs16-react19-next-auth5-drizzle-orm** | Full-stack Next.js 16 SaaS: React 19, Tailwind v4 CSS-first @theme, Auth.js v5, Drizzle ORM/Postgres (Neon), Inngest job queue, OpenAI + Replicate + ElevenLabs AI pipeline, Stripe billing, Cloudflare R2 storage, SSE streaming. 5-layer architecture (proxy → app → features → domain → lib), App Router Server Components, TypeScript strict, pnpm, Vitest + Playwright E2E, GitHub Actions CI. Luxury-dark cinematic design system with 13 CSS keyframes, WCAG AAA. Use for production SaaS with auth, AI pipeline, job queues, and full-stack TypeScript. |
-| **web-frameworks** | Next.js 16 + React 19 (App Router, Server Components, RSC, PPR, cacheComponents, async params, SSR, SSG, ISR, standalone output) + Turborepo (monorepo, task pipelines, remote caching) + RemixIcon (3100+ SVG icons). |
+| **fullstack-dev** | Next.js 16 + React 19 + TypeScript strict + Tailwind v4 + shadcn/ui + Prisma ORM. App Router, Server Components, API routes, WebSocket/Socket.io, full project scaffolding. |
+| **nextjs16-react19-postgres17** | Next.js 16 + PostgreSQL 17: Drizzle ORM, BullMQ (Redis), Auth.js v5, Vercel AI SDK, RSS/Atom ingestion, web push. 5-layer architecture, PPR/cacheComponents, CSS Subgrid, 3-layer AI provenance. Use for news/content SaaS with job queues, AI pipelines, and RSS ingestion. |
+| **web-frameworks** | Next.js 16 + React 19 (App Router, Server Components, RSC, PPR, cacheComponents, async params) + Turborepo + RemixIcon (3100+ SVG icons). |
 | **api-and-interface-design** | Stable API and interface design. REST/GraphQL endpoints, type contracts, module boundaries. |
-| **api-patterns** | API design decision-making: REST vs GraphQL vs tRPC, response formats, versioning, pagination. |
-| **python-patterns** | Python development principles: framework selection, async patterns, type hints, project structure. Teaches thinking, not copying. |
+| **api-patterns** | API design: REST vs GraphQL vs tRPC, response formats, versioning, pagination. |
+| **python-patterns** | Python development: framework selection, async patterns, type hints, project structure. Teaches thinking, not copying. |
 | **framework-templates** | Framework-specific CLAUDE.md templates for Next.js, Laravel, Rails, Django, React Native, Flutter, Go, Rust. |
-| **n8n-workflow-automation** | Build and automate n8n workflows via JSON spec. Node types, connections, expressions, webhook workflows. |
+| **n8n-workflow-automation** | Build n8n workflows via JSON spec. Node types, connections, expressions, webhook workflows. |
 | **powershell-windows** | PowerShell Windows patterns: operator syntax, error handling, critical pitfalls. |
 
 ---
 
 ## 4. AI / ML / Multimodal SDK Skills
+
+> **Capabilities for building AI-powered features.**
 
 | Skill | Description |
 |-------|-------------|
@@ -76,14 +89,16 @@
 
 ## 5. Testing, QA & Performance
 
+> **Verification, debugging, and optimization.**
+
 | Skill | Description |
 |-------|-------------|
 | **test-driven-development** | TDD principles: failing test first, then code. Bug reproduction, edge cases, behavior changes. |
 | **tdd-workflow** | RED → GREEN → REFACTOR cycle. TDD workflow mechanics. |
 | **testing-patterns** | Testing pyramid: unit, integration, E2E. Mocking strategies, reliable test suites. |
 | **webapp-testing** | E2E testing, Playwright, deep audit strategies. Automated browser test scripts. |
-| **webapp-testing-journey** | Systematic QA methodology: URL journey testing, accessibility tree, DOM inspection, network debugging, performance tracing. |
-| **frontend-ui-testing-journey** | Frontend UI testing with 4 browser tools (OpenClaw, agent-browser, chrome-devtools-mcp, @playwright/mcp). Troubleshooting guides. |
+| **webapp-testing-journey** | Systematic QA: URL journey testing, accessibility tree, DOM inspection, network debugging, performance tracing. |
+| **frontend-ui-testing-journey** | Frontend UI testing with 4 browser tools (OpenClaw, agent-browser, chrome-devtools-mcp, @playwright/mcp). |
 | **browser-testing-with-devtools** | Real-browser testing via Chrome DevTools MCP. DOM inspection, console errors, network analysis, performance profiling. |
 | **playwright-cli** | Full Playwright CLI (v0.1.14). Multi-browser (Chrome/Firefox/WebKit/Edge), test debugging (`pause-at`/`resume`/`step-over`), request inspection (`request <n>`/`response-body`), request mocking (`route` with `--status`/`--body`/`--header`), offline mode, annotated video recording, CDP attach, persistent profiles, `run-code` for custom snippets. **Choose for:** writing/debugging Playwright tests, cross-browser validation, deep HTTP inspection, API mocking, connecting to existing browsers. |
 | **agent-browser** | Fast Rust-based headless browser CLI (v0.29.1). Compact token-efficient snapshots (`-i -c`), auth vault (`auth save/login`), React DevTools (`react tree`/`inspect`/`renders`/`suspense`), Core Web Vitals (`vitals --json`), SPA navigation (`pushstate`), session persistence (`--session-name`), MCP server mode, streaming, dashboard, plugins, diff, clipboard. **Choose for:** quick E2E smoke tests, auth flows, React debugging, vitals measurement, SPA navigation, AI agent browser workflows. |
@@ -93,11 +108,16 @@
 | **e2e-testing-lessons** | Lessons from 15-phase E2E testing: auth, API contracts, tool selection, hybrid methodology. |
 | **web-design-guidelines** | Review UI code against Web Interface Guidelines. Accessibility, best-practice compliance. |
 
-> **📌 `agent-browser` vs `playwright-cli`:** Both drive real Chromium. Use **`agent-browser`** for fast interactive flows — compact snapshots, auth vault, React DevTools, Core Web Vitals, SPA `pushstate`. Use **`playwright-cli`** for test suites — multi-browser (Firefox/WebKit/Edge), `pause-at` debugging, `request`/`response-body` inspection, `route` mocking, annotated video, CDP attach. Both can run together; use `playwright-cli attach --cdp` to inspect an `agent-browser` session.
+> **📌 Browser Tool Quick Guide:**
+> - **Quick smoke tests, auth flows, React debugging, vitals →** `agent-browser`
+> - **Playwright test suites, cross-browser, HTTP deep-dive →** `playwright-cli`
+> - **Both can run together:** `playwright-cli attach --cdp` to inspect an `agent-browser` session
 
 ---
 
 ## 6. Code Quality, Security & Architecture
+
+> **Standards, reviews, and hardening.**
 
 | Skill | Description |
 |-------|-------------|
@@ -108,8 +128,8 @@
 | **vulnerability-scanner** | Advanced vulnerability analysis: OWASP 2025, supply chain security, attack surface mapping, risk prioritization. |
 | **clean-code** | Pragmatic coding standards: concise, direct, no over-engineering, no unnecessary comments. |
 | **code-simplification** | Refactor code for clarity without changing behavior. Reduce complexity, improve maintainability. |
-| **debugging-and-error-recovery** | Systematic root-cause debugging. Use when tests fail, builds break, or behavior doesn't match expectations. Find and fix the root cause rather than guessing. |
-| **lint-and-validate** | Automatic quality control: linting, static analysis, syntax correctness. Use after every code modification. Triggers: lint, format, check, validate, types, static analysis. |
+| **debugging-and-error-recovery** | Systematic root-cause debugging. Use when tests fail, builds break, or behavior doesn't match expectations. |
+| **lint-and-validate** | Automatic quality control: linting, static analysis, syntax correctness. Use after every code modification. |
 | **source-driven-development** | Every framework decision backed by official docs. Source-cited, verified, no stale patterns. |
 | **deprecation-and-migration** | Deprecation and migration management. Remove old systems, migrate users, sunset features. |
 | **verification-and-review-protocol** | Feedback protocol, subagent reviews, verification gates, "Iron Law" preventing false completion claims. |
@@ -118,6 +138,8 @@
 ---
 
 ## 7. Planning, Workflow & Project Management
+
+> **Process, scoping, and delivery management.**
 
 | Skill | Description |
 |-------|-------------|
@@ -133,9 +155,9 @@
 | **orchestrator-toolkit** | Pure-Python orchestration: task management, complexity analysis, decomposition, persistence, recovery. |
 | **loop-builder** | Design unattended agent "loops": scheduled, self-verifying workflows for recurring tasks. |
 | **task-review** | After complex tasks, evaluate whether to save the path as a reusable skill. |
-| **distill-codebase-skill** | Reference template for distilling codebase knowledge into a reusable SKILL.md. Use after major updates, security remediation, or architectural overhauls to capture lessons learned, anti-patterns, debugging guides, and best practices for future agents. |
-| **to-distill-project-into-skill** | Meta-skill for distilling a complete project codebase into a comprehensive, maintainable `SKILL.md` document. Follows a structured **Six-Phase Distillation Process** (ANALYZE → PLAN → VALIDATE → IMPLEMENT → VERIFY → DELIVER) to produce a production-grade project skill with 20 core sections covering project identity, tech stack, design system, architecture, hooks, content, accessibility, anti-patterns, debugging, pre-ship checklist, lessons learned, pitfalls, best practices, coding patterns, responsive breakpoints, z-index, colors, and TypeScript interfaces. **Scope:** Optimized for modern **web application** codebases (React, Vue, Svelte, Angular, etc.). For non-web projects, adapt web-specific sections (§4, §6, §8, §17, §18, §19) to your domain. Use after completing a major project update, security remediation, architectural overhaul, or whenever the codebase has accumulated hard-won knowledge that a single reference document would prevent repeated mistakes. |
-| **project-architecture-document-md** | Create a comprehensive Project Architecture Document (PAD) for any codebase. Covers executive summary, tech stack with version pinning, Architecture Decision Records (ADRs), system topology diagrams, layer models, annotated directory structures, critical code patterns with invariants, database schemas, security architecture, testing strategy, build/deployment, developer handbook, and known issues. Produces a single source-of-truth markdown document for onboarding, debugging, and replication. |
+| **distill-codebase-skill** | Reference template for updating an existing SKILL.md after a project update. |
+| **to-distill-project-into-skill** | Meta-skill for producing a production-grade SKILL.md. Six-Phase Distillation Process (ANALYZE → PLAN → VALIDATE → IMPLEMENT → VERIFY → DELIVER). 20 core sections for web app codebases. Use after major updates, security remediation, or architectural overhauls to capture lessons learned, anti-patterns, and best practices. |
+| **project-architecture-document-md** | Create a comprehensive Project Architecture Document (PAD). Covers tech stack, ADRs, system topology, directory structures, code patterns, DB schemas, security, testing, build/deployment, developer handbook. |
 | **idea-refine** | Iterative idea refinement through divergent and convergent thinking. |
 | **context-engineering** | Optimize agent context setup for new sessions, task switching, or degrading output quality. |
 | **context-anchor** | Recover from context compaction by scanning memory files and surfacing where you left off. |
@@ -146,6 +168,8 @@
 ---
 
 ## 8. Documentation & Content Creation
+
+> **Writing, formatting, and publishing.**
 
 | Skill | Description |
 |-------|-------------|
@@ -168,6 +192,8 @@
 
 ## 9. Career, Learning & Personal Development
 
+> **Professional growth, education, and personal tools.**
+
 | Skill | Description |
 |-------|-------------|
 | **resume-builder** | Generate/optimize Chinese resumes. STAR rewriting, ATS keyword check, industry templates, multi-format export. |
@@ -188,6 +214,8 @@
 ---
 
 ## 10. DevOps, Infrastructure & External Integrations
+
+> **Deployment, cloud, integrations, and tooling.**
 
 | Skill | Description |
 |-------|-------------|
@@ -219,9 +247,9 @@
 
 | # | Category | Count |
 |---|----------|-------|
-| 1 | Frontend Development & UI Engineering | 15 |
+| 1 | Frontend Development & UI Engineering | 17 |
 | 2 | Design Artifacts & Visual Creation | 9 |
-| 3 | Full-Stack & Backend Development | 10 |
+| 3 | Full-Stack & Backend Development | 9 |
 | 4 | AI / ML / Multimodal SDK Skills | 8 |
 | 5 | Testing, QA & Performance | 14 |
 | 6 | Code Quality, Security & Architecture | 13 |
@@ -229,127 +257,20 @@
 | 8 | Documentation & Content Creation | 14 |
 | 9 | Career, Learning & Personal Development | 14 |
 | 10 | DevOps, Infrastructure & External Integrations | 21 |
-| | **Total** | **139** |
+| | **Total** | **140** |
 
 ---
 
 ## How to Use This Catalog
 
-When a task arrives, identify which category it falls into, then scan the table for the most specific match. Each description tells you **what** the skill does and **when** to trigger it. For full details, read the `SKILL.md` at the skill path.
+1. **Identify the task category** → scan the relevant section
+2. **Read the description** → confirm the skill matches your need
+3. **Read the `SKILL.md`** for full workflow details
+4. **Cross-reference notes** point to related skills in other categories
 
-**Skill discovery priority:**
-1. Check this catalog by category → name → description
-2. Read the relevant `SKILL.md` for full workflow details
-3. For academic queries → `aminer-academic-search` takes precedence over general web search
-4. For framework code → `source-driven-development` ensures doc-backed correctness
-5. For vague ideas → `idea-refine` or `spec-driven-development` before any implementation
-
----
-
-Comparison: to-distill-project-into-skill vs. distill-codebase-skill 
- 
-### 1. Scope & Purpose 
- 
-│ Dimension │ to-distill-project-into-skill │ distill-codebase-skill │ 
-│---│---│---│
-│ Purpose │ Meta-skill for producing a production-grade SKILL.md from scratch for any web project │ Reference template for updating an existing SKILL.md after a project update │ 
-│ Primary use case │ "I need to create a comprehensive project reference for future AI agents" │ "I just finished a sprint — here's what I updated in the SKILL.md" │ 
-│ Scope │ Web application codebases (React, Vue, etc.) │ General codebase (less framework-specific) │ 
-│ Document type │ Full meta-skill with 6-phase process │ Reference template / example output │ 
-│ Size │ 721 lines (meta-skill itself) │ 2404+ lines (example output, not the skill itself) │ 
- 
-### 2. Structure & Content 
- 
-│ Feature │ to-distill-project-into-skill │ distill-codebase-skill │ 
-│---│---│---│
-│ Phases │ Six explicit phases: ANALYZE → PLAN → VALIDATE → IMPLEMENT → VERIFY → DELIVER │ Documents "What Was Updated" in a single phase │ 
-│ Sections │ 20 standardized sections with full specifications │ Documents which sections were touched in the update │ 
-│ Validation │ Rigorous checklist (version matching, test counts, file path verification) │ 10-point validation after the fact │ 
-│ Maintenance │ Drift detection script, version numbering scheme │ None documented │ 
-│ Anti-patterns │ Section on what NOT to include/do in SKILL.md writing │ Documents bugs found (XSS, race conditions, dead code) │ 
-│ Templates │ §7 with 4 copy-pasteable templates │ No templates — it's an output artifact │ 
- 
-### 3. Audience 
- 
-│ Audience │ to-distill-project-into-skill │ distill-codebase-skill │ 
-│---│---│---│
-│ Any coding agent │ ✅ Yes — designed to guide any agent to produce their own project skill │ ✅ Yes — but as a reference example, not a guide │ 
-│ Future maintainers │ Secondary │ Primary (captures "what changed" for maintainers) │ 
-│ New team members │ ✅ Yes — comprehensive onboarding │ ✅ Yes — but only for the specific update │ 
- 
-### 4. Key Differences in Approach 
- 
-│ Aspect │ to-distill-project-into-skill │ distill-codebase-skill │ 
-│---│---│
-│ Process │ Forward-looking: "Follow this process to produce a skill" │ Backward-looking: "Here's what I did in this update" │ 
-│ Generality │ Generic meta-process (but web-focused) │ Specific to the OneStopNews project │ 
-│ Prescriptive vs. Descriptive │ Prescriptive: Tells you HOW to write a skill │ Descriptive: Shows you WHAT was written │ 
-│ Code verification │ Built-in verification commands (grep, npm list, tsc) │ Post-hoc validation (10-point checklist) │ 
-│ Evolution guidance │ §6.3 "Drift Detection" with automated script │ None │ 
- 
-### 5. Practical Usage 
- 
-Use to-distill-project-into-skill when: 
-- You want to create a project-specific SKILL.md from scratch or do a major update 
-- You need a structured, repeatable process 
-- You want validation checkpoints and quality gates 
-- You need templates for sections like "Tech Stack Table" or "Anti-Pattern Entry" 
- 
-Use distill-codebase-skill when: 
-- You want a reference example of what a finished skill looks like 
-- You need to see how updates are documented incrementally (e.g., "Phase 25 content added") 
-- You want a concrete example to show to stakeholders or team members 
-- You're learning by example rather than by process 
- 
-### 6. Relationship Between the Two 
- 
-``` 
- ┌─────────────────────────────────────────────────────────────────┐ 
- │  to-distill-project-into-skill                                  │ 
- │  (Meta-skill — the PROCESS of creating skills)                  │ 
- │                                                                 │ 
- │  Phase 1: ANALYZE → Phase 2: PLAN → Phase 3: VALIDATE           │ 
- │  Phase 4: IMPLEMENT → Phase 5: VERIFY → Phase 6: DELIVER        │ 
- │                                                                 │ 
- │  Output: PROJECT_NAME_SKILL.md                                  │ 
- │  Example output for StoryIntoVideo: storyintovideo_SKILL.md     │ 
- └─────────────────────────────────────────────────────────────────┘ 
-                                │ 
-                                ▼ 
- ┌─────────────────────────────────────────────────────────────────┐ 
- │  distill-codebase-skill                                         │ 
- │  (Reference template — the PRODUCT of using the process)        │ 
- │                                                                 │ 
- │  Shows: "Here's what it looks like when you do it"              │ 
- │  Example: onestopnews_SKILL.md (2404 → 2646 lines, v2→v3)       │ 
- │                                                                 │ 
- │  Documents: "What was updated, what was validated, what's new"  │ 
- └─────────────────────────────────────────────────────────────────┘ 
-``` 
- 
-### 7. Analogy 
- 
-- to-distill-project-into-skill = A cookbook with recipes, techniques, and quality checks for making a specific dish (a project skill) 
-- distill-codebase-skill = A photo album showing finished dishes with captions explaining what was changed in the latest iteration 
- 
-### 8. Recommendation 
- 
-│ Scenario │ Which to Use │ 
-│---│---│
-│ Starting a new project and need a skill document │ to-distill-project-into-skill │ 
-│ Major project update after several sprints │ to-distill-project-into-skill (run the full 6-phase process) │ 
-│ Minor sprint update — just finished a sprint │ distill-codebase-skill (incremental update format) │ 
-│ Want to learn how to structure a project skill │ Both — meta-skill for the process, reference template for examples │ 
-│ Team member asks "what changed this sprint?" │ distill-codebase-skill (shows the "what" clearly) │ 
- 
----
- 
-### Conclusion 
- 
-They serve complementary purposes: 
- 
-1. to-distill-project-into-skill is a meta-skill — a comprehensive process for producing project-specific skills. It tells you HOW to do it. 
- 
-2. distill-codebase-skill is a reference template — it shows you the expected format and style of the output. It shows you WHAT the result should look like. 
- 
-A coding agent should start with to-distill-project-into-skill for the structured process, and reference distill-codebase-skill as an example of what the final output should resemble.
+**Quick decision rules:**
+- Academic queries → `aminer-academic-search` takes precedence over general web search
+- Framework code → `source-driven-development` ensures doc-backed correctness
+- Vague ideas → `idea-refine` or `spec-driven-development` before implementation
+- Major project updates → `to-distill-project-into-skill` for comprehensive reference
+- Next.js 16 + React  + Tailwind v4 SaaS → `nextjs16-react19-tailwind4-auth5-video-gen`
