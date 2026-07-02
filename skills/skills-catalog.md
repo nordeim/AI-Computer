@@ -134,6 +134,7 @@
 | **loop-builder** | Design unattended agent "loops": scheduled, self-verifying workflows for recurring tasks. |
 | **task-review** | After complex tasks, evaluate whether to save the path as a reusable skill. |
 | **distill-codebase-skill** | Reference template for distilling codebase knowledge into a reusable SKILL.md. Use after major updates, security remediation, or architectural overhauls to capture lessons learned, anti-patterns, debugging guides, and best practices for future agents. |
+| **to-distill-project-into-skill** | Meta-skill for distilling a complete project codebase into a comprehensive, maintainable `SKILL.md` document. Follows a structured **Six-Phase Distillation Process** (ANALYZE → PLAN → VALIDATE → IMPLEMENT → VERIFY → DELIVER) to produce a production-grade project skill with 20 core sections covering project identity, tech stack, design system, architecture, hooks, content, accessibility, anti-patterns, debugging, pre-ship checklist, lessons learned, pitfalls, best practices, coding patterns, responsive breakpoints, z-index, colors, and TypeScript interfaces. **Scope:** Optimized for modern **web application** codebases (React, Vue, Svelte, Angular, etc.). For non-web projects, adapt web-specific sections (§4, §6, §8, §17, §18, §19) to your domain. Use after completing a major project update, security remediation, architectural overhaul, or whenever the codebase has accumulated hard-won knowledge that a single reference document would prevent repeated mistakes. |
 | **project-architecture-document-md** | Create a comprehensive Project Architecture Document (PAD) for any codebase. Covers executive summary, tech stack with version pinning, Architecture Decision Records (ADRs), system topology diagrams, layer models, annotated directory structures, critical code patterns with invariants, database schemas, security architecture, testing strategy, build/deployment, developer handbook, and known issues. Produces a single source-of-truth markdown document for onboarding, debugging, and replication. |
 | **idea-refine** | Iterative idea refinement through divergent and convergent thinking. |
 | **context-engineering** | Optimize agent context setup for new sessions, task switching, or degrading output quality. |
@@ -224,11 +225,11 @@
 | 4 | AI / ML / Multimodal SDK Skills | 8 |
 | 5 | Testing, QA & Performance | 14 |
 | 6 | Code Quality, Security & Architecture | 13 |
-| 7 | Planning, Workflow & Project Management | 20 |
+| 7 | Planning, Workflow & Project Management | 21 |
 | 8 | Documentation & Content Creation | 14 |
 | 9 | Career, Learning & Personal Development | 14 |
 | 10 | DevOps, Infrastructure & External Integrations | 21 |
-| | **Total** | **138** |
+| | **Total** | **139** |
 
 ---
 
@@ -242,3 +243,113 @@ When a task arrives, identify which category it falls into, then scan the table 
 3. For academic queries → `aminer-academic-search` takes precedence over general web search
 4. For framework code → `source-driven-development` ensures doc-backed correctness
 5. For vague ideas → `idea-refine` or `spec-driven-development` before any implementation
+
+---
+
+Comparison: to-distill-project-into-skill vs. distill-codebase-skill 
+ 
+### 1. Scope & Purpose 
+ 
+│ Dimension │ to-distill-project-into-skill │ distill-codebase-skill │ 
+│---│---│---│
+│ Purpose │ Meta-skill for producing a production-grade SKILL.md from scratch for any web project │ Reference template for updating an existing SKILL.md after a project update │ 
+│ Primary use case │ "I need to create a comprehensive project reference for future AI agents" │ "I just finished a sprint — here's what I updated in the SKILL.md" │ 
+│ Scope │ Web application codebases (React, Vue, etc.) │ General codebase (less framework-specific) │ 
+│ Document type │ Full meta-skill with 6-phase process │ Reference template / example output │ 
+│ Size │ 721 lines (meta-skill itself) │ 2404+ lines (example output, not the skill itself) │ 
+ 
+### 2. Structure & Content 
+ 
+│ Feature │ to-distill-project-into-skill │ distill-codebase-skill │ 
+│---│---│---│
+│ Phases │ Six explicit phases: ANALYZE → PLAN → VALIDATE → IMPLEMENT → VERIFY → DELIVER │ Documents "What Was Updated" in a single phase │ 
+│ Sections │ 20 standardized sections with full specifications │ Documents which sections were touched in the update │ 
+│ Validation │ Rigorous checklist (version matching, test counts, file path verification) │ 10-point validation after the fact │ 
+│ Maintenance │ Drift detection script, version numbering scheme │ None documented │ 
+│ Anti-patterns │ Section on what NOT to include/do in SKILL.md writing │ Documents bugs found (XSS, race conditions, dead code) │ 
+│ Templates │ §7 with 4 copy-pasteable templates │ No templates — it's an output artifact │ 
+ 
+### 3. Audience 
+ 
+│ Audience │ to-distill-project-into-skill │ distill-codebase-skill │ 
+│---│---│---│
+│ Any coding agent │ ✅ Yes — designed to guide any agent to produce their own project skill │ ✅ Yes — but as a reference example, not a guide │ 
+│ Future maintainers │ Secondary │ Primary (captures "what changed" for maintainers) │ 
+│ New team members │ ✅ Yes — comprehensive onboarding │ ✅ Yes — but only for the specific update │ 
+ 
+### 4. Key Differences in Approach 
+ 
+│ Aspect │ to-distill-project-into-skill │ distill-codebase-skill │ 
+│---│---│
+│ Process │ Forward-looking: "Follow this process to produce a skill" │ Backward-looking: "Here's what I did in this update" │ 
+│ Generality │ Generic meta-process (but web-focused) │ Specific to the OneStopNews project │ 
+│ Prescriptive vs. Descriptive │ Prescriptive: Tells you HOW to write a skill │ Descriptive: Shows you WHAT was written │ 
+│ Code verification │ Built-in verification commands (grep, npm list, tsc) │ Post-hoc validation (10-point checklist) │ 
+│ Evolution guidance │ §6.3 "Drift Detection" with automated script │ None │ 
+ 
+### 5. Practical Usage 
+ 
+Use to-distill-project-into-skill when: 
+- You want to create a project-specific SKILL.md from scratch or do a major update 
+- You need a structured, repeatable process 
+- You want validation checkpoints and quality gates 
+- You need templates for sections like "Tech Stack Table" or "Anti-Pattern Entry" 
+ 
+Use distill-codebase-skill when: 
+- You want a reference example of what a finished skill looks like 
+- You need to see how updates are documented incrementally (e.g., "Phase 25 content added") 
+- You want a concrete example to show to stakeholders or team members 
+- You're learning by example rather than by process 
+ 
+### 6. Relationship Between the Two 
+ 
+``` 
+ ┌─────────────────────────────────────────────────────────────────┐ 
+ │  to-distill-project-into-skill                                  │ 
+ │  (Meta-skill — the PROCESS of creating skills)                  │ 
+ │                                                                 │ 
+ │  Phase 1: ANALYZE → Phase 2: PLAN → Phase 3: VALIDATE           │ 
+ │  Phase 4: IMPLEMENT → Phase 5: VERIFY → Phase 6: DELIVER        │ 
+ │                                                                 │ 
+ │  Output: PROJECT_NAME_SKILL.md                                  │ 
+ │  Example output for StoryIntoVideo: storyintovideo_SKILL.md     │ 
+ └─────────────────────────────────────────────────────────────────┘ 
+                                │ 
+                                ▼ 
+ ┌─────────────────────────────────────────────────────────────────┐ 
+ │  distill-codebase-skill                                         │ 
+ │  (Reference template — the PRODUCT of using the process)        │ 
+ │                                                                 │ 
+ │  Shows: "Here's what it looks like when you do it"              │ 
+ │  Example: onestopnews_SKILL.md (2404 → 2646 lines, v2→v3)       │ 
+ │                                                                 │ 
+ │  Documents: "What was updated, what was validated, what's new"  │ 
+ └─────────────────────────────────────────────────────────────────┘ 
+``` 
+ 
+### 7. Analogy 
+ 
+- to-distill-project-into-skill = A cookbook with recipes, techniques, and quality checks for making a specific dish (a project skill) 
+- distill-codebase-skill = A photo album showing finished dishes with captions explaining what was changed in the latest iteration 
+ 
+### 8. Recommendation 
+ 
+│ Scenario │ Which to Use │ 
+│---│---│
+│ Starting a new project and need a skill document │ to-distill-project-into-skill │ 
+│ Major project update after several sprints │ to-distill-project-into-skill (run the full 6-phase process) │ 
+│ Minor sprint update — just finished a sprint │ distill-codebase-skill (incremental update format) │ 
+│ Want to learn how to structure a project skill │ Both — meta-skill for the process, reference template for examples │ 
+│ Team member asks "what changed this sprint?" │ distill-codebase-skill (shows the "what" clearly) │ 
+ 
+---
+ 
+### Conclusion 
+ 
+They serve complementary purposes: 
+ 
+1. to-distill-project-into-skill is a meta-skill — a comprehensive process for producing project-specific skills. It tells you HOW to do it. 
+ 
+2. distill-codebase-skill is a reference template — it shows you the expected format and style of the output. It shows you WHAT the result should look like. 
+ 
+A coding agent should start with to-distill-project-into-skill for the structured process, and reference distill-codebase-skill as an example of what the final output should resemble.

@@ -42,6 +42,7 @@ Document Processing
   
 Project Management & Planning  
 - Planning (planning-and-task-breakdown, plan-writing, writing-plans, idea-refine)  
+- Knowledge Distillation (to-distill-project-into-skill) — Meta-skill for distilling a complete project codebase into a comprehensive, maintainable `SKILL.md` document. Follows a structured Six-Phase Distillation Process (ANALYZE → PLAN → VALIDATE → IMPLEMENT → VERIFY → DELIVER) to produce a production-grade project skill with 20 core sections covering project identity, tech stack, design system, architecture, hooks, content, accessibility, anti-patterns, debugging, pre-ship checklist, lessons learned, pitfalls, best practices, coding patterns, responsive breakpoints, z-index, colors, and TypeScript interfaces. Use after completing a major project update, security remediation, architectural overhaul, or whenever the codebase has accumulated hard-won knowledge that a single reference document would prevent repeated mistakes.
 - Documentation & ADRs (documentation-and-adrs)  
 - Architecture Documentation (project-architecture-document-md)  
 - Spec-Driven Development (spec-driven-development)  
