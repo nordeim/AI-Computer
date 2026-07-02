@@ -1,0 +1,81 @@
+{
+  "logoAnimation": "off",
+  "enabledPlugins": {
+    "core@factory-plugins": true,
+    "droid-control@factory-plugins": true
+  },
+  "customModels": [
+    {
+      "model": "moonshotai/kimi-k2.6",
+      "displayName": "NIM Kimi k2.6",
+      "baseUrl": "https://integrate.api.nvidia.com/v1",
+      "apiKey": "${NVIDIA_NIM_API_KEY}",
+      "provider": "generic-chat-completion-api",
+      "maxOutputTokens": 256000
+    },
+    {
+      "model": "deepseek-ai/deepseek-v4-pro",
+      "displayName": "NIM Deepseek v4 pro",
+      "baseUrl": "https://integrate.api.nvidia.com/v1",
+      "apiKey": "${NVIDIA_NIM_API_KEY}",
+      "provider": "generic-chat-completion-api",
+      "maxOutputTokens": 256000
+    },
+    {
+      "model": "deepseek-v4-flash-free",
+      "displayName": "Opencode Zen Deepseek v4 flash",
+      "baseUrl": "https://opencode.ai/zen/v1",
+      "apiKey": "${DROID_OPENCODE_ZEN_API_KEY}",
+      "provider": "generic-chat-completion-api",
+      "maxOutputTokens": 200000
+    },
+    {
+      "model": "mimo-v2.5-free",
+      "displayName": "Opencode Zen Mimo v2.5 free",
+      "baseUrl": "https://opencode.ai/zen/v1",
+      "apiKey": "${DROID_OPENCODE_ZEN_API_KEY}",
+      "provider": "generic-chat-completion-api",
+      "maxOutputTokens": 200000
+    },
+    {
+      "model": "nemotron-3-ultra-free",
+      "displayName": "Opencode Zen Nemotron-3-ultra",
+      "baseUrl": "https://opencode.ai/zen/v1",
+      "apiKey": "${DROID_OPENCODE_ZEN_API_KEY}",
+      "provider": "generic-chat-completion-api",
+      "maxOutputTokens": 200000
+    },
+    {
+      "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "displayName": "Kilo GW Nemotron-3-ultra",
+      "baseUrl": "https://api.kilo.ai/api/gateway",
+      "apiKey": "${DROID_KILO_API_KEY}",
+      "provider": "generic-chat-completion-api",
+      "maxOutputTokens": 256000
+    },
+    {
+      "model": "minimax/minimax-m3:free",
+      "displayName": "Kilo GW Minimax M3",
+      "baseUrl": "https://api.kilo.ai/api/gateway",
+      "apiKey": "${DROID_KILO_API_KEY}",
+      "provider": "generic-chat-completion-api",
+      "maxOutputTokens": 256000
+    },
+    {
+      "model": "minimax-m3",
+      "displayName": "LiteLLM Minimax M3",
+      "baseUrl": "http://localhost:4000/v1",
+      "apiKey": "${LOCAL_PROXY_KEY}",
+      "provider": "litellm-proxy-completion-api",
+      "maxOutputTokens": 256000
+    },
+    {
+      "model": "openrouter/owl-alpha",
+      "displayName": "OpenRouter Owl-Alpha",
+      "baseUrl": "https://openrouter.ai/api/v1",
+      "apiKey": "${DROID_OPENROUTER_API_KEY}",
+      "provider": "generic-chat-completion-api",
+      "maxOutputTokens": 256000
+    }
+  ]
+}
