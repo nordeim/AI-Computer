@@ -2,10 +2,12 @@
 
 ### Document Stats
 
-- 640 lines of structured, actionable guidance
+- 698 lines of structured, actionable guidance
 - 6 major sections with subsections
 - 20 core SKILL.md sections fully specified with purpose, required content, and verification rules
 - 6-Phase Distillation Process with explicit deliverables per phase
+- **Scope:** Optimized for modern **web application** codebases (React, Vue, Svelte, Angular, etc.); see `SKILL.md` end matter for non-web adaptation guidance.
+- **Example output:** `storyintovideo_SKILL.md` (v9.0, 2,041 lines, 524 tests, 97.3% accuracy)
 
 ### Key Contents
 
@@ -20,7 +22,7 @@
 
 ┌──────────────────────────┬────────────────────────────────────────────────────────────────────────────────────┐
 │ Feature                  │ Description                                                                        │
-├──────────────────────────┼────────────────────────────────────────────────────────────────────────────────────┤
+├──────────────────────────────────────────────────────────────────────────────────┼──────────────────────┤
 │ Verification commands    │ Every section includes bash commands to verify claims (grep, find, npm list, etc.) │
 ├──────────────────────────┼────────────────────────────────────────────────────────────────────────────────────┤
 │ Concrete deliverables    │ Each phase output is explicit (e.g., "a one-paragraph Project Identity summary")   │
@@ -32,13 +34,11 @@
 │ Quality gates            │ Checklist ensures no "TODO", "FIXME", or unverifiable claims survive               │
 └──────────────────────────┴────────────────────────────────────────────────────────────────────────────────────┘
 
-### Directly Derived From Real Experience
+### Scope & Limitations
 
-Every prescription in this meta-skill traces to actual work done on the StoryIntoVideo codebase:
-- The 20-section structure matches storyintovideo_SKILL.md exactly
-- The verification commands were tested against the actual codebase during this session
-- The anti-patterns were observed during the audit and remediation work
-- The templates are adapted from the actual content that proved most valuable
+- **Optimized for:** Modern web application codebases (React/Next.js, Vue, Svelte, etc.)
+- **Web-specific sections:** §4 (Design System), §6 (Hooks), §17 (Breakpoints), §18 (Z-Index), §19 (Colors) — these assume a CSS/Tailwind/frontend context
+- **For non-web projects:** See `SKILL.md` end matter for adaptation guidance (omit web-specific sections, rename §6 to "Utility Functions", replace Ts interfaces with your language's type system)
 
 ---
 

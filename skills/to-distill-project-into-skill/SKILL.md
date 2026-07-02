@@ -17,7 +17,7 @@ tags:
 
 # Distill Project Into Skill — Meta-SKILL
 
-> **Purpose:** Guide any coding agent to produce a comprehensive, production-grade `SKILL.md` for any given codebase by following a structured, six-phase validation and distillation process.
+> **Purpose:** Guide any coding agent to produce a comprehensive, production-grade `SKILL.md` for modern **web application** codebases (React, Vue, Svelte, Angular, etc.) by following a structured, six-phase validation and distillation process.
 >
 > **When to use:** After completing a major project update, security remediation, architectural overhaul, or whenever the codebase has accumulated enough hard-won knowledge that a single reference document would prevent repeated mistakes.
 >
