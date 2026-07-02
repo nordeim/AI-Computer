@@ -32,7 +32,8 @@ tags:
 3. [Section Specifications](#3-section-specifications)
 4. [Validation Checklist](#4-validation-checklist)
 5. [Anti-Patterns for SKILL.md Authors](#5-anti-patterns-for-skillmd-authors)
-6. [Appendix: Example Section Templates](#6-appendix-example-section-templates)
+6. [Skill Maintenance & Evolution](#6-skill-maintenance-and-evolution)
+7. [Appendix: Example Section Templates](#7-appendix-example-section-templates)
 
 ---
 
@@ -425,7 +426,7 @@ This section prescribes the **exact content** for each of the 20 standard sectio
 - TypeScript pitfalls (e.g., "Don't use `any`")
 - Testing pitfalls (e.g., "Don't use `vi.fn()` directly in `vi.mock()` factory")
 - Design system pitfalls (e.g., "Don't use `amber-400`")
-- Security pitfalls (e.g., "Don't read给他一个给用户未清理的输入")
+- Security pitfalls (e.g., "Don't read uncleaned user input")
 - Performance pitfalls (e.g., "Don't import `@/lib/storage/r2` in client components")
 
 **Verification:** Every pitfall should be demonstrable with a "don't do this / do this instead" code example.
@@ -569,11 +570,32 @@ Before declaring a SKILL.md complete, verify ALL of the following:
 
 ---
 
-## 5. Skill Maintenance & Evolution
+## 5. Anti-Patterns for SKILL.md Authors
+
+### §5.1 What NOT to Include
+
+- **Generic framework tutorials** — Link to official docs instead
+- **Speculative future work** — "We might switch to X" — not useful
+- **Personal opinions without evidence** — "I think X is better" needs a test or metric
+- **Duplicated content** — If the README covers it, reference the README
+- **Placeholder version numbers** — `"next": "^16.x"` is useless; lock the exact version
+- **Unverifiable claims** — Every claim must be checkable against the codebase
+
+### §5.2 What NOT to Do
+
+- **Don't write the whole document at once** — section by section, with verification between each
+- **Don't copy from old docs without re-verifying** — code drifts
+- **Don't skip the "why"** — every rule needs a rationale (e.g., "CSS-only animation for Lighthouse ≥95")
+- **Don't forget the negative space** — document what you DON'T do (e.g., "no Framer Motion")
+- **Don't make non-commitments** — "We might add i18n later" → just say "no i18n currently"
+
+---
+
+## 6. Skill Maintenance & Evolution
 
 A SKILL.md is not "write once, read forever." It must evolve with the codebase. Without maintenance, it becomes a liability — outdated instructions that mislead more than help.
 
-### §5.1 When to Update
+### §6.1 When to Update
 
 | Trigger | Action |
 |---|---|
@@ -585,7 +607,7 @@ A SKILL.md is not "write once, read forever." It must evolve with the codebase. 
 | Team member onboarding confusion | If someone asked "how do I...?", that section needs expansion |
 | Sprint 3+ without update | Schedule dedicated "doc maintenance" half-day |
 
-### §5.2 Version Numbering
+### §6.2 Version Numbering
 
 Use semantic versioning for the SKILL.md itself:
 
@@ -598,7 +620,7 @@ v2.0.0  Major — dependency upgrade (e.g., Next.js 15 → 16) changed patterns
 
 **Rule:** Bump the minor version on every sprint. Bump the major version on framework upgrades.
 
-### §5.3 Drift Detection
+### §6.3 Drift Detection
 
 Run this monthly to detect when the codebase has outpaced the docs:
 
@@ -612,7 +634,7 @@ ERRORS=0
 UNIT_TESTS=$(pnpm test 2>&1 | grep "Tests" | awk '{print $2}')
 SKILL_UNIT=$(grep "Tests.*pass" docs/SKILL.md | head -1 | grep -oP '\d+(?=\s+unit)')
 if [ "$UNIT_TESTS" != "$SKILL_UNIT" ]; then
-  echo "⚠️  SKILL.md claims $SKILL_UNIT unit tests; actual: $UNIT_TESTS"
+  echo "⚠  SKILL.md claims $SKILL_UNIT unit tests; actual: $UNIT_TESTS"
   ERRORS=$((ERRORS+1))
 fi
 
@@ -620,7 +642,7 @@ fi
 COMPONENT_COUNT=$(find src/components -name "*.tsx" | wc -l)
 SKILL_COMPONENTS=$(grep -oP '\d+(?=\s+components)' docs/SKILL.md | head -1)
 if [ "$COMPONENT_COUNT" != "$SKILL_COMPONENTS" ]; then
-  echo "⚠️  SKILL.md claims $SKILL_COMPONENTS components; actual: $COMPONENT_COUNT"
+  echo "⚠  SKILL.md claims $SKILL_COMPONENTS components; actual: $COMPONENT_COUNT"
   ERRORS=$((ERRORS+1))
 fi
 
@@ -628,14 +650,14 @@ fi
 ENV_COUNT=$(grep -c "^env\." src/lib/env/index.ts 2>/dev/null || echo "0")
 SKILL_ENV=$(grep -oP '\d+(?=\s+env vars)' docs/SKILL.md | head -1 || echo "0")
 if [ "$ENV_COUNT" != "$SKILL_ENV" ]; then
-  echo "⚠️  SKILL.md claims $SKILL_ENV env vars; actual: $ENV_COUNT"
+  echo "⚠  SKILL.md claims $SKILL_ENV env vars; actual: $ENV_COUNT"
   ERRORS=$((ERRORS+1))
 fi
 
 # 4. Verify no TODO/FIXME remain
 TODO_COUNT=$(grep -c "TODO\|FIXME" docs/SKILL.md || echo "0")
 if [ "$TODO_COUNT" -gt 0 ]; then
-  echo "⚠️  Found $TODO_COUNT TODO/FIXME in SKILL.md"
+  echo "⚠  Found $TODO_COUNT TODO/FIXME in SKILL.md"
   ERRORS=$((ERRORS+1))
 fi
 
@@ -648,7 +670,7 @@ fi
 
 ---
 
-## 6. Appendix: Example Section Templates
+## 7. Appendix: Example Section Templates
 
 ### Template: §2 Tech Stack Table
 
