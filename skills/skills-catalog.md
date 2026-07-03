@@ -15,6 +15,7 @@
 | **frontend-design** | Design thinking for web UI — color, typography, layout, component design. Teaches principles, not fixed values. |
 | **react19-ts6-vite8-tailwindv4-mvp** | MVP/production React 19 + Vite 8 + Tailwind v4. File-based routing, pnpm, Vitest + Playwright. Use for greenfield web apps with React + Vite (not Next.js). |
 | **nextjs16-tailwind4** | Next.js 16 + React  + Tailwind v4 with Framer Motion. Luxury-grade, avant-garde UI, OWASP 2025, Core Web Vitals, WCAG AAA. Use for distinctive marketing sites with animated motion. |
+| **nextjs16-react19-tailwind4-full-stack** | Next.js 16 + React 19 + Tailwind v4 full-stack marketing + booking + memberships + admin. Drizzle ORM, Auth.js v5 JWT, Inngest, Stripe, Replicate SDXL, Cloudflare R2. 5-layer architecture, CSS-only animations, brutalist dark-mode, WCAG AAA, OWASP hardening, Vitest + Playwright. Use for production marketing sites, membership platforms, booking systems, or any Next.js 16 full-stack project. |
 | **nextjs-react-expert** | Next.js 16 + React 19 performance (Vercel Engineering). 57 rules: waterfall elimination, bundle size, RSC streaming, Turbopack, React Compiler, Core Web Vitals. Use when profiling or optimizing production React/Next.js apps. |
 | **super-frontend-design** | Master skill: anti-generic strategy, Next.js 16 + React  + Tailwind v4, App Router Server Components, design systems, Vercel-grade performance, WCAG AAA. |
 | **tailwind-patterns** | Tailwind CSS v4 CSS-first `@theme` config, container queries, design tokens, modern utility patterns. |
@@ -273,4 +274,5 @@
 - Framework code → `source-driven-development` ensures doc-backed correctness
 - Vague ideas → `idea-refine` or `spec-driven-development` before implementation
 - Major project updates → `to-distill-project-into-skill` for comprehensive reference
-- Next.js 16 + React  + Tailwind v4 SaaS → `nextjs16-react19-tailwind4-auth5-video-gen`
+- Next.js 16 + React  + Tailwind v4 SaaS with AI pipeline → `nextjs16-react19-tailwind4-auth5-video-gen`
+- Next.js 16 + React  + Tailwind v4 full-stack marketing/booking/memberships → `nextjs16-react19-tailwind4-full-stack`
