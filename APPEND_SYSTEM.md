@@ -4,8 +4,8 @@ Below are some of the skills under `/home/pete/.pi/agent/skills/`:
 
 Development & Engineering  
 - Frontend Development (frontend-design, frontend-development, frontend-ui-engineering, super-frontend-design)  
-- Fullstack Development (fullstack-dev, web-frameworks, nextjs16-react19-postgres17, nextjs16-react19-next-auth5-drizzle-orm)  
-- Framework-Specific Expertise (nextjs16-tailwind4, nextjs-react-expert, react19-ts6-vite8-tailwindv4-mvp, python-patterns, powershell-windows)  
+- Fullstack Development (fullstack-dev, web-frameworks, nextjs16-react19-postgres17, nextjs16-react19-next-auth5-drizzle-orm, nextjs16-react19-tailwind4-full-stack)  
+- Framework-Specific Expertise (nextjs16-tailwind4, nextjs-react-expert, nextjs16-react19-tailwind4-full-stack, react19-ts6-vite8-tailwindv4-mvp, python-patterns, powershell-windows)  
 - API & Interface Design (api-and-interface-design, api-patterns)  
 - UI/UX Design (ui-ux-pro-max, ui-styling, visual-design-foundations, claude-design, scaffold-ui)  
 - Version Control (git-workflow-and-versioning)  
@@ -83,7 +83,7 @@ react19-ts6-vite8-tailwindv4-mvp │ React 19 + TS 6 strict + Vite 8 (Rolldown) 
 web-frameworks                   │ Next.js 16 + React 19 (App Router, RSC, PPR, cacheComponents, async params, standalone output), Turborepo, RemixIcon. 
 nextjs16-react19-postgres17    │ Next.js 16 + React 19 + PostgreSQL 17 + Drizzle ORM, BullMQ, Auth.js v5, Vercel AI SDK, RSS, web push. 
 nextjs16-react19-next-auth5-drizzle-orm │ Next.js 16 + React 19 SaaS with Tailwind v4, Auth.js v5, Drizzle/Neon, Inngest, OpenAI+Replicate+ElevenLabs, Stripe, R2, SSE. 
-fullstack-dev                  │ Next.js 16 + React 19 + TypeScript strict, Tailwind CSS v4, shadcn/ui, Prisma ORM.
+nextjs16-react19-tailwind4-full-stack │ Next.js 16 + React 19 + Tailwind v4 full-stack marketing + booking + memberships + admin. Drizzle ORM, Auth.js v5 JWT, Inngest, Stripe, Replicate SDXL, Cloudflare R2. 5-layer architecture, CSS-only animations, brutalist dark-mode, WCAG AAA, OWASP hardening, Vitest + Playwright.
  
 ### 🧪 Testing & QA 
  
@@ -248,3 +248,25 @@ Yes. Both can run against the same dev server simultaneously (use `--session` to
 1. Use `agent-browser` for quick smoke tests, auth flows, and React debugging during development
 2. Use `playwright-cli` for formal test suites, cross-browser validation, and deep network inspection
 3. Use `playwright-cli attach --cdp` to inspect a browser already opened by `agent-browser`
+
+## Next.js 16 Skill Selection Matrix
+
+This matrix helps quickly select the right Next.js 16 skill for a given project. The skills are ordered from frontend-only to full-stack SaaS with AI pipeline.
+
+| If the project needs... | Choose this skill... |
+|---|---|
+| **Frontend only** — Luxury marketing site with Framer Motion animations | `nextjs16-tailwind4` |
+| **Full-stack marketing** — Booking, memberships, admin with Drizzle ORM, Auth.js v5 JWT, Inngest, Stripe, Replicate, Cloudflare R2 | `nextjs16-react19-tailwind4-full-stack` |
+| **SaaS with AI pipeline** — OpenAI, ElevenLabs, Replicate, Inngest, Stripe, R2, SSE | `nextjs16-react19-next-auth5-drizzle-orm` |
+| **Performance optimization** — RSC streaming, Turbopack, Core Web Vitals, 57 Vercel rules | `nextjs-react-expert` |
+| **Content/news platform** — PostgreSQL 17, BullMQ, RSS/Atom ingestion, web push | `nextjs16-react19-postgres17` |
+| **Greenfield without Next.js** — Vite 8, file-based routing, standalone SPA | `react19-ts6-vite8-tailwindv4-mvp` |
+
+### Quick Decision Guide
+
+- **Frontend-only luxury site** → `nextjs16-tailwind4`
+- **Full-stack marketing/booking/memberships** → `nextjs16-react19-tailwind4-full-stack`
+- **SaaS with AI pipeline (OpenAI, ElevenLabs, etc.)** → `nextjs16-react19-next-auth5-drizzle-orm`
+- **Performance audit & optimization** → `nextjs-react-expert`
+- **News/content platform with RSS** → `nextjs16-react19-postgres17`
+- **SPA without Next.js** → `react19-ts6-vite8-tailwindv4-mvp`
