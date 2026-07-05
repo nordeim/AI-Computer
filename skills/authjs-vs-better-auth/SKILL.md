@@ -10,9 +10,14 @@ Auth.js v5 remains in beta — it has never left the beta channel since the rewr
 
 | Aspect | Auth.js v5 | Better Auth |
 |---|---|---|
-| Release channel | Beta (npm `latest` = v4.x) | Stable v1.x |
+| Release channel | `5.0.0-beta.26+` (npm `latest` = `v4.24.14`) | `1.6.23` stable; `1.7.0-beta` in testing |
 | Next.js 16 support | Peer-dependency conflicts on fresh installs | Fully compatible; `middleware` renamed to `proxy` |
 | Architecture | Framework wrapper (NextAuth-specific) | Framework-agnostic core with Next.js adapter |
+| Maintenance | Original NextAuth team; Better Auth team now also patches Auth.js security issues | Actively developed, TypeScript-first, plugin-based |
+
+## Next.js 16 Compatibility Notes
+
+A GitHub issue confirms Next.js 16's middleware-to-proxy change initially broke Better Auth compatibility, but this was resolved and the library is now documented as "fully compatible with Next.js 16," with `middleware.ts` renamed to `proxy.ts` and the exported function renamed from `middleware` to `proxy`. Auth.js users have filed open compatibility questions about whether Next.js 16 is officially supported and whether the v5 peer-dependency range needs updating, suggesting some friction remains for greenfield Next.js 16 + Auth.js v5 setups. [github](https://github.com/nextauthjs/next-auth/issues/13302)
 
 ## Core Programming Differences
 
@@ -98,7 +103,7 @@ export async function proxy(request) {
   if (!sessionCookie) return redirectToSignIn()
 }
 
-// Page/Route — full validation
+// Full validation belongs in the page/route itself
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
@@ -111,12 +116,14 @@ Both Auth.js and Better Auth docs discourage using proxy/middleware as a full se
 ## Decision Guide
 
 - **Greenfield project:** Favor Better Auth — verified Next.js 16 compatibility, stable release, type-safe plugin architecture (RBAC, 2FA, organizations).
-- **Existing Auth.js codebase:** Weigh migration cost against Auth.js v5's indefinite beta status. The Better Auth team has committed to patching Auth.js security issues.
+- **Existing Auth.js codebase:** Weigh migration cost against Auth.js v5's indefinite beta status. The Better Auth team has committed to patching Auth.js security issues. Budget separate time for a database schema migration if you use persistent sessions rather than JWT-only.
 - **Either library:** Rename `middleware.ts`/`middleware()` to `proxy.ts`/`proxy()` — this is a Next.js 16 platform change, not an auth-library one.
 
 ## References
 
 - https://www.npmjs.com/package/next-auth
+- https://www.reddit.com/r/nextjs/comments/1k5vhfd/authjs_bumped_to_500beta26/
+- https://www.pkgpulse.com/guides/better-auth-vs-nextauth-v5-vs-clerk-2026
 - https://www.npmjs.com/package/better-auth
 - https://better-auth.com/docs/integrations/next
 - https://better-auth.com/docs/guides/next-auth-migration-guide
