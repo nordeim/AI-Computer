@@ -1,6 +1,6 @@
 # Skills Catalog
 
-> **142 skills** organized into 10 categories. Each entry shows the skill name and a concise description of what it does and when to use it. Skills marked with `*` are external (outside `/home/pete/.pi/agent/skills/`).
+> **141 skills** organized into 10 categories. Each entry shows the skill name and a concise description of what it does and when to use it.
 
 ---
 
@@ -50,6 +50,7 @@
 | **image-understand**          | Image analysis via z-ai-web-dev-sdk: OCR, object detection, classification. PNG/JPEG/GIF/WebP/BMP.                                                  |
 | **image-search**              | ZAI in-house image search. Retrieve real images with optional captions, OSS-hosted direct URLs.                                                     |
 | **web-shader-extractor**      | Extract WebGL/Canvas/Shader effects from live pages, deobfuscate, and port to standalone native JS projects.                                        |
+| **comfyui-workflow-scaffold** | Create valid ComfyUI workflow JSON templates for Apple Silicon image generation. Scaffold LoRA/ControlNet/VAE nodes, validate Mac MPS/MLX compatibility. |
 
 > **Cross-reference:** `aesthetic` and `visual-design-foundations` are also highly relevant to frontend development (Category 1).
 
@@ -239,8 +240,6 @@
 | **using-agent-skills**               | Meta-skill for discovering and invoking the right skill for any task.                                                            |
 | **pi-agent-customize-system-prompt** | Customize the Pi Agent system prompt. Add custom tools, workflow instructions.                                                   |
 | **tools-cli**                        | Standalone CLI for file operations (read/glob/grep/edit/write) without a full Claude session.                                    |
-| **microsoft-foundry** *              | Deploy/manage Azure Foundry agents: Docker build, ACR push, hosted agents, batch/continuous eval, prompt optimization.           |
-| **librarian** *                      | Research open-source libraries with evidence-backed answers and GitHub permalinks. Cite exact lines of code.                     |
 | **memory-architect**                 | Bootstrap/audit/recover OpenClaw 3-layer memory (workspace files, LCM database, QMD semantic index).                             |
 | **memory-architecture**              | OpenClaw memory system architecture reference. Setup, troubleshooting, workspace/LCM/QMD interaction.                            |
 | **design**                           | Router for design-related HTML artifact tasks. Delegates to the correct artifact skill.                                          |
@@ -253,7 +252,7 @@
 | #   | Category                                       | Count   |
 | --- | ---------------------------------------------- | ------- |
 | 1   | Frontend Development & UI Engineering          | 18      |
-| 2   | Design Artifacts & Visual Creation             | 9       |
+| 2   | Design Artifacts & Visual Creation             | 10      |
 | 3   | Full-Stack & Backend Development               | 10      |
 | 4   | AI / ML / Multimodal SDK Skills                | 8       |
 | 5   | Testing, QA & Performance                      | 14      |
@@ -261,8 +260,8 @@
 | 7   | Planning, Workflow & Project Management        | 21      |
 | 8   | Documentation & Content Creation               | 14      |
 | 9   | Career, Learning & Personal Development        | 14      |
-| 10  | DevOps, Infrastructure & External Integrations | 21      |
-|     | **Total**                                      | **142** |
+| 10  | DevOps, Infrastructure & External Integrations | 19      |
+|     | **Total**                                      | **141** |
 
 ---
 
