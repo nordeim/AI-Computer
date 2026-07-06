@@ -4,7 +4,7 @@ Below are some of the skills under `/home/pete/.pi/agent/skills/`:
 
 Development & Engineering  
 - Frontend Development (frontend-design, frontend-development, frontend-ui-engineering, super-frontend-design)  
-- Fullstack Development (fullstack-dev, web-frameworks, nextjs16-react19-postgres17, nextjs16-react19-next-auth5-drizzle-orm, nextjs16-react19-tailwind4-full-stack)  
+- Fullstack Development (fullstack-dev, web-frameworks, nextjs16-react19-postgres17, nextjs16-react19-next-auth5-drizzle-orm, nextjs16-react19-tailwind4-full-stack, nextjs16-react19-tailwindv4-trpcv11-drizzle-better-auth)  
 - Framework-Specific Expertise (nextjs16-tailwind4, nextjs-react-expert, nextjs16-react19-tailwind4-full-stack, react19-ts6-vite8-tailwindv4-mvp, python-patterns, powershell-windows)  
 - API & Interface Design (api-and-interface-design, api-patterns)  
 - UI/UX Design (ui-ux-pro-max, ui-styling, visual-design-foundations, claude-design, scaffold-ui)  
@@ -83,7 +83,8 @@ react19-ts6-vite8-tailwindv4-mvp │ React 19 + TS 6 strict + Vite 8 (Rolldown) 
 web-frameworks                   │ Next.js 16 + React 19 (App Router, RSC, PPR, cacheComponents, async params, standalone output), Turborepo, RemixIcon. 
 nextjs16-react19-postgres17    │ Next.js 16 + React 19 + PostgreSQL 17 + Drizzle ORM, BullMQ, Auth.js v5, Vercel AI SDK, RSS, web push. 
 nextjs16-react19-next-auth5-drizzle-orm │ Next.js 16 + React 19 SaaS with Tailwind v4, Auth.js v5, Drizzle/Neon, Inngest, OpenAI+Replicate+ElevenLabs, Stripe, R2, SSE. 
-nextjs16-react19-tailwind4-full-stack │ Next.js 16 + React 19 + Tailwind v4 full-stack marketing + booking + memberships + admin. Drizzle ORM, Auth.js v5 JWT, Inngest, Stripe, Replicate SDXL, Cloudflare R2. 5-layer architecture, CSS-only animations, brutalist dark-mode, WCAG AAA, OWASP hardening, Vitest + Playwright.
+nextjs16-react19-tailwind4-full-stack │ Next.js 16 + React 19 + Tailwind v4 full-stack marketing + booking + memberships + admin. Drizzle ORM, Auth.js v5 JWT, Inngest, Stripe, Replicate SDXL, Cloudflare R2. 5-layer architecture, CSS-only animations, brutalist dark-mode, WCAG AAA, OWASP hardening, Vitest + Playwright. 
+nextjs16-react19-tailwindv4-trpcv11-drizzle-better-auth │ Next.js 16 + React 19 + Tailwind v4 + tRPC v11 + Drizzle ORM + Better Auth (replaces Auth.js v5) in Turborepo monorepo. 50+ anti-patterns, 24 lessons, production patterns (advisory-lock concurrency, idempotent webhooks, SSE streaming). Anti-generic design, WCAG AAA, OWASP 2025, TDD. 
  
 ### 🧪 Testing & QA 
  
@@ -257,6 +258,7 @@ This matrix helps quickly select the right Next.js 16 skill for a given project.
 |---|---|
 | **Frontend only** — Luxury marketing site with Framer Motion animations | `nextjs16-tailwind4` |
 | **Full-stack marketing** — Booking, memberships, admin with Drizzle ORM, Auth.js v5 JWT, Inngest, Stripe, Replicate, Cloudflare R2 | `nextjs16-react19-tailwind4-full-stack` |
+| **SaaS with tRPC + Better Auth** — tRPC v11, Drizzle ORM, Better Auth (not Auth.js v5), Turborepo, Stripe, 50+ anti-patterns, advisory-lock concurrency | `nextjs16-react19-tailwindv4-trpcv11-drizzle-better-auth` |
 | **SaaS with AI pipeline** — OpenAI, ElevenLabs, Replicate, Inngest, Stripe, R2, SSE | `nextjs16-react19-next-auth5-drizzle-orm` |
 | **Performance optimization** — RSC streaming, Turbopack, Core Web Vitals, 57 Vercel rules | `nextjs-react-expert` |
 | **Content/news platform** — PostgreSQL 17, BullMQ, RSS/Atom ingestion, web push | `nextjs16-react19-postgres17` |
@@ -266,6 +268,7 @@ This matrix helps quickly select the right Next.js 16 skill for a given project.
 
 - **Frontend-only luxury site** → `nextjs16-tailwind4`
 - **Full-stack marketing/booking/memberships** → `nextjs16-react19-tailwind4-full-stack`
+- **SaaS with tRPC + Better Auth + Drizzle** → `nextjs16-react19-tailwindv4-trpcv11-drizzle-better-auth`
 - **SaaS with AI pipeline (OpenAI, ElevenLabs, etc.)** → `nextjs16-react19-next-auth5-drizzle-orm`
 - **Performance audit & optimization** → `nextjs-react-expert`
 - **News/content platform with RSS** → `nextjs16-react19-postgres17`
