@@ -1,4 +1,4 @@
-# ~/nvidia-proxy/config.yaml
+# ~/litellm/openrouter.yaml
 # -----------------------------------------------------------------------------
 # LiteLLM Proxy configuration for routing local traffic to NVIDIA NIM
 # (minimaxai/minimax-m3) under both OpenAI and Anthropic API surfaces.
@@ -6,53 +6,91 @@
 
 model_list:
   # --- Primary alias: what clients type as "model" in their requests ---------
-  - model_name: minimax-m3                    # user-facing alias (any string)
-    litellm_params:
-      model: openrouter/tencent/hy3:free  # actual upstream model id
-      api_key: os.environ/OPENROUTR_API_KEY  # read from env, never inline
-      # Optional: per-deployment RPM cap to stay under NVIDIA's 40 RPM free tier
-      rpm: 10
-      model_info:
-        input_cost_per_token: 0.0
-        output_cost_per_token: 0.0
-      thinking:
-        type: "enabled"
-
-  # --- Optional convenience aliases (so clients can call "gpt-4o" etc.) -----
-  - model_name: gpt-4o
+  - model_name: claude-3-5-sonnet-20241022
     litellm_params:
       model: openrouter/tencent/hy3:free
-      api_key: os.environ/OPENROUTER_API_KEY
-      rpm: 10
-      model_info:
-        input_cost_per_token: 0.0
-        output_cost_per_token: 0.0
-      thinking:
-        type: "enabled"
+      api_key: os.environ/OPENROUTER_AAPI_KEY
+      rpm: 18
+      timeout: 300
+    model_info:
+      input_cost_per_token: 0.0
+      output_cost_per_token: 0.0
 
   - model_name: claude-3-5-sonnet-20241022
     litellm_params:
       model: openrouter/tencent/hy3:free
-      api_key: os.environ/OPENROUTER_API_KEY
-      rpm: 10
-      model_info:
-        input_cost_per_token: 0.0
-        output_cost_per_token: 0.0
-      thinking:
-        type: "enabled"
+      api_key: os.environ/OPENROUTER_BAPI_KEY
+      rpm: 18
+      timeout: 300
+    model_info:
+      input_cost_per_token: 0.0
+      output_cost_per_token: 0.0
 
-# --- LiteLLM-wide settings --------------------------------------------------
+  - model_name: claude-3-5-sonnet-20241022
+    litellm_params:
+      model: openrouter/tencent/hy3:free
+      api_key: os.environ/OPENROUTER_CAPI_KEY
+      rpm: 18
+      timeout: 300
+    model_info:
+      input_cost_per_token: 0.0
+      output_cost_per_token: 0.0
+
+  - model_name: claude-3-5-sonnet-20241022
+    litellm_params:
+      model: openrouter/tencent/hy3:free
+      api_key: os.environ/OPENROUTER_DAPI_KEY
+      rpm: 18
+      timeout: 300
+    model_info:
+      input_cost_per_token: 0.0
+      output_cost_per_token: 0.0
+
+  # --- Convenience Aliases (Routing to the same pool) ---
+  - model_name: gpt-4o
+    litellm_params:
+      model: openrouter/tencent/hy3:free
+      api_key: os.environ/OPENROUTER_API_KEY
+      rpm: 18
+      timeout: 600
+    model_info:
+      input_cost_per_token: 0.0
+      output_cost_per_token: 0.0
+
+  - model_name: minimax-m3
+    litellm_params:
+      model: openrouter/tencent/hy3:free
+      api_key: os.environ/OPENROUTER_API_KEY
+      rpm: 18
+      timeout: 600
+    model_info:
+      input_cost_per_token: 0.0
+      output_cost_per_token: 0.0
+
+# -----------------------------------------------------------------------------
+# Router & Load Balancing Mechanics
+# -----------------------------------------------------------------------------
+router_settings:
+  routing_strategy: simple-shuffle    # RECOMMENDED: Best performance for multi-key pools
+  num_retries: 3                      # Retries on transient network errors
+  retry_after: 4                      # Seconds to wait before retrying
+
+  # Cooldown Logic: If a key returns 429 or 503, ban it temporarily
+  allowed_fails: 2                    # Allow 2 failures before triggering cooldown
+  cooldown_time: 60                   # Ban the failing key for 60 seconds
+
+# -----------------------------------------------------------------------------
+# Global LiteLLM Settings
+# -----------------------------------------------------------------------------
 litellm_settings:
-  drop_params: true        # silently drop params the upstream doesn't accept
-  set_verbose: false                   # Change to true to debug underlying API headers
-  num_retries: 3           # retry on 429 / 5xx with exponential backoff
-  request_timeout: 600     # MiniMax-M3 supports 1M context — be generous
+  drop_params: true                   # CRITICAL: Strips unsupported params for OpenRouter
+  set_verbose: false                  # Change to true to debug JSON payloads
+  request_timeout: 600                # Global timeout for agentic loops
   streaming_timeout: 600
 
-# --- Proxy-wide settings ----------------------------------------------------
+# -----------------------------------------------------------------------------
+# Proxy Gateway Settings
+# -----------------------------------------------------------------------------
 general_settings:
-  # master_key: os.environ/LOCAL_PROXY_KEY    # required for /v1/messages + virtual keys
-  # Optional: store virtual keys / spend tracking in a local SQLite DB
-  # database_url: sqlite:///./litellm.db
-  # Optional: enable the admin UI at http://localhost:4000/ui
+  # master_key: os.environ/LOCAL_PROXY_KEY
   disable_admin_ui: true
