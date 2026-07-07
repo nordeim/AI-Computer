@@ -22,7 +22,7 @@ model_list:
   - model_name: gpt-4o
     litellm_params:
       model: openrouter/tencent/hy3:free
-      api_key: os.environ/OPENROUTR_API_KEY
+      api_key: os.environ/OPENROUTER_API_KEY
       rpm: 10
       model_info:
         input_cost_per_token: 0.0
@@ -33,7 +33,7 @@ model_list:
   - model_name: claude-3-5-sonnet-20241022
     litellm_params:
       model: openrouter/tencent/hy3:free
-      api_key: os.environ/OPENROUTR_API_KEY
+      api_key: os.environ/OPENROUTER_API_KEY
       rpm: 10
       model_info:
         input_cost_per_token: 0.0
