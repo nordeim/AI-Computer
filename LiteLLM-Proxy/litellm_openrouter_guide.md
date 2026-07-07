@@ -546,3 +546,490 @@ If you want, I can show you how to test a direct client connection using curl fr
 [4] [https://www.reddit.com](https://www.reddit.com/r/HomeNetworking/comments/11trf9i/best_way_to_limit_one_part_of_my_network_to/)
 [5] [https://superuser.com](https://superuser.com/questions/1571984/how-to-block-access-to-localhost-from-the-internet-in-xampp)
 [6] [https://www.fixrunner.com](https://www.fixrunner.com/how-to-fix-error-521-with-wordpress-and-cloudflare/)
+
+---
+
+This is a meticulously structured **Research & Implementation Blueprint** for integrating third-party LLM providers (via middleware like LiteLLM) into Anthropic's **Claude Code** and OpenAI's **Codex CLI**. 
+
+This plan synthesizes the architectural patterns, environment overrides, and provider-specific constraints detailed in your attached guides.
+
+---
+
+# 📘 Research Blueprint: Third-Party LLM Routing for CLI Coding Assistants
+
+## Phase 1: Executive Summary & Core Objective
+**Objective:** Decouple enterprise AI coding assistants (Claude Code, Codex CLI) from their native, hardcoded API endpoints (`api.anthropic.com` / `api.openai.com`) and route their traffic through a local middleware proxy (LiteLLM). 
+**Goal:** Enable the use of cost-effective, open-source, or alternative frontier models (via OpenRouter, NVIDIA NIM, or local Ollama) while maintaining the native tool-use, agentic loops, and UI experiences of the official CLI applications.
+
+---
+
+## Phase 2: The Architectural Paradigm (The Middleware Pattern)
+CLI coding assistants are essentially sophisticated API wrappers. They do not inherently "know" what model is generating the text; they only understand the **API Schema** (Anthropic Messages API or OpenAI Chat Completions/Responses API). 
+
+By intercepting the network request at the local machine level, we can perform **Schema Translation** and **Model Aliasing**.
+
+```text
+[ CLI Application ]  ──(Standard API Request)──> [ LiteLLM Proxy (localhost:4000) ]
+       ▲                                                │
+       │                                                ├──> [ OpenRouter (200+ Models) ]
+       │                                                ├──> [ NVIDIA NIM (Enterprise Free Tier) ]
+       └──────────(Standard API Response)───────────────└──> [ Local Ollama / vLLM ]
+```
+
+---
+
+## Phase 3: Deep Dive — Anthropic Claude Code (CLI)
+Claude Code relies heavily on the **Anthropic Messages API** (`/v1/messages`) and complex tool-use schemas (file editing, bash execution). 
+
+### 1. The Override Mechanism
+Claude Code allows endpoint redirection, but the method differs by OS due to how desktop environments handle environment variables.
+*   **The Environment Variables:** `ANTHROPIC_BASE_URL` and `ANTHROPIC_AUTH_TOKEN`.
+*   **The Linux/Desktop Quirk:** As noted in your Linux guide, CLI tools launched from IDEs or desktop shortcuts often ignore `~/.bashrc`. The **only** persistent override is the `env` block in `~/.claude/settings.json`.
+*   **The Authentication Bypass:** Creating `~/.claude/.credentials.json` with a dummy key (`sk-local-proxy`) and `hasCompletedOnboarding: true` prevents the CLI from forcing an OAuth web login.
+
+### 2. The "Aliasing" Strategy (Tricking the CLI)
+Claude Code hardcodes requests for specific models (e.g., `claude-3-5-sonnet-20241022`). To use a cheaper or free third-party model, LiteLLM must intercept the request for "Claude" and route it elsewhere.
+*   **Example:** Map the alias `claude-3-5-sonnet-20241022` $\rightarrow$ `openrouter/tencent/hy3:free` (as seen in your `openrouter.yaml`).
+*   **Result:** Claude Code thinks it is talking to Sonnet; OpenRouter actually executes the query on Tencent Hunyuan (free tier).
+
+### 3. Critical Schema Gotchas
+*   **Extended Thinking:** Claude Code may request `thinking` blocks. LiteLLM must be configured to pass `thinking: {type: "enabled"}` to OpenRouter, or the upstream provider will drop the reasoning tokens.
+*   **`drop_params: true`:** Anthropic sends specific metadata (like `anthropic-beta` headers or specific tool definitions). Open-source models on OpenRouter will throw `400 Bad Request` if they receive these. LiteLLM's `drop_params: true` acts as a scrub buffer, stripping unsupported keys before they hit the upstream provider.
+
+---
+
+## Phase 4: Deep Dive — OpenAI Codex CLI
+OpenAI's Codex CLI (and ChatGPT Desktop developer modes) utilizes the **OpenAI API** (`/v1/chat/completions` or the newer `/v1/responses`).
+
+### 1. The Override Mechanism
+OpenAI tools are generally more respectful of standard POSIX environment variables.
+*   **The Environment Variables:** `OPENAI_BASE_URL` (or `OPENAI_API_BASE`) and `OPENAI_API_KEY`.
+*   **Configuration:** Usually handled via `~/.codex/config` or direct environment injection.
+
+### 2. Schema Translation Challenges
+*   **Function Calling vs. Tool Use:** OpenAI's function calling schema differs slightly from Anthropic's tool use. If you route Codex CLI traffic to an Anthropic model via OpenRouter, LiteLLM must translate the OpenAI tool schema into Anthropic's tool schema on the fly.
+*   **The Responses API:** OpenAI is migrating to the "Responses API" for agentic workflows. LiteLLM proxy must be kept updated to translate `/v1/responses` back to standard `/v1/chat/completions` for upstream providers that haven't adopted the new spec yet.
+
+---
+
+## Phase 5: Upstream Provider Economics & Constraints
+When choosing *where* to route the traffic, you must navigate the hidden constraints of third-party aggregators.
+
+### 1. OpenRouter (The Aggregator)
+*   **The `:free` Tier Mechanics:** Models ending in `:free` (e.g., `meta-llama/llama-3.3-70b-instruct:free`) are rate-limited to **20 RPM** and **50 RPD** (Requests Per Day).
+*   **The $10 Unlock:** Purchasing $10 in credits does *not* deduct from free models. It acts as an identity verification trigger that permanently bumps the free-tier limit to **1,000 RPD**.
+*   **Proxy-Level Throttling:** Because OpenRouter enforces a hard 20 RPM, your LiteLLM `config.yaml` **must** include `rpm: 15` or `rpm: 20`. If omitted, a burst of agentic CLI requests will result in `429 Too Many Requests`, causing the CLI to assume the model is broken and break the agentic loop.
+
+### 2. NVIDIA NIM (The Enterprise Free Tier)
+*   **Use Case:** Excellent for routing specific open-weights models (like Llama 3.3 or MiniMax) with a much more generous **40 RPM** free tier.
+*   **Limitation:** Limited model selection compared to OpenRouter; requires a dedicated NVIDIA developer API key.
+
+---
+
+## Phase 6: The LiteLLM Configuration Strategy (The "Brain")
+Based on your provided logs and YAML files, a production-grade `config.yaml` for this research must include the following pillars:
+
+### 1. Security & Binding
+*   **Omit `master_key`:** For local CLI tools, managing a master key adds friction. Omit it to allow "open authentication" (any dummy key works).
+*   **Bind to Localhost:** To prevent LAN abuse of your API keys, launch the proxy with `--host 127.0.0.1` instead of `0.0.0.0`.
+
+### 2. Resilience & Fallbacks
+Agentic coding tools send dozens of requests in rapid succession.
+```yaml
+litellm_settings:
+  drop_params: true        # CRITICAL: Prevents 400 errors on open-source models
+  num_retries: 3           # Auto-retry on OpenRouter 429/503 errors
+  request_timeout: 600     # CLI tools can hang; allow long context processing
+```
+
+### 3. Cost Tracking Suppression
+As seen in your `litellm_proxy_log.txt`, LiteLLM throws warnings for models not in its internal cost map (e.g., `openrouter/tencent/hy3:free`). 
+*   **Fix:** Explicitly define `model_info` with `input_cost_per_token: 0.0` to silence the warnings and prevent SQLite database bloat if tracking is enabled.
+
+---
+
+## Phase 7: Execution & Testing Methodology
+
+To validate this research, the following testing matrix should be executed:
+
+| Test Vector | Command / Action | Expected Outcome |
+| :--- | :--- | :--- |
+| **Proxy Health** | `curl http://127.0.0.1:4000/health/liveness` | Returns `"I'm alive!"` |
+| **Schema Translation** | `curl -X POST http://127.0.0.1:4000/v1/messages ...` | Returns valid Anthropic JSON, routed to OpenRouter. |
+| **Claude Code Auth** | `claude -p "hello"` | Bypasses login prompt, executes via `settings.json` env vars. |
+| **Rate Limit Handling** | Send 25 concurrent requests via script | LiteLLM queues/throttles locally; prevents OpenRouter 429 ban. |
+| **Tool Use (Agentic)** | Ask Claude Code to "Create a python script and run it" | Proxy successfully passes `tool_use` blocks back and forth without dropping params. |
+
+## Next Steps for the Researcher
+1.  **Finalize the YAML:** Merge the NVIDIA NIM and OpenRouter configs into a single `config.yaml` utilizing LiteLLM's **Router Settings** (Fallbacks). If OpenRouter's free tier hits a 429, automatically fallback to NVIDIA NIM.
+2.  **Daemonize:** Implement the `systemd` (Linux) or `launchd` (macOS) configurations provided in your skill guides to ensure the proxy survives reboots and starts before the IDEs launch.
+3.  **Observability:** Enable `set_verbose: true` temporarily in `litellm_settings` to inspect the exact JSON payloads Claude Code and Codex CLI are sending, ensuring no proprietary headers are breaking the upstream providers.
+
+---
+
+The claim is entirely validated. Extensive web documentation confirms both the core shift in OpenAI's architecture and LiteLLM's specific engineering response.
+------------------------------
+## Key Findings Breakdown
+
+🔍 OpenAI Architecture Shift                 🛠️ LiteLLM Gateway Adapter
+------------------------------------------   -------------------------------------------
+• Status: Verified (Launched March 2025)     • Status: Verified (Implemented /v1/responses)
+• Spec Endpoint: /v1/responses               • Fallback Bridge: Downstream /v1/chat/completions
+• Intent: Statefulness & "Agentic by design" • Intent: Multi-provider abstraction & translation
+
+------------------------------
+## Detailed Verification## 1. OpenAI is Migrating to the "Responses API" [1] 
+
+* Fact: OpenAI officially launched the [Responses API](https://developers.openai.com/api/docs/guides/migrate-to-responses) as its premium API primitive designed to serve as the foundation for multi-turn, stateful agentic workflows. [2, 3, 4] 
+* Deprecation Timelines: The Responses API is explicitly designated to absorb and replace the legacy Assistants API. The transition timeline mandates a hard end-of-life (EOL) for the Assistants API on August 26, 2026. [5, 6, 7, 8] 
+* Agentic Primitives: It natively handles loop-based tools like web search, file search, computer use, and Model Context Protocol (MCP) servers directly within a single API payload. [6, 9] 
+
+## 2. LiteLLM Proxy Translation Mechanics
+
+* Native /v1/responses Support: Documentation confirms that LiteLLM maintains dedicated schema parsing for the OpenAI Responses API spec (/v1/responses). [10, 11] 
+* The Chat Completions Bridge: For upstream providers (like Anthropic, Gemini, or local models) that do not natively expose a /v1/responses architecture, LiteLLM actively maintains a /responses to /chat/completions bridge. [10] 
+* How It Translates: The proxy accepts a /v1/responses style request, translates its unified state parameters, and flattens/maps it back to the stateless standard /v1/chat/completions array format required by providers lacking native support. Conversely, it can route incoming legacy chat completions to modern /responses parameters via its configuration handlers. [10, 12, 13, 14, 15] 
+
+## Final Conclusion
+The statement accurately represents the 2026 enterprise AI landscape. OpenAI's pivot toward the stateful Responses API requires translation layers like LiteLLM to step in and act as a compatibility matrix for older, stateless LLM gateways.
+
+[1] [https://github.com](https://github.com/aaif-goose/goose/issues/5270)
+[2] [https://developers.openai.com](https://developers.openai.com/api/docs/guides/migrate-to-responses)
+[3] [https://www.seangoedecke.com](https://www.seangoedecke.com/responses-api/)
+[4] [https://www.youtube.com](https://www.youtube.com/watch?v=mXx-joEhDxk&t=45)
+[5] [https://www.youtube.com](https://www.youtube.com/watch?v=Bhj1n0dh1z8&t=163)
+[6] [https://www.linkedin.com](https://www.linkedin.com/pulse/empowering-advanced-ai-agents-transitioning-from-api-raj-sanghvi-jahwe)
+[7] [https://igor-ya.com](https://igor-ya.com/posts/assistants-api-to-responses-api-migration-playbook-2026/)
+[8] [https://axevate.com](https://axevate.com/ai/frameworks/openai-responses-api)
+[9] [https://ai-sdk.dev](https://ai-sdk.dev/cookbook/guides/openai-responses)
+[10] [https://docs.litellm.ai](https://docs.litellm.ai/docs/response_api)
+[11] [https://github.com](https://github.com/BerriAI/litellm/issues/15342)
+[12] [https://github.com](https://github.com/BerriAI/litellm/issues/21346)
+[13] [https://docs.litellm.ai](https://docs.litellm.ai/docs/providers/openai/responses_api)
+[14] [https://docs.litellm.ai](https://docs.litellm.ai/docs/anthropic_unified/messages_to_responses_mapping)
+[15] [https://github.com](https://github.com/toeverything/AFFiNE/discussions/13575)
+
+## LiteLLM Code Architecture
+The translation layer mapping the modern OpenAI Responses API and legacy stateless endpoints is organized across two explicit, decoupled internal directories within the LiteLLM open-source repository: [1] 
+
+litellm/
+├── completion_extras/
+│   └── litellm_responses_transformation/
+│       ├── __init__.py
+│       └── transformation.py           # Translates incoming /v1/responses requests to standard /v1/chat/completions
+│
+├── responses/
+│   └── litellm_completion_transformation/
+│       ├── __init__.py
+│       └── transformation.py           # Maps stateless /v1/chat/completions back into stateful /v1/responses paradigms
+│
+└── llms/
+    └── anthropic/
+        └── experimental_pass_through/
+            └── responses_adapters/
+                └── transformation.py   # Downstream provider pass-through mapping rules (e.g., Anthropic /v1/messages)
+
+The system manages formatting translation dynamically through decoupled scripts: [1, 2] 
+
+* completion_extras/litellm_responses_transformation/: Acts as the primary fallback layer. If a client sends a stateful /v1/responses payload to a provider that lacks native state or tool parsing, it unpacks the payload, processes parameters, and reformats it to standard /v1/chat/completions array inputs. [1] 
+* responses/litellm_completion_transformation/: Enables downstream legacy clients to interface smoothly with advanced o-series or newer OpenAI models that exclusively mandate the stateful /v1/responses protocol. [1, 3] 
+
+------------------------------
+## OpenAI Responses API: Agent Tool Call Code Example
+The code snippet below demonstrates an agent workflow using the OpenAI Responses API pattern (client.responses.create). It uses a single unified input schema instead of the legacy messages array, tracks context statefully via previous_response_id, and includes a flat tool execution block: [4, 5, 6] 
+
+import osfrom openai import OpenAI
+# Initialize client targeting the modern Responses API endpointclient = OpenAI(
+    api_key=os.environ.get("OPENAI_API_KEY"),
+    base_url="https://openai.com"
+)
+# 1. Define an agentic tool using standard JSON schema layoutweather_tool = {
+    "type": "function",
+    "function": {
+        "name": "get_current_weather",
+        "description": "Get the current weather conditions for a specific city location.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "location": {
+                    "type": "string",
+                    "description": "The city and state, e.g. San Francisco, CA"
+                },
+                "unit": {
+                    "type": "string", 
+                    "enum": ["celsius", "fahrenheit"]
+                }
+            },
+            "required": ["location"]
+        }
+    }
+}
+# 2. Execute the initial response request using the streamlined input blockagent_response = client.responses.create(
+    model="gpt-4o",
+    # The new spec replaces the old 'messages' array with a singular or array 'input'
+    input="What is the weather like in Tokyo right now? Please look it up.",
+    tools=[weather_tool],
+    tool_choice="auto"
+)
+# Access content cleanly without traversing legacy choices[0].message syntax
+print("Agent Response Status:", agent_response.status)if agent_response.tool_calls:
+    for tool_call in agent_response.tool_calls:
+        print(f"Agent requested tool: {tool_call.function.name}")
+        print(f"Arguments: {tool_call.function.arguments}")
+# 3. Multi-turn stateful follow-up using the tracking identifier# (Simulating sending the tool output execution result back to the model)follow_up_response = client.responses.create(
+    model="gpt-4o",
+    # Link explicitly back to the original turn id without passing the entire historical chat array
+    previous_response_id=agent_response.id,
+    input=[
+        {
+            "type": "tool_output",
+            "tool_call_id": agent_response.tool_calls[0].id,
+            "output": '{"temperature": "22", "condition": "Partly Cloudy", "unit": "celsius"}'
+        }
+    ]
+)
+
+print("\nFinal Agent Answer:")
+print(follow_up_response.output_text)
+
+[1] [https://github.com](https://github.com/BerriAI/litellm/issues/21346)
+[2] [https://docs.litellm.ai](https://docs.litellm.ai/docs/anthropic_unified/messages_to_responses_mapping)
+[3] [https://docs.laozhang.ai](https://docs.laozhang.ai/en/api-capabilities/openai-responses)
+[4] [https://www.youtube.com](https://www.youtube.com/watch?v=0pGxoubWI6s&vl=en)
+[5] [https://techsy.io](https://techsy.io/en/blog/openai-responses-api-tutorial)
+[6] [https://docs.perplexity.ai](https://docs.perplexity.ai/docs/search/agent-sdks/openai)
+
+---
+
+To expose an OpenAI-compatible /v1/responses gateway endpoint to your agent clients while routing requests upstream to stateless providers like Anthropic and Gemini, LiteLLM leverages its underlying /responses to /chat/completions translation bridge.
+The configs below map an identical incoming /v1/responses endpoint signature to respective upstream APIs using standardized virtual models.
+------------------------------
+## 1. Anthropic Configuration (config.yaml)
+This configuration registers a custom endpoint agent-model-claude. When a client targets this virtual namespace using the modern stateful /v1/responses endpoint, LiteLLM intercepts the payload, utilizes the completion_extras parsing logic, and flattens it down to Anthropic's compliant Messages API layout.
+
+model_list:
+  - model_name: agent-model-claude
+    litellm_params:
+      model: claude-3-5-sonnet-20240620
+      api_key: "os.environ/ANTHROPIC_API_KEY"
+      # Forces the translation framework to fallback from modern stateful payloads
+      # down to stateless arrays required for non-OpenAI upstream providers
+      tpm: 40000
+      rpm: 1000
+router_settings:
+  routing_strategy: latency-based-routing
+  enable_fallback: true
+general_settings:
+  # Instructs LiteLLM to serve and support the /v1/responses endpoint structure globally
+  # across the proxy gateway for translating multi-turn agent execution blocks
+  openai_responses_api_compatibility: true
+
+------------------------------
+## 2. Google Gemini Configuration (config.yaml)
+This configuration provides compatibility for clients sending stateful agentic schemas to Gemini models. LiteLLM intercepts incoming tools definitions, context tracking IDs, and singular input payloads from the modern spec, decomposing them into the standard syntax expected by Gemini's endpoint architecture.
+
+model_list:
+  - model_name: agent-model-gemini
+    litellm_params:
+      model: gemini/gemini-1.5-pro-latest
+      api_key: "os.environ/GEMINI_API_KEY"
+      # Explicitly instructs the translation layer to drop or unpack parameters 
+      # like 'previous_response_id' that Gemini's native API cannot interpret
+      drop_params: true 
+      tpm: 360000
+      rpm: 360
+router_settings:
+  routing_strategy: simple-shuffle
+general_settings:
+  # Ensures the endpoint /v1/responses parses incoming agent tool-execution 
+  # payloads before executing upstream mappings to vertex/gemini backends
+  openai_responses_api_compatibility: true
+
+------------------------------
+## Proxy Operational Mechanics
+When you spin up the gateway proxy using these configurations:
+
+litellm --config config.yaml
+
+The gateway exposes a uniform, OpenAI-compliant routing environment:
+
+       [ Stateful Agentic Client ]
+                    │
+        POST /v1/responses  (Unified input payload, tools, previous_response_id)
+                    │
+                    ▼
+          ┌───────────────────┐
+          │   LiteLLM Proxy   │ ◄── Handles token tracking & billing metrics
+          └─────────┬─────────┘
+                    │
+       Translations dynamic step via completion_extras/
+                    │
+      ┌─────────────┴─────────────┐
+      ▼                           ▼
+[ Anthropic Messages API ]   [ Gemini generateContent API ]
+(Stateless Array)            (Stateless Content Objects)
+
+Both configurations utilize openai_responses_api_compatibility: true under general settings to prevent the proxy from throwing 404 Not Found or parameter rejection validation faults when downstream agent frameworks avoid legacy /v1/chat/completions routes entirely.
+
+---
+
+To implement cross-provider fallbacks using the modern OpenAI Responses API schema, LiteLLM leverages its centralized router layer. When configured properly, the proxy intercepts stateful payloads targeting an OpenAI model group, detects runtime failures (such as rate limits, context windows, or server overloads), and transparently flattens the execution context to route it to fallback providers like Anthropic or Gemini. [1, 2, 3, 4, 5] 
+------------------------------
+## Cross-Provider Fallback Configuration (config.yaml)
+This master configuration sets up a virtual model routing alias (agentic-core). When an agent client makes a call to POST /v1/responses using this alias, the proxy prioritizes OpenAI's o-series but maintains an explicit, ordered failover path. [1, 5] 
+
+model_list:
+  # ----------------------------------------------------
+  # Primary: OpenAI Stateful Reasoning Model
+  # ----------------------------------------------------
+  - model_name: agentic-core
+    litellm_params:
+      model: openai/o3-mini
+      api_key: "os.environ/OPENAI_API_KEY"
+
+  # ----------------------------------------------------
+  # Secondary Fallback: Anthropic (Translates payload)
+  # ----------------------------------------------------
+  - model_name: claude-fallback
+    litellm_params:
+      model: anthropic/claude-3-5-sonnet-20240620
+      api_key: "os.environ/ANTHROPIC_API_KEY"
+
+  # ----------------------------------------------------
+  # Tertiary Fallback: Google Gemini (Translates payload)
+  # ----------------------------------------------------
+  - model_name: gemini-fallback
+    litellm_params:
+      model: gemini/gemini-2.5-flash
+      api_key: "os.environ/GEMINI_API_KEY"
+      drop_params: true # Drops strict OpenAI parameters Gemini can't parse
+# ----------------------------------------------------# Router and Error Handling Mechanics# ----------------------------------------------------router_settings:
+  routing_strategy: priority-based
+  num_retries: 2            # Rapidly attempts immediate retries before failing over
+  allowed_fails: 1          # Cools down the target deployment upon a single hard failure
+  cooldown_time: 60         # Temp bans the failing provider for 60 seconds
+  
+  # Explicit execution fallback chain for the Responses API payload
+  fallbacks:
+    - agentic-core: ["claude-fallback", "gemini-fallback"]
+# ----------------------------------------------------# Global Transformation & System Settings# ----------------------------------------------------general_settings:
+  # Crucial: Activates the gateway translation engine for the /v1/responses endpoint
+  openai_responses_api_compatibility: true
+
+  # Optimises internal routing logic to securely cache and transfer stateful execution
+  # sessions (e.g. tracking via previous_response_id) during rollover events
+  optional_pre_call_checks:
+    - responses_api_deployment_check
+
+------------------------------
+## Payload Rollover Logic Matrix
+When a failure triggers a fallback mid-session, LiteLLM's internal parsing engine transforms the incoming payload on the fly: [4] 
+
+      [ Client Request to /v1/responses ]
+                      │
+                      ▼
+             [ Primary: o3-mini ] ──( ❌ 429 Rate Limit / 503 Outage )
+                      │
+                      ▼ Trigger Fallback
+           ┌─────────────────────┐
+           │ LiteLLM Translation │
+           └──────────┬──────────┘
+                      │
+         ┌────────────┴────────────┐
+         ▼                         ▼
+[ Fallback 1: Claude ]    [ Fallback 2: Gemini ]
+• Strips o-series params   • Strips 'previous_response_id'
+• Unpacks unified input   • flattens tool definitions
+• Executes via /messages  • Executes via generateContent
+
+
+* Session Continuity Tracking: To maximize safety during agent tool loops, LiteLLM's responses_api_deployment_check tracks the state variable previous_response_id. If the primary model goes down mid-loop, the proxy maps the existing thread history into a compiled messages array and passes the full conversational history to Claude or Gemini to maintain context continuity. [4] 
+
+[1] [https://docs.litellm.ai](https://docs.litellm.ai/docs/proxy/configs)
+[2] [https://docs.litellm.ai](https://docs.litellm.ai/docs/proxy/guardrails/rubrik)
+[3] https://docs.litellm.ai
+[4] [https://docs.litellm.ai](https://docs.litellm.ai/docs/response_api)
+[5] [https://www.tencentcloud.com](https://www.tencentcloud.com/techpedia/143947)
+
+---
+
+Yes, LiteLLM can auto-route and load-balance across multiple OpenRouter accounts using different API keys. [1, 2] 
+By organizing these keys as separate deployments pointing to the same model name, LiteLLM treats them as a single virtual model pool. Its built-in router handles the distribution logic, track usage limits, and dynamically cool down specific keys when OpenRouter returns a 429 Too Many Requests response. [1, 3, 4] 
+------------------------------
+## Implementation Configuration (config.yaml)
+This setup pools three distinct OpenRouter free accounts to share the load. It enforces load balancing and proactively cools down individual accounts for 60 seconds if they exceed the OpenRouter free tier limit (20 requests per minute). [5, 6] 
+
+model_list:
+  # ----------------------------------------------------
+  # Account 1 Deployment
+  # ----------------------------------------------------
+  - model_name: openrouter-free-pool
+    litellm_params:
+      model: openrouter/google/gemini-2.5-flash:free
+      api_key: "os.environ/OPENROUTER_KEY_ACCOUNT_A"
+      rpm: 20                  # Throttles individual key tracking at 20 RPM
+      tpm: 40000
+
+  # ----------------------------------------------------
+  # Account 2 Deployment
+  # ----------------------------------------------------
+  - model_name: openrouter-free-pool
+    litellm_params:
+      model: openrouter/google/gemini-2.5-flash:free
+      api_key: "os.environ/OPENROUTER_KEY_ACCOUNT_B"
+      rpm: 20
+      tpm: 40000
+
+  # ----------------------------------------------------
+  # Account 3 Deployment
+  # ----------------------------------------------------
+  - model_name: openrouter-free-pool
+    litellm_params:
+      model: openrouter/google/gemini-2.5-flash:free
+      api_key: "os.environ/OPENROUTER_KEY_ACCOUNT_C"
+      rpm: 20
+      tpm: 40000
+# ----------------------------------------------------# Multi-Key Load Balancing Logic# ----------------------------------------------------router_settings:
+  # Alternates across available accounts evenly to distribute traffic
+  routing_strategy: simple-shuffle 
+  
+  # How many times to try a different key within the pool if one returns a 429
+  num_retries: 3                  
+  
+  # Instantly flags a deployment key if it returns a 429 error code
+  allowed_fails: 1                
+  
+  # Removes the specific failed account key from rotation for 60 seconds
+  cooldown_time: 60               
+
+------------------------------
+## Key Operational Mechanics
+
+                  [ Client API Call ]
+                           │
+                           ▼ (Targets: openrouter-free-pool)
+                 ┌───────────────────┐
+                 │   LiteLLM Proxy   │
+                 └─────────┬─────────┘
+                           │ (Simple-Shuffle Logic)
+        ┌──────────────────┼──────────────────┐
+        ▼                  ▼                  ▼
+ [ Key Account A ]  [ Key Account B ]  [ Key Account C ]
+   (Hits 429 Error)   (Active Pool)      (Active Pool)
+        │
+        ▼ (Triggers Fallback Retry)
+  [ Cooldown: 60s ] ──► Dynamically routes payload to Key B or C instead
+
+
+* Coordinated Token Tracking (Redis Integration): If running multiple LiteLLM workers across container clusters (like Docker or Kubernetes), add a Redis instances layout (redis_host, redis_port) to your configuration. This forces workers to sync and track the RPM across the accounts globally, preventing race conditions from hitting OpenRouter boundaries concurrently. [5, 6] 
+* Handling Strict IP-Based Limits: Be aware that while key rotation bypasses account token counters, OpenRouter may track rapid connection spikes via the client IP address. If you encounter global IP throttles, hosting the LiteLLM proxy behind an outbound proxy pool with rotating IPs may be required. [7] 
+
+Would you like me to show you how to configure a permanent paid model backup tier that the router falls back to only if all free account keys are simultaneously exhausted? [4] 
+
+[1] [https://medium.com](https://medium.com/@aiforhuman/litellm-routing-e02004053602)
+[2] [https://grokipedia.com](https://grokipedia.com/page/Openrouter-proxy)
+[3] [https://docs.litellm.ai](https://docs.litellm.ai/docs/routing)
+[4] [https://openrouter.ai](https://openrouter.ai/blog/insights/reliability-failover/)
+[5] [https://github.com](https://github.com/BerriAI/litellm/issues/9035)
+[6] [https://docs.litellm.ai](https://docs.litellm.ai/docs/proxy/load_balancing)
+[7] [https://grokipedia.com](https://grokipedia.com/page/Openrouter-proxy)
