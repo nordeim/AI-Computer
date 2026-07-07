@@ -1,0 +1,58 @@
+# ~/nvidia-proxy/config.yaml
+# -----------------------------------------------------------------------------
+# LiteLLM Proxy configuration for routing local traffic to NVIDIA NIM
+# (minimaxai/minimax-m3) under both OpenAI and Anthropic API surfaces.
+# -----------------------------------------------------------------------------
+
+model_list:
+  # --- Primary alias: what clients type as "model" in their requests ---------
+  - model_name: minimax-m3                    # user-facing alias (any string)
+    litellm_params:
+      model: openrouter/tencent/hy3:free  # actual upstream model id
+      api_key: os.environ/OPENROUTR_API_KEY  # read from env, never inline
+      # Optional: per-deployment RPM cap to stay under NVIDIA's 40 RPM free tier
+      rpm: 10
+      model_info:
+        input_cost_per_token: 0.0
+        output_cost_per_token: 0.0
+      thinking:
+        type: "enabled"
+
+  # --- Optional convenience aliases (so clients can call "gpt-4o" etc.) -----
+  - model_name: gpt-4o
+    litellm_params:
+      model: openrouter/tencent/hy3:free
+      api_key: os.environ/OPENROUTR_API_KEY
+      rpm: 10
+      model_info:
+        input_cost_per_token: 0.0
+        output_cost_per_token: 0.0
+      thinking:
+        type: "enabled"
+
+  - model_name: claude-3-5-sonnet-20241022
+    litellm_params:
+      model: openrouter/tencent/hy3:free
+      api_key: os.environ/OPENROUTR_API_KEY
+      rpm: 10
+      model_info:
+        input_cost_per_token: 0.0
+        output_cost_per_token: 0.0
+      thinking:
+        type: "enabled"
+
+# --- LiteLLM-wide settings --------------------------------------------------
+litellm_settings:
+  drop_params: true        # silently drop params the upstream doesn't accept
+  set_verbose: false                   # Change to true to debug underlying API headers
+  num_retries: 3           # retry on 429 / 5xx with exponential backoff
+  request_timeout: 600     # MiniMax-M3 supports 1M context — be generous
+  streaming_timeout: 600
+
+# --- Proxy-wide settings ----------------------------------------------------
+general_settings:
+  # master_key: os.environ/LOCAL_PROXY_KEY    # required for /v1/messages + virtual keys
+  # Optional: store virtual keys / spend tracking in a local SQLite DB
+  # database_url: sqlite:///./litellm.db
+  # Optional: enable the admin UI at http://localhost:4000/ui
+  disable_admin_ui: true

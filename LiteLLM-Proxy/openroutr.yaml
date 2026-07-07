@@ -1,0 +1,55 @@
+# /home/pete/nvidia-proxy/openrouter.yaml
+# -----------------------------------------------------------------------------
+# LiteLLM Proxy configuration for routing local traffic to OpenRouter
+# -----------------------------------------------------------------------------
+
+model_list:
+  # --- Primary alias: minimax-m3 ---
+  - model_name: minimax-m3
+    litellm_params:
+      model: openrouter/tencent/hy3:free
+      api_key: os.environ/OPENROUTER_API_KEY  # FIXED: Added missing 'E'
+      rpm: 10
+      model_info:
+        input_cost_per_token: 0.0
+        output_cost_per_token: 0.0
+      thinking:
+        type: "enabled"
+
+  # --- Optional convenience alias: gpt-4o ---
+  - model_name: gpt-4o
+    litellm_params:
+      model: openrouter/tencent/hy3:free
+      api_key: os.environ/OPENROUTER_API_KEY  # FIXED: Added missing 'E'
+      rpm: 10
+      model_info:
+        input_cost_per_token: 0.0
+        output_cost_per_token: 0.0
+      thinking:                                # FIXED: Removed duplicate line
+        type: "enabled"
+
+  # --- Optional convenience alias: claude-3-5-sonnet-20241022 ---
+  - model_name: claude-3-5-sonnet-20241022
+    litellm_params:
+      model: openrouter/tencent/hy3:free
+      api_key: os.environ/OPENROUTER_API_KEY  # FIXED: Added missing 'E'
+      rpm: 10
+      model_info:
+        input_cost_per_token: 0.0
+        output_cost_per_token: 0.0
+      thinking:                                # FIXED: Removed duplicate line
+        type: "enabled"
+
+# --- LiteLLM-wide settings --------------------------------------------------
+litellm_settings:
+  drop_params: true        
+  set_verbose: false                   
+  num_retries: 3           
+  request_timeout: 600     
+  streaming_timeout: 600
+
+# --- Proxy-wide settings ----------------------------------------------------
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY    # UNCOMMENTED: Secures your proxy endpoint
+  disable_admin_ui: true
+
