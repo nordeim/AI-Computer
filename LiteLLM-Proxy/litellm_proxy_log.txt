@@ -1,0 +1,54 @@
+$ python3 /opt/venv/bin/litellm --config ~/litellm/openrouter.yaml --port 4001
+INFO:     Started server process [2412155]
+INFO:     Waiting for application startup.
+
+   ██╗     ██╗████████╗███████╗██╗     ██╗     ███╗   ███╗
+   ██║     ██║╚══██╔══╝██╔════╝██║     ██║     ████╗ ████║
+   ██║     ██║   ██║   █████╗  ██║     ██║     ██╔████╔██║
+   ██║     ██║   ██║   ██╔══╝  ██║     ██║     ██║╚██╔╝██║
+   ███████╗██║   ██║   ███████╗███████╗███████╗██║ ╚═╝ ██║
+   ╚══════╝╚═╝   ╚═╝   ╚══════╝╚══════╝╚══════╝╚═╝     ╚═╝
+
+
+#------------------------------------------------------------#
+#                                                            #
+#       'This feature doesn't meet my needs because...'       #
+#        https://github.com/BerriAI/litellm/issues/new        #
+#                                                            #
+#------------------------------------------------------------#
+
+ Thank you for using LiteLLM! - Krrish & Ishaan
+
+
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+
+
+07:51:19 - LiteLLM Proxy:CRITICAL: proxy_server.py:4522 - LITELLM_MASTER_KEY is not set! All requests will be treated as INTERNAL_USER with no admin access. Set LITELLM_MASTER_KEY for production use.
+LiteLLM: Proxy initialized with Config, Set models:
+    minimax-m3
+    gpt-4o
+    claude-3-5-sonnet-20241022
+07:51:19 - LiteLLM:WARNING: utils.py:3007 - register_model: model=ed2f8fc0bc1cc9b0b3fa0339090fc79031deff7973714ec15ddfaa05803a2ab4 not in built-in cost map and no prefix/region variant matched; cache cost fields will default to 0. To track cache cost, add cache_creation_input_token_cost and cache_read_input_token_cost to model_info
+07:51:19 - LiteLLM:WARNING: utils.py:3007 - register_model: model=openrouter/tencent/hy3:free not in built-in cost map and no prefix/region variant matched; cache cost fields will default to 0. To track cache cost, add cache_creation_input_token_cost and cache_read_input_token_cost to model_info
+07:51:19 - LiteLLM:WARNING: utils.py:3007 - register_model: model=c3f57461bea090914553f3cb3639984da1f49d694e9e4e7d236e0b4ae31d455b not in built-in cost map and no prefix/region variant matched; cache cost fields will default to 0. To track cache cost, add cache_creation_input_token_cost and cache_read_input_token_cost to model_info
+07:51:19 - LiteLLM:WARNING: utils.py:3007 - register_model: model=28703c89186d553b10780b1ade805a41712483761c1007c0fc0038ce263226a7 not in built-in cost map and no prefix/region variant matched; cache cost fields will default to 0. To track cache cost, add cache_creation_input_token_cost and cache_read_input_token_cost to model_info
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:4001 (Press CTRL+C to quit)
+INFO:     127.0.0.1:50242 - "HEAD / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54212 - "POST /v1/messages?beta=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54220 - "POST /v1/messages?beta=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54220 - "POST /v1/messages?beta=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52958 - "POST /v1/messages?beta=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52958 - "POST /v1/messages?beta=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55556 - "POST /v1/messages?beta=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51890 - "POST /v1/messages?beta=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51890 - "POST /v1/messages?beta=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56474 - "POST /v1/messages?beta=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36028 - "POST /v1/messages?beta=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36028 - "POST /v1/messages?beta=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38548 - "POST /v1/messages?beta=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38548 - "POST /v1/messages?beta=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54472 - "POST /v1/messages?beta=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54472 - "POST /v1/messages?beta=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51374 - "HEAD / HTTP/1.1" 200 OK
