@@ -1,14 +1,12 @@
-# ~/.config/systemd/user/litellm.service
 [Unit]
 Description=LiteLLM Proxy
 After=network.target
 
 [Service]
 Type=simple
-User=pete
-WorkingDirectory=/home/pete/nvidia-proxy
-EnvironmentFile=/home/pete/nvidia-proxy/.env
-ExecStart=/opt/venv/bin/litellm --config /home/pete/nvidia-proxy/config.yaml --port 4000
+WorkingDirectory=/home/pete/litellm
+EnvironmentFile=/home/pete/litellm/.env
+ExecStart=/opt/venv/bin/litellm --config /home/pete/litellm/config.yaml --port 4000
 Restart=always
 RestartSec=5
 
