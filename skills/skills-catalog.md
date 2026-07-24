@@ -1,6 +1,6 @@
 # Skills Catalog
 
-> **144 skills** organized into 10 categories. Each entry shows the skill name and a concise description of what it does and when to use it.
+> **145 skills** organized into 10 categories. Each entry shows the skill name and a concise description of what it does and when to use it.
 
 ---
 
@@ -17,6 +17,7 @@
 | **nextjs16-tailwind4**                                      | Next.js 16 + React + Tailwind v4 with Framer Motion. Luxury-grade, avant-garde UI, OWASP 2025, Core Web Vitals, WCAG AAA. Use for distinctive marketing sites with animated motion.                                                                                                                                                                                                                                                                           |
 | **nextjs16-react19-tailwind4-full-stack**                   | Next.js 16 + React 19 + Tailwind v4 full-stack marketing + booking + memberships + admin. Drizzle ORM, Auth.js v5 JWT, Inngest, Stripe, Replicate SDXL, Cloudflare R2. 5-layer architecture, CSS-only animations, brutalist dark-mode, WCAG AAA, OWASP hardening, Vitest + Playwright. Use for production marketing sites, membership platforms, booking systems, or any Next.js 16 full-stack project.                                                       |
 | **nextjs16-react19-tailwindv4-trpcv11-drizzle-better-auth** | Next.js 16 + React 19 + Tailwind v4 + tRPC v11 + Drizzle ORM + Better Auth (replaces Auth.js v5) in Turborepo monorepo. 50+ anti-patterns, 24 implementation lessons, production patterns (advisory-lock concurrency, idempotent webhooks, SSE streaming, fail-open rate limiting). Anti-generic avant-garde design, WCAG AAA, OWASP 2025, 8-gate CI/CD, TDD regression verification. Use for full-stack Next.js 16 SaaS with tRPC, Drizzle, and Better Auth. |
+| **nextjs16-react19-tailwind4-better-auth-monorepo** | Production-grade Stillwater yoga studio platform — Turborepo monorepo, Next.js 16.2, React 19, Tailwind v4.3, tRPC v11, Drizzle ORM 0.45, Better Auth 1.6.23, Stripe 22.3 (Dahlia), Trigger.dev v4, React Email 6.6, Resend, Sanity CMS v6. 651 tests, 11 ADRs, 93 lessons learned across 13 build phases. Booking with PostgreSQL advisory locks, SSE real-time seat availability, credit packs, RBAC (5 tiers), admin surface, 34 env vars with Zod validation. "Editorial Calm" design system (Warm Mineral palette, `--radius: 0`, Cormorant Garamond + DM Sans + JetBrains Mono). Use as a **production codebase reference** for Next.js 16 + Better Auth Turborepo monorepos — complements the generic `…trpcv11-drizzle-better-auth` skill with concrete file paths, working configurations, and battle-tested patterns. |
 | **nextjs-react-expert**                                     | Next.js 16 + React 19 performance (Vercel Engineering). 57 rules: waterfall elimination, bundle size, RSC streaming, Turbopack, React Compiler, Core Web Vitals. Use when profiling or optimizing production React/Next.js apps.                                                                                                                                                                                                                              |
 | **super-frontend-design**                                   | Master skill: anti-generic strategy, Next.js 16 + React + Tailwind v4, App Router Server Components, design systems, Vercel-grade performance, WCAG AAA.                                                                                                                                                                                                                                                                                                      |
 | **tailwind-patterns**                                       | Tailwind CSS v4 CSS-first `@theme` config, container queries, design tokens, modern utility patterns.                                                                                                                                                                                                                                                                                                                                                         |
@@ -135,6 +136,7 @@
 | **vulnerability-scanner**            | Advanced vulnerability analysis: OWASP 2025, supply chain security, attack surface mapping, risk prioritization.               |
 | **clean-code**                       | Pragmatic coding standards: concise, direct, no over-engineering, no unnecessary comments.                                     |
 | **code-simplification**              | Refactor code for clarity without changing behavior. Reduce complexity, improve maintainability.                               |
+| **ponytail**                         | Minimalism-as-discipline coding methodology: ordered implementation ladder (skip speculative → reuse existing → stdlib → native features → installed deps → one line → minimum working code), shortest correct diff, root-cause bug fixes (grep all callers, fix once), YAGNI, one runnable self-check. Hard rails: never simplify away trust-boundary validation, data-loss error handling, security, or accessibility. lite/full/ultra intensity modes. |
 | **debugging-and-error-recovery**     | Systematic root-cause debugging. Use when tests fail, builds break, or behavior doesn't match expectations.                    |
 | **lint-and-validate**                | Automatic quality control: linting, static analysis, syntax correctness. Use after every code modification.                    |
 | **source-driven-development**        | Every framework decision backed by official docs. Source-cited, verified, no stale patterns.                                   |
@@ -259,17 +261,17 @@
 
 | #   | Category                                       | Count   |
 | --- | ---------------------------------------------- | ------- |
-| 1   | Frontend Development & UI Engineering          | 19      |
+| 1   | Frontend Development & UI Engineering          | 20      |
 | 2   | Design Artifacts & Visual Creation             | 10      |
 | 3   | Full-Stack & Backend Development               | 10      |
 | 4   | AI / ML / Multimodal SDK Skills                | 8       |
 | 5   | Testing, QA & Performance                      | 14      |
-| 6   | Code Quality, Security & Architecture          | 13      |
+| 6   | Code Quality, Security & Architecture          | 14      |
 | 7   | Planning, Workflow & Project Management        | 21      |
 | 8   | Documentation & Content Creation               | 14      |
 | 9   | Career, Learning & Personal Development        | 14      |
 | 10  | DevOps, Infrastructure & External Integrations | 21      |
-|     | **Total**                                      | **144** |
+|     | **Total**                                      | **146** |
 
 ---
 
