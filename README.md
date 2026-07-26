@@ -1,632 +1,124 @@
-# Personal Computer - AI Agent Orchestration System
+# my-pi-agent
 
-> A Perplexity Computer-inspired multi-model AI agent system that runs entirely in a single Docker container.
+An opinionated customization bundle for the [Pi Agent](https://github.com/nordeim/my-pi-agent) — themes, in-tree extensions, a curated 175+ skill library, and the supporting docs an agent needs to bootstrap a fresh Pi installation into a productive engineering setup.
 
-## Table of Contents
+This setup is fairly opinionated. It:
 
-1. [Overview](#overview)
-2. [Architecture](#architecture)
-3. [Quick Start](#quick-start)
-4. [Configuration](#configuration)
-5. [Components](#components)
-6. [API Reference](#api-reference)
-7. [Tools Reference](#tools-reference)
-8. [Safety Features](#safety-features)
-9. [Comparison with Perplexity Computer](#comparison-with-perplexity-computer)
-10. [Troubleshooting](#troubleshooting)
+- sets up GitHub Dark Default as the theme
+- adds Firecrawl tools for searching and scraping
+- updates the bottom bar to show the info the maintainer actually cares about
+- adds background terminals + UI to manage them
+- adds subagents to Pi
+- adds workflows to Pi
+- adds an ask-user tool that lets the model ask multiple-choice questions
+- adds first-class `fd` (file discovery) and `rg` (content search) tools
 
----
-
-## Overview
-
-**Personal Computer** is a self-hosted AI agent orchestration system inspired by Perplexity Computer. It provides:
-
-- **Multi-model orchestration** - Route tasks to the best AI model for each job
-- **Autonomous task execution** - Break down goals into executable subtasks
-- **Web automation** - Browser-based research and interaction via Playwright
-- **Code execution** - Run Python and shell commands safely
-- **Safety mechanisms** - Confirm dangerous actions before execution
-- **Audit logging** - Complete trail of all agent actions
-- **Web UI** - Clean interface for interaction and monitoring
-
-### Key Features
-
-| Feature | Description |
-|---------|-------------|
-| **Task Decomposition** | Break complex goals into executable subtasks |
-| **Model Routing** | Automatically select the best model for each task type |
-| **Filesystem IPC** | Sub-agents communicate via files (like Perplexity) |
-| **confirm_action** | Mandatory approval for sensitive operations |
-| **Audit Trail** | Log every action for compliance and debugging |
-| **Web Terminal** | Full bash access via ttyd |
+![Pi setup interface](assets/pi-setup.jpeg)
 
 ---
 
-## Architecture
+## What's in the box
 
-### Single-Container Design
-
-Unlike Perplexity Computer's four-layer architecture, this implementation runs all components in a single Docker container:
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    DOCKER CONTAINER                              │
-│                                                                  │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐  │
-│  │  FastAPI     │  │   ttyd       │  │   Orchestrator       │  │
-│  │  Web UI      │  │   Terminal   │  │   (Python)           │  │
-│  │  :7860       │  │   :7681      │  │                      │  │
-│  └──────────────┘  └──────────────┘  └──────────────────────┘  │
-│         │                 │                    │                │
-│         └─────────────────┴────────────────────┘                │
-│                           │                                      │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │                     WORKSPACE                              │  │
-│  │  /workspace                                               │  │
-│  │  ├── ipc/           # Inter-agent communication           │  │
-│  │  ├── artifacts/     # Output files                        │  │
-│  │  ├── logs/          # Application logs                    │  │
-│  │  ├── memory/        # Persistent memory                   │  │
-│  │  ├── sessions/      # Session data                        │  │
-│  │  └── skills/        # Custom skills/playbooks             │  │
-│  └──────────────────────────────────────────────────────────┘  │
-│                                                                  │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │                    TOOLS LAYER                             │  │
-│  │  • Filesystem (read, write, delete, list)                 │  │
-│  │  • Web (fetch, scrape)                                     │  │
-│  │  • Browser (navigate, screenshot)                          │  │
-│  │  • Code (execute_python, execute_shell)                    │  │
-│  │  • IPC (send, receive)                                     │  │
-│  └──────────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-### Directory Structure
-
-```
-personal-computer/
-├── Dockerfile              # Single-stage Docker build
-├── scripts/
-│   ├── docker-entrypoint.sh   # Container entrypoint
-│   └── pc-cli.py              # CLI utility
-├── app/
-│   ├── config.py           # Configuration management
-│   ├── orchestrator.py     # Main orchestration engine
-│   ├── tools.py            # Tool implementations
-│   ├── safety.py           # Safety mechanisms
-│   └── server.py           # FastAPI web server
-└── workspace/              # Persistent workspace (mounted volume)
-    ├── ipc/                # Inter-agent communication
-    ├── artifacts/          # Generated outputs
-    ├── logs/               # Application logs
-    ├── memory/             # Persistent memory
-    ├── sessions/           # Session data
-    └── skills/             # Custom skills
-```
+| Area | Path | Description |
+|------|------|-------------|
+| Pi setup | `package.json`, `tsconfig.json`, `.env.example` | Runtime config, dependency manifest, env-var template for the Pi shell itself. |
+| Extensions | `extensions/` | Twelve TypeScript extensions that plug into the Pi agent loop (see below). |
+| Skills | `skills/` | 181 self-contained skill packages across 10 categories — the bulk of the repo by file count. |
+| Themes | `themes/` | `github-dark-default.json` and `brutalist.json` — Pi UI color themes. |
+| Git config | `git/` | Project-local gitignore patterns. |
+| Assets | `assets/` | Screenshots referenced by this README. |
+| Docs | `SETUP.md`, `AGENTS.md`, `APPEND_SYSTEM.md`, `Translation_Engine_v10_APPEND_SYSTEM.md` | Setup runbook, agent-onboarding brief, and system-prompt append layers. |
 
 ---
 
-## Quick Start
+## Skills catalog
 
-### Prerequisites
+The skill library lives under `skills/` and is indexed by [`skills/skills-catalog.md`](skills/skills-catalog.md) — a single-file directory of all 181 skills with a one-line description and "when to use it" hint for each. The catalog is organized into 10 categories:
 
-- Docker installed on your system
-- At least one AI API key (Anthropic, OpenAI, Google, or xAI)
+1. **Frontend Development & UI Engineering** — 30 skills (React 19, Next.js 16, Tailwind v4, Svelte 5, Vue 3/Nuxt 4, Flutter, React Native/Expo, Astro 5, Tauri 2, HTMX, SolidStart, brutalist/avant-garde design systems, full-stack SaaS references, pixel-for-pixel web cloning)
+2. **Design Artifacts & Visual Creation** — 10 skills (charts, image generation/edit/understand/search, web-shader extraction, ComfyUI)
+3. **Full-Stack & Backend Development** — 23 skills (Laravel 12, Django 6, Rails 8, Go, Rust/Axum, Spring Boot 3, .NET 9, FastAPI, NestJS, Phoenix 1.7, Hono, Fastify, KeystoneJS 6, fullstack-dev, Next.js 16 + Postgres 17, auth library comparison, web-frameworks, API patterns, Python patterns, framework templates, n8n, PowerShell)
+4. **AI / ML / Multimodal SDK Skills** — 8 skills (LLM, ASR, TTS, VLM, video generation/understanding, web search/reader)
+5. **Testing, QA & Performance** — 14 skills (TDD, webapp testing, Playwright CLI, agent-browser, Chrome DevTools MCP, performance optimization)
+6. **Code Quality, Security & Architecture** — 15 skills (code review, security hardening, TrustSkill v3.1 security scanner, vulnerability scanner, clean-code, ponytail minimalism, debugging, lint-and-validate)
+7. **Planning, Workflow & Project Management** — 23 skills (spec-driven development, plan-writing, incremental implementation, git workflow, CI/CD, shipping, orchestrator-toolkit, loop-builder, subagents, background terminals, context engineering)
+8. **Documentation & Content Creation** — 19 skills (README/CLAUDE/AGENTS.md generation, blog writer, SEO content, content strategy, content analysis, **pptx**, **codex-ppt**, **cyber-ppt**, **pptx-generator**, **docx**, **docx-generation**, **xlsx**, pdf, cheat-sheet, storyboard manager, **pandoc-docx-template**, **translation-engine**)
+9. **Career, Learning & Personal Development** — 14 skills (resume builder, JD-resume tailor, interview prep, study buddy, quiz mastery, mindfulness, dream interpreter)
+10. **DevOps, Infrastructure & External Integrations** — 25 skills (Cloudflare tunnel, multi-search-engine, finance/stock analysis, market research reports, AMiner academic search, AI news collectors, marketing-mode, skill-creator, skill-creator-zai, skill-finder-cn, **how-to-git-push-using-ssh-wrapper**, Microsoft Foundry, Sanity best-practices/migration/deploy, memory architect/architecture, mac-mlx local inference, tools-cli, system-prompt customization)
 
-### Build and Run
-
-```bash
-# 1. Clone or create the project directory
-mkdir -p personal-computer && cd personal-computer
-
-# 2. Create .env file with your API keys
-cat > workspace/.env << EOF
-ANTHROPIC_API_KEY=your-key-here
-OPENAI_API_KEY=your-key-here
-GOOGLE_API_KEY=your-key-here
-EOF
-
-# 3. Build the Docker image
-docker build -t personal-computer .
-
-# 4. Run the container
-docker run -d \
-    --name pc \
-    -p 7860:7860 \
-    -p 7681:7681 \
-    -v $(pwd)/workspace:/workspace \
-    -e ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY} \
-    -e OPENAI_API_KEY=${OPENAI_API_KEY} \
-    personal-computer
-
-# 5. Access the web UI
-open http://localhost:7860
-
-# 6. Access the terminal
-open http://localhost:7681
-```
-
-### Environment Variables
-
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `ANTHROPIC_API_KEY` | Claude API key | Recommended |
-| `OPENAI_API_KEY` | OpenAI API key | Optional |
-| `GOOGLE_API_KEY` | Google Gemini API key | Optional |
-| `XAI_API_KEY` | xAI Grok API key | Optional |
-| `APP_PORT` | Web UI port (default: 7860) | Optional |
-| `TTYD_PORT` | Terminal port (default: 7681) | Optional |
+Each skill folder contains a `SKILL.md` with frontmatter (`name`, `metadata.description`, `license`) and the full workflow instructions. Most skills also ship `references/`, `scripts/`, or `scenes/` subdirectories that the `SKILL.md` loads on demand.
 
 ---
 
-## Configuration
+## Extensions
 
-### Configuration File (config.py)
+Twelve TypeScript extensions under `extensions/` extend the Pi agent loop. Each one is a self-contained package with its own `package.json` and `tsconfig.json`.
 
-The system uses Pydantic Settings for configuration management. You can override any setting via environment variables or a `.env` file in the workspace directory.
-
-```python
-# Example .env file
-ANTHROPIC_API_KEY=sk-ant-...
-OPENAI_API_KEY=sk-...
-GOOGLE_API_KEY=AI...
-
-# Model routing
-DEFAULT_MODEL=claude-sonnet-4-20250514
-REASONING_MODEL=claude-sonnet-4-20250514
-RESEARCH_MODEL=gemini-2.5-pro
-CODE_MODEL=claude-sonnet-4-20250514
-SPEED_MODEL=gpt-4.1-mini
-LONG_CONTEXT_MODEL=gemini-2.5-pro
-
-# Server
-PORT=7860
-DEBUG=false
-```
-
-### Model Routing Configuration
-
-```python
-MODEL_ROUTING = {
-    "reasoning": {
-        "model": "claude-sonnet-4-20250514",
-        "provider": "anthropic",
-        "max_tokens": 8192,
-        "temperature": 0.5
-    },
-    "research": {
-        "model": "gemini-2.5-pro",
-        "provider": "google",
-        "max_tokens": 8192,
-        "temperature": 0.3
-    },
-    "code": {
-        "model": "claude-sonnet-4-20250514",
-        "provider": "anthropic",
-        "max_tokens": 8192,
-        "temperature": 0.3
-    },
-    "speed": {
-        "model": "gpt-4.1-mini",
-        "provider": "openai",
-        "max_tokens": 2048,
-        "temperature": 0.7
-    },
-    "long_context": {
-        "model": "gemini-2.5-pro",
-        "provider": "google",
-        "max_tokens": 32768,
-        "temperature": 0.5
-    }
-}
-```
+| Extension | Purpose |
+|-----------|---------|
+| `ask-user` | Lets the model ask the user multiple-choice questions instead of guessing. |
+| `ava-agent` | Ava autonomous agent harness with session-graph, AST auditor, and reflect-session tooling. |
+| `background-terminals` | Run and manage long-lived shell commands (dev servers, watchers, streaming builds) in background terminals. |
+| `copy-all` | Bulk-copy agent output to the clipboard. |
+| `file-search` | First-class `fd` (file discovery) tool wired into the agent loop. |
+| `firecrawl-search` | Firecrawl-powered web search and scraping tool. |
+| `git-info` | Surface git status, changed files, and refresh-coordination in the Pi UI. |
+| `model-info` | Display model metadata in the bottom bar. |
+| `summaries` | Generate and surface session summaries inside the agent transcript. |
+| `subagents` | Headless autonomous sub-agents (Pi, Claude, Codex harnesses) with their own context window. |
+| `ui-customization` | Customize Pi UI chrome (bottom bar, panels, status indicators). |
+| `workflows` | Multi-step workflow runner with sandboxing, artifacts, serialization, and a dashboard view. |
 
 ---
 
-## Components
+## Themes
 
-### 1. Orchestrator (orchestrator.py)
+Two Pi UI themes ship in `themes/`:
 
-The orchestrator is the "brain" of the system, responsible for:
-- Task decomposition
-- Model routing
-- Sub-agent coordination
-- Workflow execution
+- `github-dark-default.json` — the default dark theme modeled on GitHub's dark palette.
+- `brutalist.json` — a raw, high-contrast brutalist alternative.
 
-```python
-from orchestrator import Orchestrator
-
-orchestrator = Orchestrator()
-
-# Execute a goal
-result = await orchestrator.run_workflow(
-    goal="Research AI trends in 2026 and create a summary report",
-    context="Focus on enterprise applications",
-    provider="anthropic"
-)
-```
-
-### 2. Tools (tools.py)
-
-Comprehensive tool implementations for agent actions:
-
-| Tool | Description |
-|------|-------------|
-| `fs_read` | Read file contents |
-| `fs_write` | Write content to file |
-| `fs_delete` | Delete file or directory |
-| `fs_list` | List directory contents |
-| `fs_mkdir` | Create directory |
-| `web_fetch` | HTTP request to URL |
-| `web_scrape` | Scrape and convert to markdown |
-| `execute_python` | Run Python code |
-| `execute_shell` | Run shell command |
-| `browser_navigate` | Navigate to URL |
-| `browser_screenshot` | Take webpage screenshot |
-| `ipc_send` | Send message to IPC channel |
-| `ipc_receive` | Receive messages from channel |
-
-### 3. Safety (safety.py)
-
-Safety mechanisms including:
-- **confirm_action**: Require user approval for sensitive operations
-- **AuditLog**: Comprehensive action logging
-- **Credential Isolation**: Never expose API keys in sandbox
-
-```python
-from safety import confirm_action, ActionType
-
-# Request confirmation before sending email
-if confirm_action(
-    ActionType.SEND_EMAIL,
-    "Send email to john@example.com",
-    {"to": "john@example.com", "subject": "Hello"}
-):
-    send_email(...)
-```
-
-### 4. Server (server.py)
-
-FastAPI-based web server providing:
-- REST API for programmatic access
-- Web UI for interactive use
-- WebSocket for real-time updates
-- File upload/download
+Switch between them via Pi's theme selector.
 
 ---
 
-## API Reference
+## Setup
 
-### Execute Goal
+### On your own Pi
 
-```http
-POST /api/execute
-Content-Type: application/json
+Instructions for installing this bundle on a fresh Pi are in [`SETUP.md`](SETUP.md). The short version: clone the repo, copy `themes/*.json` into Pi's themes directory, symlink the extensions you want into Pi's `extensions/` directory, and restart Pi.
 
-{
-    "goal": "Research competitor pricing strategies",
-    "context": "Focus on SaaS companies",
-    "provider": "anthropic"
-}
-```
+### For agents
 
-Response:
-```json
-{
-    "session_id": "abc12345",
-    "goal": "Research competitor pricing strategies",
-    "status": "completed",
-    "results": [
-        {
-            "task": "Identify top competitors",
-            "result": "..."
-        }
-    ],
-    "tasks": {...}
-}
-```
+If you are an agent reading this, onboarding instructions are in [`AGENTS.md`](AGENTS.md). System-prompt append layers live in [`APPEND_SYSTEM.md`](APPEND_SYSTEM.md) and [`Translation_Engine_v10_APPEND_SYSTEM.md`](Translation_Engine_v10_APPEND_SYSTEM.md) — read them in order before operating in this repo.
 
-### Execute Tool
+### Skills
 
-```http
-POST /api/tool
-Content-Type: application/json
-
-{
-    "name": "fs_read",
-    "parameters": {
-        "path": "report.md"
-    }
-}
-```
-
-### Get Pending Confirmations
-
-```http
-GET /api/confirmations
-```
-
-Response:
-```json
-[
-    {
-        "id": "conf_123",
-        "action_type": "send_email",
-        "description": "Send email to john@example.com",
-        "risk_level": "high",
-        "status": "pending"
-    }
-]
-```
-
-### Approve/Reject Confirmation
-
-```http
-POST /api/confirmations/{id}/approve
-POST /api/confirmations/{id}/reject
-```
-
-### WebSocket
-
-```javascript
-const ws = new WebSocket('ws://localhost:7860/ws');
-
-// Send goal
-ws.send(JSON.stringify({
-    type: 'execute',
-    goal: 'Research AI trends'
-}));
-
-// Receive result
-ws.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-    console.log(data);
-};
-```
+Skills are loaded on demand by the Pi agent loop. To make a skill available, ensure its folder is present under `skills/` (it already is, if you cloned this repo) and that Pi's skill discovery is pointed at `skills/`. To find the right skill for a task, start at [`skills/skills-catalog.md`](skills/skills-catalog.md).
 
 ---
 
-## Tools Reference
+## Repository layout
 
-### Filesystem Tools
-
-#### fs_read
-Read file contents from the workspace.
-
-```python
-execute_tool("fs_read", path="example.txt")
 ```
-
-#### fs_write
-Write content to a file in the workspace.
-
-```python
-execute_tool("fs_write", path="output.md", content="# Hello\n\nWorld!")
-```
-
-#### fs_delete
-Delete a file or directory (requires confirmation).
-
-```python
-execute_tool("fs_delete", path="old_file.txt")
-```
-
-#### fs_list
-List directory contents.
-
-```python
-execute_tool("fs_list", path=".")
-```
-
-### Web Tools
-
-#### web_fetch
-Make HTTP request to a URL.
-
-```python
-execute_tool("web_fetch", url="https://api.example.com/data", method="GET")
-```
-
-#### web_scrape
-Scrape webpage and convert to markdown.
-
-```python
-execute_tool("web_scrape", url="https://example.com/article", selector="article")
-```
-
-### Browser Tools
-
-#### browser_navigate
-Navigate to URL with headless browser.
-
-```python
-execute_tool("browser_navigate", url="https://example.com")
-```
-
-#### browser_screenshot
-Take screenshot of webpage.
-
-```python
-execute_tool("browser_screenshot", url="https://example.com")
-```
-
-### Execution Tools
-
-#### execute_python
-Run Python code in sandboxed environment.
-
-```python
-execute_tool("execute_python", code="""
-import pandas as pd
-df = pd.DataFrame({'a': [1, 2, 3]})
-print(df.describe())
-""")
-```
-
-#### execute_shell
-Execute shell command (requires confirmation).
-
-```python
-execute_tool("execute_shell", command="ls -la")
-```
-
----
-
-## Safety Features
-
-### confirm_action Pattern
-
-This is the key safety mechanism from Perplexity Computer. Before any sensitive operation, the agent must request explicit user approval.
-
-```python
-from safety import confirm_action, ActionType
-
-# These action types ALWAYS require confirmation
-HIGH_RISK_ACTIONS = {
-    ActionType.SEND_EMAIL,
-    ActionType.PAYMENT,
-    ActionType.PURCHASE,
-    ActionType.DELETE_DATA,
-    ActionType.PUSH_CODE,
-}
-
-# Usage
-if confirm_action(
-    ActionType.DELETE_FILE,
-    "Delete directory 'old_project'",
-    {"path": "/workspace/old_project"}
-):
-    # Proceed with deletion
-    delete_directory(...)
-else:
-    # User rejected
-    print("Operation cancelled")
-```
-
-### Audit Logging
-
-Every action is logged for compliance and debugging:
-
-```python
-from safety import audit_log
-
-# Query recent actions
-logs = audit_log.query(action="fs_write", limit=10)
-
-for entry in logs:
-    print(f"{entry['timestamp']}: {entry['action']}")
-    print(f"  Details: {entry['details']}")
-```
-
-### Credential Isolation
-
-API keys are never exposed to the sandbox environment:
-- Keys are stored in environment variables on the host
-- Tools that need external access use the orchestrator as a proxy
-- The sandbox never sees raw credentials
-
----
-
-## Comparison with Perplexity Computer
-
-| Feature | Perplexity Computer | Personal Computer |
-|---------|--------------------|--------------------|
-| **Architecture** | 4-layer (Local, Orchestrator, Sandbox, Browser) | Single-container |
-| **Isolation** | Firecracker microVMs | Docker container |
-| **Models** | 19+ models, automatic routing | 3-5 models via API keys |
-| **Connectors** | 400+ OAuth integrations | Build as needed |
-| **Safety** | confirm_action, audit logs, VM isolation | confirm_action, audit logs |
-| **IPC** | Filesystem-based | Filesystem-based (same pattern) |
-| **Pricing** | $200/month | API costs only |
-| **Customization** | Limited | Full control |
-
-### What You Get
-
-✅ **Execution Sandbox** - Same tool set (Python, Node.js, Playwright, ffmpeg)
-✅ **Task Decomposition** - Break goals into subtasks
-✅ **Model Routing** - Select best model for each task
-✅ **Safety Mechanisms** - confirm_action pattern
-✅ **Audit Trail** - Complete action logging
-✅ **Filesystem IPC** - Same communication pattern
-
-### What's Different
-
-⚠️ **Isolation Level** - Docker containers share kernel (less isolated than Firecracker)
-⚠️ **Model Selection** - Fewer models, manual configuration
-⚠️ **Connectors** - Build your own integrations
-⚠️ **Scale** - Designed for single-user, not enterprise
-
----
-
-## Troubleshooting
-
-### Container Won't Start
-
-```bash
-# Check logs
-docker logs personal-computer
-
-# Common issues:
-# 1. Port already in use
-docker run -p 7861:7860 -p 7682:7681 personal-computer
-
-# 2. Missing API keys
-docker run -e ANTHROPIC_API_KEY=sk-... personal-computer
-```
-
-### Playwright Browser Issues
-
-```bash
-# Install browsers manually
-docker exec -it personal-computer bash
-npx playwright install chromium --with-deps
-```
-
-### Permission Issues
-
-```bash
-# Fix workspace permissions
-docker exec -it personal-computer bash
-sudo chown -R user:user /workspace
-```
-
-### Memory Issues
-
-```bash
-# Increase container memory
-docker run --memory=4g personal-computer
-```
-
-### Reset Everything
-
-```bash
-# Stop and remove container
-docker stop personal-computer
-docker rm personal-computer
-
-# Clean workspace
-rm -rf workspace/ipc/* workspace/logs/* workspace/sessions/*
-
-# Rebuild
-docker build -t personal-computer .
+my-pi-agent/
+├── assets/                    # Screenshots and images
+├── extensions/                # 12 TypeScript extensions to the Pi agent loop
+├── git/                       # Project-local gitignore patterns
+├── skills/                    # 181 skill packages (see skills/skills-catalog.md)
+├── themes/                    # github-dark-default.json, brutalist.json
+├── AGENTS.md                  # Agent onboarding brief
+├── APPEND_SYSTEM.md           # System-prompt append layer
+├── README.md                  # This file
+├── SETUP.md                   # Pi-side installation runbook
+├── Translation_Engine_v10_APPEND_SYSTEM.md
+├── package.json               # Pi runtime dependencies
+├── tsconfig.json              # TypeScript config for extensions
+└── .env.example               # Environment variable template
 ```
 
 ---
 
 ## License
 
-MIT License - Use freely for personal and commercial projects.
-
----
-
-## Acknowledgments
-
-Inspired by Perplexity Computer and the vision of autonomous AI agents that can execute complex workflows. This implementation makes that vision accessible for personal use without the $200/month price tag.
-
-Key architectural decisions were informed by:
-- Perplexity's official blog posts and documentation
-- Reverse-engineering analyses by security researchers
-- Open-source alternatives like Agent Zero, OpenSandbox, and OpenClaw
-
-# https://chat.z.ai/s/d1097f85-6240-48b7-94d2-492e4adb8a97
+The Pi setup code in this repo is provided as-is for the maintainer's personal use. Individual skills under `skills/` ship their own licenses — see each skill's `LICENSE.txt` and `SKILL.md` frontmatter for terms.
