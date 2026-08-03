@@ -1,6 +1,6 @@
 ---
 name: astro-5
-description: "Astro 5 (released November 2024) content-focused web framework workflow skill — the islands architecture. Covers the server-first mental model (zero JS by default — Astro components render to static HTML at build time, hydration is opt-in per-component via client:load / client:idle / client:visible / client:only directives), the multi-framework integration (use React, Vue, Svelte, Preact, Solid, or Lit components in the same Astro project — @astrojs/react, @astrojs/vue, etc.), content collections (the type-safe Markdown/MDX authoring system with Zod schemas — Content Layer API in Astro 5 replaces the legacy file-based collections), Astro Studio + Astro DB (Astro's managed backend), file-based routing with src/pages/, layout inheritance with Astro layouts, the View Transitions API (native browser page transitions without React Router), Server Islands (Astro 5 — deferred rendering for personalized content in otherwise-static pages), middleware (src/middleware.ts), endpoints (API routes in src/pages/api/), the Vite-powered build, and deployment to static hosts (Netlify, Vercel, Cloudflare Pages, GitHub Pages) or SSR adapters. Use when building any content-focused website — blog, documentation, marketing site, portfolio, e-commerce catalog — especially when the task involves content collections, choosing hydration directives, mixing UI frameworks in one project, or optimizing for Core Web Vitals where Astro's zero-JS-by-default approach differs fundamentally from Next.js / Nuxt / SvelteKit app frameworks."
+description: Astro 5, content-focused web framework workflow skill — the islands architecture. Covers the server-first mental model (zero JS by default — Astro components render to static HTML at build time, hydration is opt-in per-component via client:load / client:idle / client:visible / client:only directives), the multi-framework integration (use React, Vue, Svelte, Preact, Solid, or Lit components in the same Astro project — @astrojs/react, @astrojs/vue, etc.), content collections (the type-safe Markdown/MDX authoring system with Zod schemas — Content Layer API in Astro 5 replaces the legacy file-based collections), Astro Studio + Astro DB (Astro's managed backend), file-based routing with src/pages/, layout inheritance with Astro layouts, the View Transitions API (native browser page transitions without React Router), Server Islands (Astro 5 — deferred rendering for personalized content in otherwise-static pages), middleware (src/middleware.ts), endpoints (API routes in src/pages/api/), the Vite-powered build, and deployment to static hosts (Netlify, Vercel, Cloudflare Pages, GitHub Pages) or SSR adapters. Use when building any content-focused website — blog, documentation, marketing site, portfolio, e-commerce catalog — especially when the task involves content collections, choosing hydration directives, mixing UI frameworks in one project, or optimizing for Core Web Vitals where Astro's zero-JS-by-default approach differs fundamentally from Next.js / Nuxt / SvelteKit app frameworks.
 license: Proprietary. LICENSE.txt has complete terms
 ---
 
@@ -130,6 +130,15 @@ export default defineConfig({
         '@': '/src',
       },
     },
+  },
+
+  // Image optimization (astro:assets)
+  image: {
+    service: {
+      entrypoint: 'astro/assets/services/sharp', // or 'squoosh' for smaller bundles
+    },
+    domains: ['images.example.com'],
+    remotePatterns: [{ protocol: 'https' }],
   },
 });
 ```
@@ -392,6 +401,109 @@ export const collections = { products };
 
 This makes Astro a powerful headless-CMS-friendly framework — fetch from Sanity, Contentful, Shopify, or any API at build time, with full type safety.
 
+### Advanced: References and Relations between Collections
+
+You can define references to other collections to build relationships:
+
+```typescript
+// src/content.config.ts
+const blog = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/blog' }),
+  schema: z.object({
+    title: z.string(),
+    author: z.string().ref(('authors')), // reference to an author entry's ID
+    // OR
+    authorRef: z.object({
+      id: z.string().ref('authors'),
+    }),
+  }),
+});
+
+const authors = defineCollection({
+  loader: glob({ pattern: '**/*.yaml', base: './src/content/authors' }),
+  schema: z.object({ name: z.string(), bio: z.string() }),
+});
+```
+
+Then in a page, you can `getEntry` to resolve the referenced author:
+
+```astro
+---
+import { getEntry } from 'astro:content';
+const post = await getEntry('blog', 'hello-world');
+const author = await getEntry('authors', post.data.author);
+---
+<p>Written by {author.data.name}</p>
+```
+
+### Rendering Markdown with custom components
+
+You can pass custom components to the `render` function to override HTML elements:
+
+```astro
+---
+import { render } from 'astro:content';
+import MyLink from '../components/MyLink.astro';
+const { Content } = await render(post, {
+  components: {
+    a: MyLink,   // override <a> tags
+    h1: 'h2',    // render h1 as h2
+  }
+});
+---
+<Content />
+```
+
+---
+
+## Server Islands (Astro 5 — deferred rendering)
+
+Server Islands let you defer rendering of personalized content in an otherwise-static page. The page is served as static HTML immediately, then personalized components stream in.
+
+```astro
+---
+// src/pages/index.astro — static page with one personalized island
+import BaseLayout from '../layouts/BaseLayout.astro';
+import UserProfile from '../components/UserProfile.astro';
+---
+
+<BaseLayout title="Home">
+  <h1>Welcome!</h1>
+  <p>This page is static — instant load, zero JS.</p>
+
+  <!-- Server Island — renders later, can be personalized -->
+  <UserProfile slot="fallback" server:defer>
+    <div slot="fallback">Loading your profile...</div>
+  </UserProfile>
+</BaseLayout>
+```
+
+```astro
+---
+// src/components/UserProfile.astro — the deferred component
+// This runs on the server when the island is requested
+import { getUserFromCookie } from '../lib/auth';
+
+const user = await getUserFromCookie(Astro.cookies);
+---
+
+{user ? (
+  <div class="profile">Hello, {user.name}!</div>
+) : (
+  <div class="profile"><a href="/login">Sign in</a></div>
+)}
+```
+
+The page renders instantly as static HTML. The `UserProfile` island is fetched separately (as an HTML fragment) and swapped in when ready. This gives you the performance of static pages with the personalization of SSR — without shipping JS for the personalization logic.
+
+**Use cases for Server Islands:**
+- User‑specific greetings or profile widgets
+- Real‑time data like notifications or cart count
+- A/B testing variants that depend on user cookies
+- Ads or dynamic content that must be personalized
+
+**Under the hood:** Astro uses streaming HTML. The main page is served immediately; the island placeholder triggers a sub‑request to the server which renders the island and streams it back, replacing the placeholder. This works without client‑side JS.
+
 ---
 
 ## Astro Components (the `.astro` syntax)
@@ -468,7 +580,8 @@ Key `.astro` features:
 - **`class:list`**: conditional class names (like `clsx`)
 - **`<style>`**: scoped by default (use `is:global` for global styles)
 - **`<script>`**: processed by Vite (TypeScript, bundling, HMR in dev)
-- **`set:html`**: inject raw HTML (use carefully — XSS risk)
+- **`set:html`**: inject raw HTML (use carefully — XSS risk; prefer `set:text` for safe text)
+- **`<slot />`**: content placeholders with fallback, named slots (`<slot name="footer" />`)
 
 ---
 
@@ -612,48 +725,6 @@ When the user navigates from `/` to `/about`, the hero image smoothly morphs bet
 
 ---
 
-## Server Islands (Astro 5 — deferred rendering)
-
-Server Islands let you defer rendering of personalized content in an otherwise-static page. The page is served as static HTML immediately, then personalized components stream in.
-
-```astro
----
-// src/pages/index.astro — static page with one personalized island
-import BaseLayout from '../layouts/BaseLayout.astro';
-import UserProfile from '../components/UserProfile.astro';
----
-
-<BaseLayout title="Home">
-  <h1>Welcome!</h1>
-  <p>This page is static — instant load, zero JS.</p>
-
-  <!-- Server Island — renders later, can be personalized -->
-  <UserProfile slot="fallback" server:defer>
-    <div slot="fallback">Loading your profile...</div>
-  </UserProfile>
-</BaseLayout>
-```
-
-```astro
----
-// src/components/UserProfile.astro — the deferred component
-// This runs on the server when the island is requested
-import { getUserFromCookie } from '../lib/auth';
-
-const user = await getUserFromCookie(Astro.cookies);
----
-
-{user ? (
-  <div class="profile">Hello, {user.name}!</div>
-) : (
-  <div class="profile"><a href="/login">Sign in</a></div>
-)}
-```
-
-The page renders instantly as static HTML. The `UserProfile` island is fetched separately (as an HTML fragment) and swapped in when ready. This gives you the performance of static pages with the personalization of SSR — without shipping JS for the personalization logic.
-
----
-
 ## Middleware
 
 ```typescript
@@ -697,6 +768,31 @@ declare namespace App {
 }
 ```
 
+### Advanced Middleware Patterns
+
+**Redirect based on user agent:**
+```typescript
+if (request.headers.get('user-agent')?.includes('bot')) {
+  return new Response(null, { status: 301, headers: { Location: '/seo-version' } });
+}
+```
+
+**Rewrite (serve a different page without redirect):**
+```typescript
+// Rewrite to a different route
+return context.rewrite('/other-page');
+```
+
+**Error handling middleware:**
+```typescript
+try {
+  return next();
+} catch (error) {
+  // log error and return a custom error page
+  return new Response('Something went wrong', { status: 500 });
+}
+```
+
 ---
 
 ## API Endpoints
@@ -723,6 +819,180 @@ export const POST: APIRoute = async ({ request }) => {
 ```
 
 For SSR mode, API endpoints run on every request. For static mode, they're called at build time (useful for generating data-driven pages).
+
+---
+
+## Image Optimization (`astro:assets`)
+
+Astro has built‑in image optimization similar to Next.js `next/image`.
+
+```astro
+---
+import { Image } from 'astro:assets';
+import heroImage from '../assets/hero.png';
+---
+
+<!-- Responsive image with automatic format selection and lazy loading -->
+<Image src={heroImage} alt="Hero" width={800} height={400} format="avif" />
+```
+
+You can also generate optimized images programmatically:
+
+```typescript
+import { getImage } from 'astro:assets';
+import myImage from '../assets/photo.jpg';
+
+const optimized = await getImage({
+  src: myImage,
+  width: 300,
+  height: 200,
+  format: 'webp',
+});
+// optimized.src is the URL to the optimized image
+```
+
+Configuration in `astro.config.mjs`:
+
+```javascript
+image: {
+  service: {
+    entrypoint: 'astro/assets/services/sharp', // or 'squoosh'
+  },
+  domains: ['images.unsplash.com'],
+  remotePatterns: [{ protocol: 'https', hostname: '**.cdn.com' }],
+}
+```
+
+---
+
+## Environment Variables
+
+Use `import.meta.env` to access environment variables. Astro automatically loads `.env` files.
+
+```typescript
+// In .env
+PUBLIC_API_URL=https://api.example.com
+SECRET_KEY=abc123
+```
+
+```astro
+---
+// In .astro frontmatter
+const apiUrl = import.meta.env.PUBLIC_API_URL;  // accessible in client too
+const secret = import.meta.env.SECRET_KEY;      // only on server
+---
+
+<script>
+  // Client-side script can only access PUBLIC_* variables
+  console.log(import.meta.env.PUBLIC_API_URL);
+</script>
+```
+
+**Important:** Variables starting with `PUBLIC_` are exposed to the client. Never put secrets in public variables.
+
+---
+
+## State Management (with Nanostores)
+
+Astro works well with [Nanostores](https://github.com/nanostores/nanostores) for client-side state that can be shared across islands.
+
+```bash
+npm install nanostores
+```
+
+```typescript
+// src/lib/cartStore.ts
+import { atom } from 'nanostores';
+
+export const cartItems = atom([]);
+export const addItem = (item) => {
+  cartItems.set([...cartItems.get(), item]);
+};
+```
+
+```astro
+---
+// In your island component (React example)
+import { useStore } from '@nanostores/react';
+import { cartItems } from '../lib/cartStore';
+
+function Cart() {
+  const items = useStore(cartItems);
+  return <div>Cart has {items.length} items</div>;
+}
+```
+
+This state is scoped to the client and does not require server-side rendering.
+
+---
+
+## Testing
+
+Astro provides `@astrojs/test` (still experimental) but you can also use Vitest with the `astro` environment.
+
+### Setup Vitest:
+
+```bash
+npm install -D vitest @vitest/ui @vitejs/plugin-vue @vitejs/plugin-react
+```
+
+```javascript
+// vitest.config.ts
+import { defineConfig } from 'vitest/config';
+import astro from '@astrojs/vite-plugin-astro';
+
+export default defineConfig({
+  plugins: [astro()],
+  test: {
+    environment: 'jsdom',
+    globals: true,
+  },
+});
+```
+
+### Testing content collection queries:
+
+```typescript
+import { getCollection } from 'astro:content';
+import { describe, expect, test } from 'vitest';
+
+describe('blog collection', () => {
+  test('has at least one post', async () => {
+    const posts = await getCollection('blog');
+    expect(posts.length).toBeGreaterThan(0);
+  });
+});
+```
+
+### Testing components with `@astrojs/test` (experimental):
+
+```typescript
+import { render } from '@astrojs/test';
+import MyComponent from './MyComponent.astro';
+
+test('renders correctly', async () => {
+  const result = await render(MyComponent, { props: { name: 'World' } });
+  expect(result.html).toContain('Hello World');
+});
+```
+
+---
+
+## Performance Optimization
+
+- **Prefetching**: Use `astro:prefetch` to prefetch pages when the user hovers a link.
+
+```astro
+---
+import { prefetch } from 'astro:prefetch';
+---
+<a href="/blog" onmouseenter={() => prefetch('/blog')}>Blog</a>
+```
+
+- **Lazy loading images**: Use `<img loading="lazy" />` or the `Image` component from `astro:assets` which adds lazy loading automatically.
+- **Code splitting**: Astro automatically splits code by route and by island. Each island's JS is loaded only when needed.
+- **Caching**: For SSR, use `cache-control` headers in middleware or endpoints.
+- **Build analysis**: Run `npm run build -- --verbose` to see bundle sizes.
 
 ---
 
@@ -775,15 +1045,81 @@ export const prerender = false;
 
 With `output: 'static'` (default) and `export const prerender = false` on specific pages, you get the best of both worlds: most pages are static (pre-rendered at build), but personalized pages (dashboard, profile) render on the server per request.
 
+### Environment variables in production
+
+For static builds, environment variables are inlined at build time. For SSR, they are read at runtime. Use `.env.production` for production overrides.
+
 ---
 
-## Top 10 Anti-Patterns (the most valuable section)
+## Security Considerations
+
+- **XSS prevention**: Astro automatically escapes HTML content. However, using `set:html` or injecting raw HTML can introduce XSS. Prefer `set:text` for user‑provided text.
+- **Content injection**: In MDX, ensure that any user‑provided components are safe. Sanitize HTML if using `set:html`.
+- **Authentication**: Use cookies with `httpOnly` and `secure` flags. Use `Astro.cookies` to set them.
+- **CSRF**: For API endpoints, validate origin headers or use CSRF tokens.
+- **Secrets**: Never hardcode secrets in code. Use environment variables.
+- **Headers**: Set security headers (CSP, HSTS, etc.) using middleware or via `astro.config.mjs` with the `security` option.
+
+---
+
+## Advanced Routing
+
+### Dynamic routes with `getStaticPaths`
+
+```astro
+---
+// src/pages/blog/[slug].astro
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+const { post } = Astro.props;
+---
+<h1>{post.data.title}</h1>
+```
+
+### Pagination
+
+```astro
+---
+// src/pages/blog/page/[page].astro
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  const perPage = 10;
+  const pages = Math.ceil(posts.length / perPage);
+  return Array.from({ length: pages }, (_, i) => ({
+    params: { page: String(i + 1) },
+    props: { posts: posts.slice(i * perPage, (i + 1) * perPage) },
+  }));
+}
+const { posts } = Astro.props;
+---
+<BlogList posts={posts} />
+```
+
+### Catch‑all routes
+
+```astro
+// src/pages/[...slug].astro — matches any path not matched by other routes
+export function getStaticPaths() { return [] } // if static
+```
+
+### Route priority
+
+Astro matches routes in the order they are defined in the file system. More specific routes (like `[slug].astro`) take precedence over catch‑all (`[...slug].astro`).
+
+---
+
+## Top 12 Anti‑Patterns (expanded)
 
 1. **Shipping JS when you don't need it.** The #1 Astro mistake. Use Astro components (`.astro`) for static content and reserve framework components (React/Vue/Svelte) for genuinely interactive elements. If a component doesn't have state or event handlers, it should be `.astro`, not `.tsx`.
 
-2. **`client:load` for everything.** `client:load` hydrates immediately — wasteful for below-the-fold components. Use `client:idle` for non-critical interactivity, `client:visible` for components far down the page, `client:media` for mobile/desktop-only widgets. Reserve `client:load` for above-the-fold critical interactions.
+2. **`client:load` for everything.** `client:load` hydrates immediately — wasteful for below‑the‑fold components. Use `client:idle` for non‑critical interactivity, `client:visible` for components far down the page, `client:media` for mobile/desktop‑only widgets. Reserve `client:load` for above‑the‑fold critical interactions.
 
-3. **Not using content collections for structured content.** Astro's content collections give you Zod-validated frontmatter, type-safe queries, and automatic slug generation. Writing your own Markdown loading logic skips all this. Always use `getCollection()` / `getEntry()` from `astro:content`.
+3. **Not using content collections for structured content.** Astro's content collections give you Zod‑validated frontmatter, type‑safe queries, and automatic slug generation. Writing your own Markdown loading logic skips all this. Always use `getCollection()` / `getEntry()` from `astro:content`.
 
 4. **Missing Zod schema validation.** Content collection schemas catch typos and missing fields at build time. Without them, a misspelled `publishedAt` in a Markdown frontmatter becomes a runtime error (or worse, silently renders `undefined`). Always define a `z.object({...})` schema for every collection.
 
@@ -791,13 +1127,31 @@ With `output: 'static'` (default) and `export const prerender = false` on specif
 
 6. **Giant layout files.** Layouts should be the HTML shell (`<html>`, `<head>`, `<body>`, header, footer, `<slot />`). Business logic doesn't belong in layouts. If your layout has `getCollection()` calls or complex conditionals, extract them into components.
 
-7. **Not using View Transitions for multi-page sites.** View Transitions (`<ClientRouter />`) give SPA-like navigation with zero JS framework cost. Without them, every page navigation is a full page reload (jarring). Add `<ClientRouter />` to your base layout's `<head>` — it's a one-line upgrade that dramatically improves perceived performance.
+7. **Not using View Transitions for multi‑page sites.** View Transitions (`<ClientRouter />`) give SPA‑like navigation with zero JS framework cost. Without them, every page navigation is a full page reload (jarring). Add `<ClientRouter />` to your base layout's `<head>` — it's a one‑line upgrade that dramatically improves perceived performance.
 
 8. **Forgetting `Astro.site` for canonical URLs.** Without `site: 'https://example.com'` in `astro.config.mjs`, `new URL(path, Astro.site)` produces `https://example.com/path` instead of `http://localhost:4321/path` in dev. Set the `site` config always — it's required for sitemaps, RSS feeds, and canonical URLs.
 
 9. **Not using `prerender` for hybrid mode.** With `output: 'static'` (default), you can still have SSR pages via `export const prerender = false`. Don't switch the whole app to `output: 'server'` just because one page needs SSR — use hybrid mode and prerender everything except the personalized pages.
 
-10. **Loading content from external APIs at request time when build time works.** If content doesn't change per-user, fetch it at build time (in the `.astro` frontmatter or a content collection loader). Don't pay the runtime cost of an API call on every request for content that's the same for everyone. Astro 5's Content Layer API supports loading from external APIs at build time — use it.
+10. **Loading content from external APIs at request time when build time works.** If content doesn't change per‑user, fetch it at build time (in the `.astro` frontmatter or a content collection loader). Don't pay the runtime cost of an API call on every request for content that's the same for everyone. Astro 5's Content Layer API supports loading from external APIs at build time — use it.
+
+11. **Hardcoding environment‑specific URLs.** Use environment variables for API endpoints, base URLs, etc. Avoid hardcoding `localhost` or production domains in code.
+
+12. **Ignoring image optimization.** Unoptimized images can wreck performance. Use `astro:assets` Image component or at least include `width` and `height` attributes to prevent layout shift. Always serve modern formats (AVIF, WebP) when possible.
+
+---
+
+## Troubleshooting Common Errors
+
+| Error | Likely cause | Solution |
+|-------|--------------|----------|
+| `window is not defined` | A framework component (React/Vue) uses browser APIs at top‑level. | Use `client:only` or move the API usage inside `useEffect`/`onMounted`. |
+| `Cannot find module 'astro/loaders'` | Using Astro 4 or older. | Upgrade to Astro 5 (`npm install astro@latest`). |
+| `[vite] Cannot find module ...` | Vite cache or missing dependency. | Delete `node_modules/.vite` and restart dev. |
+| `Content collection "blog" not found` | Missing `src/content.config.ts` or collection name mismatch. | Ensure `src/content.config.ts` exports the collection with the correct name. |
+| `Astro.site` is `http://localhost:4321` in production | `site` config missing. | Set `site` in `astro.config.mjs`. |
+| `Image` component fails for remote images | Domain not allowed in `image.domains`. | Add the domain to `image.domains` or `remotePatterns`. |
+| `Server Island not rendering` | Missing `server:defer` directive. | Add `server:defer` to the component invocation and provide a fallback slot. |
 
 ---
 
@@ -807,14 +1161,14 @@ With `output: 'static'` (default) and `export const prerender = false` on specif
 - `vue-3-nuxt` — Vue + Nuxt (Astro can use Vue components as islands — the Vue skill covers Vue component authoring)
 - `svelte-5-sveltekit` — Svelte + SvelteKit (Astro can use Svelte components as islands)
 - `react19-ts6-vite8-tailwindv4-mvp` — React (Astro can use React components as islands)
-- `frontend-ui-engineering` — Production-quality UI build patterns (relevant for Astro components)
+- `frontend-ui-engineering` — Production‑quality UI build patterns (relevant for Astro components)
 - `frontend-design` — Design thinking for web UI
 - `api-and-interface-design` — Type contract design (relevant for content collection schemas and API endpoints)
 - `api-patterns` — REST API patterns (for Astro API routes)
-- `security-and-hardening` — OWASP-aware hardening (Astro has good XSS defaults via auto-escaping)
+- `security-and-hardening` — OWASP‑aware hardening (Astro has good XSS defaults via auto‑escaping)
 - `clean-code` — General coding standards
 - `testing-patterns` — Test pyramid, mocking strategies
-- `code-review-checklist` — 12-category code review checklist
+- `code-review-checklist` — 12‑category code review checklist
 
 ---
 
@@ -839,13 +1193,13 @@ Required (installed via `npm create astro`):
 
 - `@astrojs/mdx` — MDX support (Markdown + JSX)
 - `@astrojs/tailwind` — Tailwind CSS integration (or use `@tailwindcss/vite` for Tailwind 4)
-- `@astrojs/sitemap` — auto-generate `/sitemap.xml`
+- `@astrojs/sitemap` — auto‑generate `/sitemap.xml`
 - `@astrojs/rss` — RSS feed generation
-- `@astrojs/partytown` — move third-party scripts to a web worker (improves performance)
+- `@astrojs/partytown` — move third‑party scripts to a web worker (improves performance)
 
 ### SSR adapters (add via `npx astro add`)
 
-- `@astrojs/node` — self-hosted Node.js SSR
+- `@astrojs/node` — self‑hosted Node.js SSR
 - `@astrojs/vercel` — Vercel SSR
 - `@astrojs/cloudflare` — Cloudflare Pages/Workers SSR
 - `@astrojs/netlify` — Netlify SSR
@@ -856,5 +1210,6 @@ Required (installed via `npm create astro`):
 - `astro-icon` — icon component (uses Iconify)
 - `astro-seo` — SEO meta tags component
 - `@astrolib/analytics` — analytics integration
-- `astro-pagefind` — client-side full-text search (Pagefind)
+- `astro-pagefind` — client‑side full‑text search (Pagefind)
 - `keystatic` + `@keystatic/core` — headless CMS for Astro content collections
+- `nanostores` — lightweight client‑side state
