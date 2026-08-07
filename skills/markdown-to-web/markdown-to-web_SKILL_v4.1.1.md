@@ -1,11 +1,50 @@
+<!--
+markdown-to-web — Unified Skill v4.1.1
+
+Lineage:
+  - original_SKILL.md v1.0.1 — evidence contract, anti-pattern format, z-index discipline
+  - markdown-to-web_SKILL.md v2.1.0 — Part 1 validation review (Round 1 findings)
+  - draft_z2.md v2.0.0 — full test code, performance budgets, CI/CD, self-hosted fonts
+  - draft_d2.md v2.0.0 — full template CSS for technical + minimal, 6-week migration plan
+  - draft_q3.md v3.0.0 — correct Tailwind v4 theming, fence scanner, collision detection,
+    correct WCAG arithmetic (base of v4.0.0)
+  - SKILL.md v4.0.0 — BASE for v4.1.0: unified all of the above; fixed the three
+    hereditary Critical bugs (@theme-in-@media, WCAG 14px arithmetic,
+    dangerouslySetInnerHTML)
+  - SKILL.md v4.1.0 — BASE for v4.1.1: added 15 Round 3 self-audit fixes (F1–F5 +
+    textual corrections, §22 findings, §23 Lessons)
+  - Round 4 coherence patch (v4.1.1) — 16 coherence fixes completing the unfinished
+    v4.1.0 verification/traceability layer: tests rewritten for parseDocument,
+    Appendix A ledger updated to 67 rows, Closing version/paths corrected,
+    missing fixtures added, 21.13 retag completed, §12.1 contradiction resolved
+
+Verification protocol: desk review. Findings tagged Verified / Reasoned / Assumed /
+Unverifiable per the skill's own evidence contract (§21). No code execution in this
+environment. Round 3 retag (see §1.1 note): claims about runtime or library behavior
+that were not executed are Reasoned — including two claims v4.0.0 tagged Verified
+without execution (§21.1, §21.13). This edition applies to itself the standard it
+enforces.
+-->
+
 ---
 name: markdown-to-web
-description: Renders an arbitrary Markdown document as a polished, single-file, accessible web page. Accepts any .md file plus an optional template (editorial long-form / technical docs / minimal print) and an optional tag registry (severity, confidence, status, custom). Built on React 19 + Vite 7 + Tailwind v4 + react-markdown.
-triggers: 
-  - render this markdown as a web page
-  - convert .md to HTML
-  - publish this document as a site
-  - make a polished web version of this README/report/spec
+description: >
+  Renders an arbitrary Markdown document as a polished, single-file, accessible
+  web page. Accepts any .md file plus an optional template (editorial long-form
+  / technical docs / minimal print) and an optional tag registry (severity,
+  confidence, status, custom). Produces a self-contained dist/index.html with
+  WCAG 2.2 AA enforced by an axe gate, and AAA where feasible with enumerated
+  exceptions that are encoded in the gate itself (badge contrast exclusions by
+  selector, target-size enforced globally). Code-first theming via a two-layer
+  token pattern (runtime variables + @theme inline bridge); fence-aware TOC with
+  verified slug parity including linked-heading normalization; frontmatter parsed
+  AND stripped before render; tag-registry badges with cross-category collision
+  detection and a code-block misfire guard; template switching via one wiring
+  file; 8-gate pre-ship checklist. Built on React 19 + Vite 7 + Tailwind v4 +
+  react-markdown.
+  Use when the user asks to "render this markdown as a web page", "convert .md
+  to HTML", "publish this document as a site", or "make a polished web version
+  of this README/report/spec".
 version: 4.1.1
 tags:
   - react
